@@ -3,9 +3,7 @@
   "name": "WaniBeyond",
   "version": "0.0.1",
   "manifest_version": 3,
-  "permissions": [
-    "tabs"
-  ],
+  "permissions": [],
   "background": {
     "service_worker": "background.js"
   },
