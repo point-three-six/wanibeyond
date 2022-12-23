@@ -1,0 +1,3 @@
+For speed, keep a local cache in the browser's Storage
+We can always sync the storage, but when they start the reviews
+we don't want to delay the intercept with an additional API call to WaniPlus

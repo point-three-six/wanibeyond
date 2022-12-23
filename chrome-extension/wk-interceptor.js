@@ -1,14 +1,27 @@
-XMLHttpRequest.prototype._open = XMLHttpRequest.prototype.open;
-XMLHttpRequest.prototype.open = function(m,u){
-    if(u == '/lesson/queue'){
-        intercept(this);
+XMLHttpRequest.prototype._send = XMLHttpRequest.prototype.send;
+XMLHttpRequest.prototype.send = function (data) {
+    if (this.hasOwnProperty('__hb_xhr')) {
+        let req = this.__hb_xhr;
+        if (req.url == '/json/lesson/completed') {
+            console.log('hijack')
+            return;
+        }
     }
 
-    this._open.apply(this, arguments);
-}
+    this._send.call(this, data);
+};
+
+// XMLHttpRequest.prototype._open = XMLHttpRequest.prototype.open;
+// XMLHttpRequest.prototype.open = function (m, u) {
+//     if (u == '/lesson/queue') {
+//         intercept(this);
+//     }
+
+//     this._open.apply(this, arguments);
+// }
 
 function intercept(xhr) {
-    function getter(){
+    function getter() {
         // delete getter
         delete xhr.responseText;
 
@@ -21,7 +34,7 @@ function intercept(xhr) {
         return response;
     }
 
-    function hook(){
+    function hook() {
         Object.defineProperty(xhr, 'responseText', {
             get: getter,
             configurable: true
@@ -31,7 +44,7 @@ function intercept(xhr) {
     hook();
 }
 
-function inject(response){
+function inject(response) {
     response = JSON.parse(response);
 
     response['queue'].unshift({
@@ -118,7 +131,7 @@ function inject(response){
         "relationships": {
             "study_material": null
         },
-        "wanibeyond" : true
+        "wanibeyond": true
     });
 
     return JSON.stringify(response);

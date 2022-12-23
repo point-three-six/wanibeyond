@@ -13,10 +13,13 @@ datasource db {
 model User {
   id          String    @id @default(uuid())
   username    String    @unique
+  password    String
   email       String    @unique
   dateCreated DateTime  @default(now())
   decks       Deck[]
   Session     Session[]
+
+  @@index([username, password])
 }
 
 model Deck {

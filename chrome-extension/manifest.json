@@ -1,6 +1,5 @@
-
 {
-  "name": "WaniBeyond",
+  "name": "WaniPlus",
   "version": "0.0.1",
   "manifest_version": 3,
   "permissions": [],
@@ -9,20 +8,33 @@
   },
   "web_accessible_resources": [
     {
-      "resources": [ "inject-bridge.js" ],
-      "matches": [ "https://www.wanikani.com/*" ]
+      "resources": [
+        "wk-interceptor.js"
+      ],
+      "matches": [
+        "https://www.wanikani.com/*"
+      ]
     }
   ],
   "content_scripts": [
     {
-      "matches": ["https://www.wanikani.com/", "https://www.wanikani.com/dashboard"],
-      "js": [ "cs-wk-home.js" ],
-      "run_at" : "document_start"
+      "matches": [
+        "https://www.wanikani.com/",
+        "https://www.wanikani.com/dashboard"
+      ],
+      "js": [
+        "cs-wk-home.js"
+      ],
+      "run_at": "document_start"
     },
     {
-      "matches": ["https://www.wanikani.com/lesson/session"],
-      "js": [ "cs-wk-lessons.js" ],
-      "run_at" : "document_start"
+      "matches": [
+        "https://www.wanikani.com/lesson/session"
+      ],
+      "js": [
+        "cs-wk-lessons.js"
+      ],
+      "run_at": "document_start"
     }
   ],
   "action": {
