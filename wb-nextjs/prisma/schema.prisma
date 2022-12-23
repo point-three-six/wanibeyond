@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String    @id @default(uuid())
+  username    String    @unique
+  email       String    @unique
+  dateCreated DateTime  @default(now())
+  decks       Deck[]
+  Session     Session[]
+}
+
+model Deck {
+  id          Int      @id @default(autoincrement())
+  User        User     @relation(fields: [userId], references: [id])
+  userId      String
+  name        String
+  description String
+  dateCreated DateTime @default(now())
+  dateUpdated DateTime @updatedAt
+  allowForks  Boolean  @default(true)
+  isPrivate   Boolean  @default(false)
+
+  @@index([name, userId])
+}
+
+model Session {
+  token  String @unique
+  User   User   @relation(fields: [userId], references: [id])
+  userId String
+}
