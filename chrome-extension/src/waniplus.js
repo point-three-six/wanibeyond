@@ -41,7 +41,7 @@
         for (let i = 0; i < dependencies.length; i++) {
             if (debug) console.log('Injecting dependency:', dependencies[i])
 
-            var s = document.createElement('script');
+            let s = document.createElement('script');
             s.src = chrome.runtime.getURL(dependencies[i]);
             (document.head || document.documentElement).appendChild(s);
             s.onload = function () {
