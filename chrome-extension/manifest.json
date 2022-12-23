@@ -4,12 +4,14 @@
   "manifest_version": 3,
   "permissions": [],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "src/background.js"
   },
   "web_accessible_resources": [
     {
       "resources": [
-        "wk-interceptor.js"
+        "src/utils/interceptor.js",
+        "src/pages/pg-wk-home.js",
+        "src/pages/pg-wk-lessons.js"
       ],
       "matches": [
         "https://www.wanikani.com/*"
@@ -19,20 +21,10 @@
   "content_scripts": [
     {
       "matches": [
-        "https://www.wanikani.com/",
-        "https://www.wanikani.com/dashboard"
+        "https://www.wanikani.com/*"
       ],
       "js": [
-        "cs-wk-home.js"
-      ],
-      "run_at": "document_start"
-    },
-    {
-      "matches": [
-        "https://www.wanikani.com/lesson/session"
-      ],
-      "js": [
-        "cs-wk-lessons.js"
+        "src/waniplus.js"
       ],
       "run_at": "document_start"
     }

@@ -1,0 +1,22 @@
+insert this INNER TOP of div.span12 //
+
+.dashboard section.system-alert,
+.dashboard section.alert-where-user-scripts-cant-ignore,
+.dashboard section.sale-alert {
+    position: relative;
+    padding: 7.5px 30px;
+    background-color: #f100a1;
+    background-image: -moz-linear-gradient(top, #f0a, #dd0093);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f0a), to(#dd0093));
+    background-image: -webkit-linear-gradient(top, #f0a, #dd0093);
+    background-image: -o-linear-gradient(top, #f0a, #dd0093);
+    background-image: linear-gradient(to bottom, #f0a, #dd0093);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFF00AA', endColorstr='#FFDD0093', GradientType=0);
+    border-top: 1px solid #f6c;
+    border-bottom: 1px solid #cc0088;
+    border-left: 1px solid #f6c;
+}
+
+<section class="sale-alert"><div class="sale-alert__message" data-id="100"><h3><i class="fa fa-star" aria-hidden="true"></i>The once-a-年 WaniKani sale is here ! The Lifetime Plan is $100 off,
+plus proration for any unused subscription time you have left. <a href="/account/subscription?utm_campaign=Premium+1-59&amp;utm_medium=Banner&amp;utm_source=WaniKani">See Your Final Upgrade Price</a></h3><a class="sale-alert__close-button close-alert" href="#" title="Close notification"><i class="fa fa-times" aria-hidden="true"></i></a></div></section>
