@@ -1,9 +1,10 @@
-(function () {
+(() => {
     const manifest = chrome.runtime.getManifest();
     const version = manifest.version;
-    console.info('WaniPlus: ', version);
 
     let debug = true;
+
+    if (debug) console.debug('WaniPlus: ', version);
 
     function init() {
         const dependencies = getDependencies();
@@ -16,7 +17,10 @@
             loc = loc.replace(/\/+$/, '')
         }
 
-        let dependencies = ['src/utils/interceptor.js'];
+        let dependencies = [
+            'src/utils/context.js',
+            'src/utils/interceptor.js'
+        ];
 
         switch (loc) {
             case '':
@@ -25,6 +29,7 @@
                 break
             case '/lesson/session':
                 dependencies.push('src/pages/pg-wk-lessons.js')
+                break
             default:
                 break
         }
@@ -40,7 +45,7 @@
             s.src = chrome.runtime.getURL(dependencies[i]);
             (document.head || document.documentElement).appendChild(s);
             s.onload = function () {
-                //s.remove();
+                s.remove();
             };
         }
     }

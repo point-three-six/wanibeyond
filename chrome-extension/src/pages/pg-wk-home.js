@@ -8,12 +8,14 @@
         console.log('inject-wk-home');
     }
 
-    document.addEventListener('readystatechange', () => {
-        console.log('lets listen')
+    function isReady(e) {
         if (document.querySelector('section.lessons-and-reviews')) {
+            document.removeEventListener('readystatechange', isReady);
             init();
         }
-    });
+    }
+
+    document.addEventListener('readystatechange', isReady);
 })();
 
 

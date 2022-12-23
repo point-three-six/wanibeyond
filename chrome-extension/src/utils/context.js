@@ -1,0 +1,1 @@
+if (!window.hasOwnProperty('__wp__')) window.__wp__ = {};
