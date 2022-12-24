@@ -1,14 +1,9 @@
 import React from 'react'
-import { isLoggedIn } from '../lib/session'
 
 export default function Page() {
-  isLoggedIn().then((r) => {
-    console.log((r) ? 'true' : false)
-  });
-
   return (
     <div>
-      <h2 class="text-4xl font-extrabold text-slate-700">WaniPlus</h2>
+      <h2 className="text-4xl font-extrabold text-slate-700">WaniPlus</h2>
       <div>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam faucibus erat a gravida ultricies. Aenean viverra commodo velit ac accumsan. Curabitur maximus tempus risus eget finibus. Phasellus molestie dignissim eleifend. Etiam ac lacus tincidunt, maximus sapien quis, semper est. Pellentesque finibus, purus at feugiat viverra, magna tortor aliquet massa, nec facilisis risus felis id arcu. Phasellus venenatis interdum sapien ut condimentum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent pharetra ligula lacus.
         <br /><br />

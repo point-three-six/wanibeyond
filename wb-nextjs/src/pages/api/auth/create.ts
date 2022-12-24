@@ -1,12 +1,16 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { validate } from 'email-validator'
-import prisma from '../../../lib/prisma';
+import prisma from '../../../lib/prisma'
+import bcrypt from 'bcrypt'
 
 async function createUser({ username, password, email }) {
+    const passwordHash = await bcrypt.hash(password, 10);
+
     return await prisma.user.create({
         data: {
             email: email,
-            username: username
+            username: username,
+            password: passwordHash
         }
     });
 }

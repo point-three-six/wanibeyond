@@ -2,13 +2,10 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation'
-import useSWR from 'swr'
-
-const fetcher = (url: string) => fetch(url).then(res => res.json())
+import { setCookie } from 'cookies-next';
 
 export default function page() {
     const router = useRouter()
-    const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -19,13 +16,26 @@ export default function page() {
         })
     }
 
-    const register = () => {
+    const login = () => {
         sendRequest('/api/auth/login', {
             email: email,
             password: password
-        }).then((res) => {
+        }).then(async (res) => {
             if (res.status == 200) {
+                let data = await res.json();
+
+                const token = data.token;
+
+                setCookie('wp_session', token, {
+                    path: '/',
+                    maxAge: 3600 * 24 * 7 * 30, // Expires after 1hr
+                    sameSite: true
+                });
+
                 router.push('/')
+            } else {
+                console.log(res)
+                // setError
             }
         })
     }
@@ -38,6 +48,8 @@ export default function page() {
                         <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
                             Sign In
                         </h2>
+                        {email}
+                        {password}
                     </div>
                     <div className="mt-8 space-y-6">
                         <div className="-space-y-px rounded-md shadow-sm">
@@ -80,7 +92,7 @@ export default function page() {
                             <button
                                 type="submit"
                                 className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                                onClick={register}
+                                onClick={login}
                             >
                                 {/* <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                                     <LockClosedIcon className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" aria-hidden="true" />
