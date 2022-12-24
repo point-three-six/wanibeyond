@@ -19,7 +19,8 @@
 
         let dependencies = [
             'src/utils/context.js',
-            'src/utils/interceptor.js'
+            'src/utils/interceptor.js',
+            'src/utils/api.js',
         ];
 
         switch (loc) {

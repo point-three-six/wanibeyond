@@ -16,6 +16,10 @@
         //return injectWPData(data);
     })
 
+    window.__wp__.API.getItems().then((items) => {
+        console.log(items)
+    });
+
     function injectWPData(response) {
         response = JSON.parse(response);
 

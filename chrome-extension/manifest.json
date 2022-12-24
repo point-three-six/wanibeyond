@@ -10,6 +10,7 @@
     {
       "resources": [
         "src/utils/context.js",
+        "src/utils/api.js",
         "src/utils/interceptor.js",
         "src/pages/pg-wk-home.js",
         "src/pages/pg-wk-lessons.js"
