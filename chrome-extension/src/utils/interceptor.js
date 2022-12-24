@@ -8,7 +8,7 @@
         this.hooksIn[url] = callback;
     }
 
-    Interceptor.prototype.hookOutgoing = function () {
+    Interceptor.prototype.hookOutgoing = function (url, callback) {
         this.hooksOut[url] = callback;
     }
 
@@ -40,7 +40,8 @@
     XMLHttpRequest.prototype.open = function (method, url) {
         if (url in window.__wp__.Interceptor.hooksIn) {
             window.__wp__.Interceptor.intercept(
-                this, window.__wp__.Interceptor.hooksIn[url].bind(this)
+                this,
+                window.__wp__.Interceptor.hooksIn[url].bind(this)
             );
         }
 
@@ -50,6 +51,13 @@
 
     // XMLHttpRequest.prototype._send = XMLHttpRequest.prototype.send;
     // XMLHttpRequest.prototype.send = function (data) {
+    //     if (url in window.__wp__.Interceptor.hooksOut) {
+    //         window.__wp__.Interceptor.intercept(
+    //             this,
+    //             window.__wp__.Interceptor.hooksOut[url].bind(this)
+    //         );
+    //     }
+
     //     this._send.call(this, data);
     // };
 

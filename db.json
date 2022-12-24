@@ -1,7 +1,0 @@
-{
-    "decks" : [
-        { "id" : 1, "name" : "Math I Kanji Deck", "user_id" : 434 },
-        { "id" : 2, "name" : "Math II Kanji Deck", "user_id" : 76 },
-        { "id" : 3, "name" : "Book Club: WK 1 Kanji Deck", "user_id" : 233 }
-    ]
-  }

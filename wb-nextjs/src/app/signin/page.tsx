@@ -32,6 +32,7 @@ export default function page() {
                     sameSite: true
                 });
 
+                router.refresh()
                 router.push('/')
             } else {
                 console.log(res)

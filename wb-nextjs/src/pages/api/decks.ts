@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { PrismaClient } from '@prisma/client'
-import { prisma } from '../../lib/prisma'
+import prisma from '../../lib/prisma'
 
 async function main() {
   const decks = await prisma.deck.findMany();
@@ -13,7 +13,5 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     res.status(200).json(r);
   }).catch(e => {
     console.log(e.message);
-  }).finally(async () => {
-    await prisma.$disconnect();
-  })
+  });
 }

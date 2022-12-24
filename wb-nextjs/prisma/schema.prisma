@@ -11,13 +11,13 @@ datasource db {
 }
 
 model User {
-  id          String    @id @default(uuid())
-  username    String    @unique
+  id          String   @id @default(uuid())
+  username    String   @unique
   password    String
-  email       String    @unique
-  dateCreated DateTime  @default(now())
+  email       String   @unique
+  dateCreated DateTime @default(now())
   decks       Deck[]
-  Session     Session[]
+  Item        Item[]
 
   @@index([username, password])
 }
@@ -32,12 +32,19 @@ model Deck {
   dateUpdated DateTime @updatedAt
   allowForks  Boolean  @default(true)
   isPrivate   Boolean  @default(false)
+  Item        Item[]
 
   @@index([name, userId])
 }
 
-model Session {
-  token  String @unique
-  User   User   @relation(fields: [userId], references: [id])
-  userId String
+model Item {
+  id           Int      @id @default(autoincrement())
+  type         String
+  item         Json
+  User         User     @relation(fields: [userId], references: [id])
+  Deck         Deck     @relation(fields: [deckId], references: [id])
+  userId       String
+  deckId       Int
+  level        Int      @default(0)
+  lastProgress DateTime @default(now())
 }
