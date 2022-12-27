@@ -1,8 +1,4 @@
 (function () {
-    window.__wp__.API.getItems().then((items) => {
-        console.log(items)
-    });
-
     function init() {
         let [span_lessons, span_reviews] = document.querySelectorAll('.lessons-and-reviews span');
 

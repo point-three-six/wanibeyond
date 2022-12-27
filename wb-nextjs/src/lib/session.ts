@@ -8,8 +8,7 @@ export const getSession = () => {
         const cookie = nxtCookies.get('wp_session');
 
         let sessionData = jwt.verify(cookie.value, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-            if (err) return false;
-            return user;
+            return (err) ? false : user;
         });
 
         if (sessionData) return sessionData;

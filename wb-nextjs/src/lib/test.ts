@@ -3,19 +3,19 @@ import prisma from './prisma'
 export default async function doStuff() {
     // let user = await prisma.user.findFirst({
     //     where: {
-    //         email: 'jhendrix13@gmail.com'
+    //         id: 1
     //     }
     // });
 
     // let deck = await prisma.deck.create({
     //     data: {
     //         name: 'WaniPlus Deck',
-    //         description: 'The OG deck.',
+    //         description: 'The official WaniPlus deck.',
     //         allowForks: true,
     //         isPrivate: false,
-    //         User: {
+    //         user: {
     //             connect: {
-    //                 email: 'jhendrix13@gmail.com'
+    //                 id: 1
     //             }
     //         }
     //     }
@@ -23,7 +23,7 @@ export default async function doStuff() {
     // console.log(deck)
 
     // create items
-    let items = [[
+    let items = [
         {
             "en": [
                 "Medical University",
@@ -266,36 +266,36 @@ export default async function doStuff() {
                 "study_material": null
             }
         }
-    ]];
+    ];
 
-    // let deck = await prisma.deck.update({
-    //     where: {
-    //         id: 1
-    //     },
-    //     data: {
-    //         Item: {
-    //             createMany: {
-    //                 data: [{
-    //                     type: 'vocab',
-    //                     userId: 'df03852d-c66d-4cd7-81b8-f0f1338f1a1b',
-    //                     item: items[0],
-    //                     level: 0
-    //                 }, {
-    //                     type: 'kanji',
-    //                     userId: 'df03852d-c66d-4cd7-81b8-f0f1338f1a1b',
-    //                     item: items[0],
-    //                     level: 0
-    //                 },
-    //                 {
-    //                     type: 'radical',
-    //                     userId: 'df03852d-c66d-4cd7-81b8-f0f1338f1a1b',
-    //                     item: items[0],
-    //                     level: 0
-    //                 }]
-    //             }
-    //         }
-    //     }
-    // });
+    await prisma.deck.update({
+        where: {
+            id: 1
+        },
+        data: {
+            items: {
+                createMany: {
+                    data: [{
+                        type: 'vocab',
+                        userId: 1,
+                        item: items[0],
+                        level: 0
+                    }, {
+                        type: 'kanji',
+                        userId: 1,
+                        item: items[1],
+                        level: 0
+                    },
+                    {
+                        type: 'radical',
+                        userId: 1,
+                        item: items[2],
+                        level: 0
+                    }]
+                }
+            }
+        }
+    });
 
     return false;
 }
