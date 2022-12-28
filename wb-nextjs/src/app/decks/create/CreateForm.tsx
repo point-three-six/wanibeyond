@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import '../../../styles/checkmark.css'
 
 export default function CreateForm() {
+    const router = useRouter()
+
     const nameMaxLength = 45;
     const descMaxLength = 300;
 
@@ -14,7 +16,7 @@ export default function CreateForm() {
     let [desc, setDesc] = useState('');
     let [descValidated, setDescValidated] = useState(false);
 
-    let [isPrivate, setIsPrivate] = useState('');
+    let [isPrivate, setIsPrivate] = useState(false);
     let [isPrivateValidated, setIsPrivateValidated] = useState(false);
 
     let [allowForking, setAllowForking] = useState(false);
@@ -35,14 +37,15 @@ export default function CreateForm() {
         let body = value.trim();
 
         if (body.length >= 10 && body.length <= descMaxLength) {
-            setDesc(name);
+            setDesc(body);
             setDescValidated(true);
         }
     }
 
     function validatePrivacy(value: string) {
-        if (['listed', 'unlisted', 'private'].indexOf(value) != -1) {
-            setIsPrivate(value);
+        if (['yes', 'no'].indexOf(value) != -1) {
+            let isPrivate = (value == 'yes') ? true : false;
+            setIsPrivate(isPrivate);
             setIsPrivateValidated(true);
         } else {
             setIsPrivateValidated(false);
@@ -117,9 +120,8 @@ export default function CreateForm() {
                             }}
                         >
                             <option value=''></option>
-                            <option value='listed'>Listed: Anyone can see & use my deck.</option>
-                            <option value='unlisted'>Unlisted: Anyone with the link can see & use my deck.</option>
-                            <option value='private'>Private: Only I can see & use my deck.</option>
+                            <option value='no'>Listed: Anyone can see & use my deck.</option>
+                            <option value='yes'>Private: Only I can see & use my deck.</option>
                         </select>
                     </div>
                 </div>
@@ -166,7 +168,11 @@ export default function CreateForm() {
                 </div>
             </div>
             <div className={`text-center mt-8 ${(nameValidated && isPrivateValidated && allowForkingValidated && descValidated) ? '' : 'hidden'}`}>
-                <button type="button" className="text-white bg-blue-500 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2">
+                <button
+                    type="button"
+                    className="text-white bg-blue-500 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2"
+                    onClick={submit}
+                >
                     <div className='mr-1 inline'>
                         <span>+</span>
                         <span className='hidden'>

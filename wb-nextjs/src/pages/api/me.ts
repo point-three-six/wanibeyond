@@ -27,24 +27,19 @@ async function getUserDecks(userId) {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     //doStuff();
+    const session = getSession(req.cookies);
 
-    if ('wp_session' in req.cookies) {
-        const cookie = req.cookies.wp_session;
-        const session = getSession(cookie);
+    if (session) {
         let myDecks = await getUserDecks(session.id);
 
-        if (session) {
-            res.status(200).json({
-                user: {
-                    id: session.id,
-                    username: session.username
-                }, data: {
-                    decks: myDecks
-                }
-            });
-        } else {
-            res.status(200).json({});
-        }
+        res.status(200).json({
+            user: {
+                id: session.id,
+                username: session.username
+            }, data: {
+                decks: myDecks
+            }
+        });
     } else {
         res.status(200).json({});
     }

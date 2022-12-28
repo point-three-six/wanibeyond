@@ -1,21 +1,43 @@
 import { NextApiRequest, NextApiResponse } from 'next'
+import { getSession } from '../../../lib/sessionApiFallback'
 import prisma from '../../../lib/prisma'
+import { connect } from 'http2';
 
-async function createDeck({ username, password, email }) {
-    const passwordHash = await bcrypt.hash(password, 10);
-
-    return await prisma.user.create({
+async function createDeck(userId, { name, desc, privacy, forking }) {
+    return await prisma.deck.create({
         data: {
-            email: email,
-            username: username,
-            password: passwordHash
+            name: name,
+            description: desc,
+            isPrivate: privacy,
+            allowForks: forking,
+            user: {
+                connect: {
+                    id: userId
+                }
+            }
         }
     });
 }
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-    const data = JSON.parse(req.body);
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    const session = getSession(req.cookies);
 
-    if (data.username.length < 3 || data.username.length > 15) return res.status(422).json({ e: 'Invalid username.' });
+    if (session) {
+        let data = JSON.parse(req.body);
 
+        // validate form data
+        if (data.name.length < 3 || data.name.length >= 45) return res.status(422).json({ e: 'Invalid name.' });
+        if (data.desc.length < 10 || data.desc.length >= 300) return res.status(422).json({ e: 'Invalid description.' });
+        if (data.privacy !== true && data.privacy !== false) return res.status(422).json({ e: 'Invalid privacy setting.' });
+        if (data.forking !== true && data.forking !== false) return res.status(422).json({ e: 'Invalid forking setting.' });
+
+        createDeck(session.id, data).then((r) => {
+            console.log(r);
+            res.status(200).json({
+                id: r.id
+            });
+        });
+    } else {
+        res.status(401).json({});
+    }
 }
