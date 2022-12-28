@@ -2,6 +2,10 @@ const endpoint = 'http://localhost:3000'
 
 let userData = [];
 
+// store locally completed items until they can
+// be sent to the server to be processed.
+let completed = [];
+
 // headers that enforce no caching for a fetch request
 var headers = new Headers();
 headers.append('pragma', 'no-cache');
@@ -42,6 +46,7 @@ async function getLessonData() {
     for (let i in decks) {
         let deck = decks[i];
         for (let i in deck.items) {
+            deck.items[i].item.__wp__ = true;
             items.unshift(deck.items[i].item)
         }
     }

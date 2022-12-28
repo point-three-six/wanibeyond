@@ -38,6 +38,11 @@
 
     XMLHttpRequest.prototype._open = XMLHttpRequest.prototype.open;
     XMLHttpRequest.prototype.open = function (method, url) {
+        this.__wp__ = {
+            method: method,
+            url: url,
+        };
+
         if (url in window.__wp__.Interceptor.hooksIn) {
             window.__wp__.Interceptor.intercept(
                 this,
@@ -49,17 +54,31 @@
     }
 
 
-    // XMLHttpRequest.prototype._send = XMLHttpRequest.prototype.send;
-    // XMLHttpRequest.prototype.send = function (data) {
-    //     if (url in window.__wp__.Interceptor.hooksOut) {
-    //         window.__wp__.Interceptor.intercept(
-    //             this,
-    //             window.__wp__.Interceptor.hooksOut[url].bind(this)
-    //         );
-    //     }
+    XMLHttpRequest.prototype._send = XMLHttpRequest.prototype.send;
+    XMLHttpRequest.prototype.send = function (data) {
+        let call = this._send.bind(this, data);
 
-    //     this._send.call(this, data);
-    // };
+        if (this.hasOwnProperty('__wp__')) {
+            const url = this.__wp__.url;
+
+            if (url in window.__wp__.Interceptor.hooksOut) {
+                let ret = window.__wp__.Interceptor.hooksOut[url](data);
+
+                let proceed = ret[0]; // should continue with call?
+                let newData = ret[1]; // new data
+
+                data = newData;
+
+                if (proceed) {
+                    call();
+                }
+            } else {
+                call();
+            }
+        } else {
+            call();
+        }
+    };
 
     window.__wp__.Interceptor = new Interceptor();
 })();
