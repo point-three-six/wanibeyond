@@ -2,18 +2,20 @@ const endpoint = 'http://localhost:3000'
 
 let userData = [];
 
+// headers that enforce no caching for a fetch request
+var headers = new Headers();
+headers.append('pragma', 'no-cache');
+headers.append('cache-control', 'no-cache');
+
 function sync() {
     fetchUserData().then((data) => {
         userData = data;
 
         setUserData(data).then(() => {
             console.log('User data set!')
-        }).catch(e => {
-            console.log(e);
         });
-    }).catch(e => {
-        console.log(e);
-    });
+
+    }, { method: 'GET', headers: headers });
 }
 
 async function getUserData() {
@@ -21,8 +23,6 @@ async function getUserData() {
 }
 
 async function setUserData(data) {
-    console.log('Setting user data . . .')
-    console.log(data)
     await chrome.storage.local.set({ 'wp_data': data });
 }
 
@@ -41,9 +41,7 @@ async function getLessonData() {
 
     for (let i in decks) {
         let deck = decks[i];
-        console.log(deck)
         for (let i in deck.items) {
-            console.log(deck.items[i].item)
             items.unshift(deck.items[i].item)
         }
     }
@@ -59,6 +57,7 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
             case 'getLessonData':
                 console.log('Action getLessonData . . .')
                 getLessonData().then((data) => {
+                    console.log(data)
                     sendResponse(data);
                 });
             default:

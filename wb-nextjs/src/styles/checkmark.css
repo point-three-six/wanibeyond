@@ -1,0 +1,26 @@
+/*
+https://codepen.io/wiwa-cloud/pen/mdegPwV
+*/
+.circle {
+    position: relative;
+    display: inline-block;
+    border: 1px solid #8cc63e;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+}
+
+.circle.checked {
+    background: #8cc63e;
+}
+
+.checkmark {
+    position: absolute;
+    transform: rotate(45deg) translate(-50%, -50%);
+    left: 35%;
+    top: 45%;
+    height: 8px;
+    width: 4px;
+    border-bottom: 2px solid white;
+    border-right: 2px solid white;
+}

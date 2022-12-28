@@ -7,7 +7,6 @@ async function main() {
     return items;
 }
 
-
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
     main().then(r => {
         res.status(200).json(r);
