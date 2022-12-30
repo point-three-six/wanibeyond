@@ -1,0 +1,39 @@
+.editor .item {
+    min-width: 60px;
+    max-width: 60px;
+    text-align: center;
+    display: inline-block;
+    border-bottom: 3px solid transparent;
+    border-radius: 2px;
+    padding: 8px 4px;
+    font-size: 1.1em;
+    cursor: pointer;
+    color: rgb(255, 255, 255);
+}
+
+.editor .item.kanji {
+    border-color: rgb(245, 153, 168);
+    background-color: pink;
+}
+
+.editor .item.radical {
+    border-color: rgb(107, 191, 230);
+    background-color: rgb(143, 205, 234);
+}
+
+.editor .item.vocab {
+    border-color: rgb(201, 107, 219);
+    background-color: rgb(219, 148, 233);
+}
+
+.editor .item.kanavocab {
+    border-color: rgb(234, 166, 77);
+    background-color: rgb(240, 186, 114);
+}
+
+.level-grid-item {
+    border: 1px solid gainsboro;
+    text-align: center;
+    font-size: .8em;
+    cursor: pointer;
+}

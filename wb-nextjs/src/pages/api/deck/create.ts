@@ -32,7 +32,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (data.forking !== true && data.forking !== false) return res.status(422).json({ e: 'Invalid forking setting.' });
 
         createDeck(session.id, data).then((r) => {
-            console.log(r);
             res.status(200).json({
                 id: r.id
             });

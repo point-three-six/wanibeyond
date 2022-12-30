@@ -75,9 +75,10 @@ export default function CreateForm() {
             desc: desc,
             privacy: isPrivate,
             forking: allowForking
-        }).then((res) => {
-            if (res.status == 200) {
-                router.push('/')
+        }).then(async (res) => {
+            let r = await res.json();
+            if (res.status == 200 && 'id' in r) {
+                router.push(`/decks/${r.id}/edit`)
             }
         })
     }

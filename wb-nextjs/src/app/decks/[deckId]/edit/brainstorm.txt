@@ -1,0 +1,3 @@
+unassigned and assigned items (items w/ levels)
+
+import sources (e.g.: wanikani or, in the future, anki)
