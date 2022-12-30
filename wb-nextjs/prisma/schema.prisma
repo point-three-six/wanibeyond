@@ -48,3 +48,10 @@ model Item {
   level        Int      @default(0)
   lastProgress DateTime @default(now())
 }
+
+model WkItem {
+  id   Int    @id @default(autoincrement())
+  type String
+  en   String
+  data Json
+}

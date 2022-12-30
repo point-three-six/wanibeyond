@@ -10,12 +10,13 @@ function getItemTitle(item) {
     if (item.type == 'radical') return item.data.rad;
     if (item.type == 'kanji') return item.data.kan;
     if (item.type == 'vocab') return item.data.voc;
+    if (item.type == 'kana') return item.data.hir;
     return '';
 }
 
 export default function ItemEditor(props) {
     const deck = props.deck;
-    let levels = [];
+    let levels = [0];
 
     deck.items.forEach(item => {
         const level = item.level;

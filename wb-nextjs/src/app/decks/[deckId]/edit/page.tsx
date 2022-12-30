@@ -41,7 +41,7 @@ export default async function EditDeckPage({ params: { deckId } }) {
     return (
         <div>
             {
-                Object.keys(deckData).length > 0 ?
+                deckData && Object.keys(deckData).length > 0 ?
                     <ItemEditor deck={deckData} /> : 'There was an error.'
             }
         </div >
