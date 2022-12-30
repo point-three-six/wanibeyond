@@ -12,7 +12,7 @@ export default function RootLayout({
 
       <body>
         <Header />
-        <div className='flex justify-center'>
+        <div className='flex justify-center m-4'>
           <div className='flex justify-center max-width'>
             {children}
           </div>

@@ -1,10 +1,13 @@
 .editor .item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
     min-width: 80px;
     max-width: 80px;
     min-height: 80px;
     max-height: 80px;
     text-align: center;
-    display: inline-block;
     border-bottom: 3px solid transparent;
     border-radius: 2px;
     padding: 8px 4px;
@@ -12,6 +15,13 @@
     word-wrap: break-all;
     cursor: pointer;
     color: rgb(255, 255, 255);
+}
+
+.item.large {
+    min-width: 130px;
+    max-width: 130px;
+    min-height: 130px;
+    max-height: 130px;
 }
 
 .editor .item.add {

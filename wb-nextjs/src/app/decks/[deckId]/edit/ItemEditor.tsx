@@ -4,15 +4,8 @@ import React, { useEffect, useState, useRef } from 'react'
 import LevelGrid from './LevelGrid';
 import DeckDetails from './DeckDetails';
 import '../../../../styles/editor.css';
-import { getDisplayName } from 'next/dist/shared/lib/utils';
-
-function getItemTitle(item) {
-    if (item.type == 'radical') return item.data.rad;
-    if (item.type == 'kanji') return item.data.kan;
-    if (item.type == 'vocab') return item.data.voc;
-    if (item.type == 'kana') return item.data.hir;
-    return '';
-}
+import AddItem from './AddItem';
+import LevelList from './LevelList';
 
 export default function ItemEditor(props) {
     const deck = props.deck;
@@ -32,30 +25,15 @@ export default function ItemEditor(props) {
     const dragOverItem = useRef();
     const [list, setList] = useState(['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5', 'Item 6']);
 
+    let [isAddingItem, setIsAddingItem] = useState(-1);
+
     function updateFilter(value) {
         setFilter(value);
     }
 
-    const dragStart = (e, position) => {
-        dragItem.current = position;
-        console.log(e.target.innerHTML);
-    };
-
-    const dragEnter = (e, position) => {
-        dragOverItem.current = position;
-        console.log(e.target.innerHTML);
-    };
-
-
-    const drop = (e) => {
-        const copyListItems = [...list];
-        const dragItemContent = copyListItems[dragItem.current];
-        copyListItems.splice(dragItem.current, 1);
-        copyListItems.splice(dragOverItem.current, 0, dragItemContent);
-        dragItem.current = null;
-        dragOverItem.current = null;
-        setList(copyListItems);
-    };
+    function handleAddItem(level) {
+        setIsAddingItem(level);
+    }
 
     return (
         <div className="editor max-width" >
@@ -76,36 +54,9 @@ export default function ItemEditor(props) {
                 </div>
                 <div className='w-3/4'>
                     {
-                        levels.map(level =>
-                            <div key={level}>
-                                <div className='flex items-center'>
-                                    <div className='flex-grow h-px bg-gray-400'></div>
-                                    <span className='flex-shrink text-lg text-slate-500 px-4 font-light'>
-                                        {level == 0 ? 'Any level' : `Level ${level}`}
-                                    </span>
-                                    <div className='flex-grow h-px bg-gray-400'></div>
-                                </div>
-                                <div className='items flex gap-2'>
-                                    {deck.items
-                                        .filter(item => item.level == level)
-                                        .filter(item => item.data.en[0].toLowerCase().indexOf(filter.toLowerCase()) != -1)
-                                        .map(item =>
-                                            <div key={item.id} className={`item ${item.type}`}>
-                                                {getItemTitle(item)}
-                                                <div className='meaning text-xs'>
-                                                    {item.data.en[0]}
-                                                </div>
-                                            </div>
-                                        )}
-                                    <div className='item add' onClick={(e) => alert(`add ${level}`)}>
-                                        +
-                                        <div className='meaning text-xs'>
-                                            add item
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )
+                        isAddingItem > -1 ?
+                            <AddItem level={isAddingItem} /> :
+                            <LevelList deck={deck} levels={levels} filter={filter} onAddItem={handleAddItem} />
                     }
                 </div>
             </div>

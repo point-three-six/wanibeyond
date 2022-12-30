@@ -115,7 +115,7 @@ export default function CreateForm() {
                         <select
                             name='privacy'
                             className='border border-gray-300 w-full'
-                            defaultValue={'value'}
+                            defaultValue={''}
                             onChange={e => {
                                 validatePrivacy(e.target.value)
                             }}
