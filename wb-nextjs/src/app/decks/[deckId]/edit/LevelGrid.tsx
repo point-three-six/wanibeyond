@@ -7,7 +7,7 @@ export default function LevelGrid() {
         <>
             <div className="level-grid grid grid-cols-8 gap-2">
                 {[...Array(35)].map((x, i) =>
-                    <div className='level-grid-item'>{i}</div>
+                    <div key={i} className='level-grid-item'>{i}</div>
                 )}
             </div>
         </>

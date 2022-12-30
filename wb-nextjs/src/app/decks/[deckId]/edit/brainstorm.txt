@@ -1,3 +1,5 @@
 unassigned and assigned items (items w/ levels)
 
 import sources (e.g.: wanikani or, in the future, anki)
+
+CLICK A LEVEL IT ONLY SHOWS THAT LEVEL

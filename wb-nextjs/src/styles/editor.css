@@ -1,14 +1,24 @@
 .editor .item {
-    min-width: 60px;
-    max-width: 60px;
+    min-width: 80px;
+    max-width: 80px;
+    min-height: 80px;
+    max-height: 80px;
     text-align: center;
     display: inline-block;
     border-bottom: 3px solid transparent;
     border-radius: 2px;
     padding: 8px 4px;
-    font-size: 1.1em;
+    font-size: 1em;
+    word-wrap: break-all;
     cursor: pointer;
     color: rgb(255, 255, 255);
+}
+
+.editor .item.add {
+    border: 1px dashed rgb(206, 206, 206);
+    color: rgb(206, 206, 206);
+    background-color: transparent;
+    font-weight: bold;
 }
 
 .editor .item.kanji {

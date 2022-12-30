@@ -12,7 +12,7 @@ async function getUserDecks(userId) {
             items: {
                 select: {
                     id: true,
-                    item: true,
+                    data: true,
                     deckId: true,
                     level: true,
                     lastProgress: true,
