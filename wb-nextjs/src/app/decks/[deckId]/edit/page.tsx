@@ -1,11 +1,32 @@
 import React from 'react'
 import ItemEditor from './ItemEditor';
+import prisma from '../../../../lib/prisma';
 import { getSession } from '../../../../lib/session'
 
-async function getDeckData(id) {
-    // get deck data
-    // get item data
-    return { 'item': id };
+async function getDeckData(deckId, userId) {
+    const deck = await prisma.deck.findFirst({
+        where: {
+            id: deckId,
+            userId: userId
+        },
+        include: {
+            user: {
+                select: {
+                    username: true
+                }
+            },
+            items: {
+                select: {
+                    id: true,
+                    item: true,
+                    level: true,
+                    lastProgress: true,
+                    type: true
+                }
+            }
+        }
+    });
+    return deck;
 }
 
 export default async function EditDeckPage({ params: { deckId } }) {
@@ -14,7 +35,7 @@ export default async function EditDeckPage({ params: { deckId } }) {
     let deckData = {};
 
     if (sessionData) {
-        deckData = await getDeckData(id);
+        deckData = await getDeckData(id, sessionData.id);
     }
 
     return (

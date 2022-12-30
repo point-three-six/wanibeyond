@@ -36,31 +36,35 @@ export default function ItemEditor(props) {
         <div className="editor max-width" >
             <div className='w-screen max-width flex justify-between gap-7'>
                 <div className='w-1/4'>
-                    <div className='text-sm font-medium text-gray-700 mb-2'>
+                    <div className='font-medium text-gray-700 mb-2'>
                         Details
                     </div>
-                    <DeckDetails />
-                    <div className='text-sm font-medium text-gray-700 mt-6 mb-2'>
+                    <DeckDetails deck={props.deck} />
+                    <div className='font-medium text-gray-700 mt-6 mb-2'>
                         Levels
                     </div>
                     <LevelGrid />
                 </div>
                 <div className='w-3/4'>
-                    <div className='flex items-center'>
+                    <div className='level flex items-center'>
                         <div className='flex-grow h-px bg-gray-400'></div>
                         <span className='flex-shrink text-lg text-slate-500 px-4 font-light'>Level 1</span>
                         <div className='flex-grow h-px bg-gray-400'></div>
                     </div>
-                    <div className='item kanji'>
-                        和足
+                    <div className='items'>
+                        <div className='item vocab'>
+                            和足
+                        </div>
                     </div>
-                    <div className='flex items-center'>
+                    <div className='level flex items-center'>
                         <div className='flex-grow h-px bg-gray-400'></div>
-                        <span className='flex-shrink text-lg text-slate-500 px-4 font-light'>Level 4</span>
+                        <span className='flex-shrink text-lg text-slate-500 px-4 font-light'>Level 3</span>
                         <div className='flex-grow h-px bg-gray-400'></div>
                     </div>
-                    <div className='item vocab'>
-                        和足
+                    <div className='items'>
+                        <div className='item vocab'>
+                            和足
+                        </div>
                     </div>
                 </div>
             </div>
