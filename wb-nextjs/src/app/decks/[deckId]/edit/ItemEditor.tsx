@@ -25,6 +25,10 @@ export default function ItemEditor(props) {
     const dragOverItem = useRef();
     const [list, setList] = useState(['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5', 'Item 6']);
 
+    // the VALUE of this will indicate the LEVEL
+    // and item is currently being added to.
+    // if equals == -1, we are not adding an item.
+    // therefore the entire deck screen is shown.
     let [isAddingItem, setIsAddingItem] = useState(-1);
 
     function updateFilter(value) {
@@ -55,7 +59,9 @@ export default function ItemEditor(props) {
                 <div className='w-3/4'>
                     {
                         isAddingItem > -1 ?
-                            <AddItem level={isAddingItem} /> :
+                            <AddItem back={() => {
+                                setIsAddingItem(-1)
+                            }} level={isAddingItem} /> :
                             <LevelList deck={deck} levels={levels} filter={filter} onAddItem={handleAddItem} />
                     }
                 </div>

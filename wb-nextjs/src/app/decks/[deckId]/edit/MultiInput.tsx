@@ -27,6 +27,7 @@ export default (props) => {
         switch (event.key) {
             case 'Enter':
             case 'Tab':
+                // this is updating the value of props.value/value
                 props.onChange((prev) => [...prev, createOption(inputValue)]);
                 setInputValue('');
                 event.preventDefault();
@@ -43,7 +44,7 @@ export default (props) => {
             onChange={(newValue) => setValue(newValue)}
             onInputChange={(newValue) => setInputValue(newValue)}
             onKeyDown={handleKeyDown}
-            placeholder="Type and press enter for each value..."
+            placeholder='Type and press enter for each value...'
             value={value}
             styles={{
                 control: (baseStyles, state) => ({

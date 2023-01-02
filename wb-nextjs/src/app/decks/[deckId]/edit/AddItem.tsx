@@ -19,30 +19,37 @@ export default function AddItem(props) {
 
     let [itemType, setItemType] = useState('');
     let [meaning, setMeaning] = useState('');
+    let [characters, setCharacters] = useState('');
+
+    let [radicals, setRadicals] = useState([]);
+    let [vocabulary, setVocabulary] = useState([]);
+
     let [meaningHint, setMeaningHint] = useState('');
     let [mmne, setMmne] = useState('');
     let [readingHint, setReadingHint] = useState('');
     let [rmne, setRmne] = useState('');
     let [onyomi, setOnyomi] = useState('');
     let [kunyomi, setKunyomi] = useState('');
-    let [radicals, setRadicals] = useState([]);
+
 
     return (
         <div className={props.addingItem}>
             <div className='flex justify-between mb-4'>
-                <div className='text-sm font-medium text-gray-700'>
-                    {`<< go back`}
+                <div className='font-medium text-gray-700'>
+                    <a href="#" onClick={() => props.back()}>{`<< go back`}</a>
                 </div>
-                <div className='text-sm font-medium text-gray-700'>
+                <div className='font-medium text-gray-700'>
                     Level {props.level}
                 </div>
             </div>
             <div className='text-center'>
                 <div className={`item ${itemType ? itemType : 'add'} large`}>
                     <div>
-                        preview
+                        {characters ? characters : 'example'}
                     </div>
-                    <div className='meaning text-xs'>buy</div>
+                    <div className='meaning text-xs'>
+                        {meaning ? meaning : 'example'}
+                    </div>
                 </div>
             </div>
             <div className=''>
@@ -66,11 +73,11 @@ export default function AddItem(props) {
                         </div>
                     </div>
                 </div>
-                {/* characters */}
+                {/* meaning */}
                 <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
-                        <label htmlFor='deckName' className='text-sm font-medium text-gray-700'>
-                            {getTypeDisplayText(itemType)}
+                        <label htmlFor='meaning' className='text-sm font-medium text-gray-700'>
+                            Meaning
                         </label>
                         <div className='mt-1'>
                             <input
@@ -78,6 +85,28 @@ export default function AddItem(props) {
                                 type='text'
                                 className='border border-gray-300 w-full'
                                 placeholder=''
+                                onChange={(e) => {
+                                    setMeaning(e.target.value)
+                                }}
+                            />
+                        </div>
+                    </div>
+                </div>
+                {/* characters */}
+                <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
+                    <div className='flex-grow'>
+                        <label htmlFor='characters' className='text-sm font-medium text-gray-700'>
+                            {getTypeDisplayText(itemType)}
+                        </label>
+                        <div className='mt-1'>
+                            <input
+                                name='characters'
+                                type='text'
+                                className='border border-gray-300 w-full'
+                                placeholder=''
+                                onChange={(e) => {
+                                    setCharacters(e.target.value)
+                                }}
                             />
                         </div>
                     </div>
@@ -87,16 +116,16 @@ export default function AddItem(props) {
                     <div className='flex-grow'>
                         <label htmlFor='description' className='text-sm font-medium text-gray-700'>Radicals</label>
                         <div className='mt-1'>
-                            <ItemSearch type='radical' value={radicals} onChange={setRadicals} />
+                            <ItemSearch type='radical' onChange={setRadicals} />
                         </div>
                     </div>
                 </div>
                 {/* vocabulary -- kanji,  */}
                 <div className={`flex items-center mb-3 ${itemType == 'kanji' ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
-                        <label htmlFor='description' className='text-sm font-medium text-gray-700'>Vocabulary</label>
+                        <label htmlFor='description' className='text-sm font-medium text-gray-700'>Vocabulary (search w/ english or hiragana)</label>
                         <div className='mt-1'>
-                            <ItemSearch type='radical' value={radicals} onChange={setRadicals} />
+                            <ItemSearch type='vocabulary' onChange={setVocabulary} />
                         </div>
                     </div>
                 </div>
