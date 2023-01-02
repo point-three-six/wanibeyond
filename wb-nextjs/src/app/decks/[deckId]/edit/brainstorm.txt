@@ -3,3 +3,27 @@ unassigned and assigned items (items w/ levels)
 import sources (e.g.: wanikani or, in the future, anki)
 
 CLICK A LEVEL IT ONLY SHOWS THAT LEVEL
+
+ALL ITEMS:
+- en[]
+- id
+- aud[]
+-mmne
+-rmne
+-type ["Vocabulary"]
+-category ["Vocabulary"]
+-sentences[] (sentences[0][0] == kana sentence && sentences[0][1] == english translated sentence)
+-characters (??)
+-collocations (??)
+-relationships (??)
+-parts-of-speech[]
+-auxilary_meaings[]
+-auxilary_readings[]
+
+
+Kanji Items:
+Vocab Items:
+    -voc (the item "name"/"title")
+    -kana (kana reading)
+Kana Items:
+Radical Items:

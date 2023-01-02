@@ -11,7 +11,7 @@ var headers = new Headers();
 headers.append('pragma', 'no-cache');
 headers.append('cache-control', 'no-cache');
 
-function sync() {
+function init() {
     fetchUserData().then((data) => {
         userData = data;
 
@@ -22,7 +22,11 @@ function sync() {
     }, { method: 'GET', headers: headers });
 }
 
-async function getUserData() {
+async function sync() {
+
+}
+
+async function getUserDataStore() {
     return await chrome.storage.local.get(['wp_data']);
 }
 
@@ -37,7 +41,7 @@ async function fetchUserData() {
 }
 
 async function getLessonData() {
-    let data = await getUserData();
+    let data = await getUserDataStore();
     let decks = data.wp_data.data.decks;
 
     // congregate items from all enabled decks
@@ -46,8 +50,8 @@ async function getLessonData() {
     for (let i in decks) {
         let deck = decks[i];
         for (let i in deck.items) {
-            deck.items[i].item.__wp__ = true;
-            items.unshift(deck.items[i].item)
+            deck.items[i].data.__wp__ = true;
+            items.unshift(deck.items[i].data)
         }
     }
 
@@ -72,4 +76,4 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
     }
 });
 
-sync();
+init();

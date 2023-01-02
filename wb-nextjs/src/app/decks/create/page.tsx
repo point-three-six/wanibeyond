@@ -1,7 +1,10 @@
 import React from 'react'
 import CreateForm from './CreateForm'
+import { getSession } from '../../../lib/session'
 
-export default function DeckListPage() {
+export default async function DeckListPage() {
+    let sessionData = await getSession();
+
     return (
         <div>
             <div className='w-screen max-width flex justify-between gap-7'>
@@ -16,7 +19,9 @@ export default function DeckListPage() {
                 <div className='w-3/4'>
                     <h3 className='text-2xl font-bold text-slate-700'>Create a Deck</h3>
                     <hr className='mb-3 mt-3' />
-                    <CreateForm></CreateForm>
+                    {
+                        sessionData ? <CreateForm></CreateForm> : 'You are not authorized for this action.'
+                    }
                 </div>
             </div>
         </div >

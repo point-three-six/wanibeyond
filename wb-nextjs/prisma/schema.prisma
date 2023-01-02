@@ -11,13 +11,13 @@ datasource db {
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
-  username    String   @unique
+  id          Int          @id @default(autoincrement())
+  username    String       @unique
   password    String
-  email       String   @unique
-  dateCreated DateTime @default(now())
+  email       String       @unique
+  dateCreated DateTime     @default(now())
   decks       Deck[]
-  items       Item[]
+  Assignment  Assignment[]
 
   @@index([username, password])
 }
@@ -32,26 +32,40 @@ model Deck {
   dateUpdated DateTime @updatedAt
   allowForks  Boolean  @default(true)
   isPrivate   Boolean  @default(false)
+  threadUrl   String?
   items       Item[]
 
   @@index([name, userId])
 }
 
 model Item {
-  id           Int      @id @default(autoincrement())
-  type         String
-  data         Json
-  user         User     @relation(fields: [userId], references: [id])
-  deck         Deck     @relation(fields: [deckId], references: [id])
-  userId       Int
-  deckId       Int
-  level        Int      @default(0)
-  lastProgress DateTime @default(now())
+  id         Int          @id @default(autoincrement())
+  type       String
+  data       Json
+  deck       Deck         @relation(fields: [deckId], references: [id])
+  deckId     Int
+  level      Int          @default(0)
+  assignment Assignment[]
+
+  @@index([deckId])
+}
+
+model Assignment {
+  id          Int      @id @default(autoincrement())
+  user        User     @relation(fields: [userId], references: [id])
+  item        Item     @relation(fields: [itemId], references: [id])
+  userId      Int
+  itemId      Int
+  srsLevel    Int      @default(0)
+  lastAdvance DateTime @default(now())
+
+  @@index([userId, itemId])
 }
 
 model WkItem {
-  id   Int    @id @default(autoincrement())
-  type String
-  en   String
-  data Json
+  id         Int    @id @default(autoincrement())
+  type       String
+  characters String
+  en         String
+  data       Json
 }

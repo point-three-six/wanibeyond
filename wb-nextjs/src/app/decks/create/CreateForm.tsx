@@ -22,6 +22,9 @@ export default function CreateForm() {
     let [allowForking, setAllowForking] = useState(false);
     let [allowForkingValidated, setAllowForkingValidated] = useState(false);
 
+    let [url, setUrl] = useState('');
+    let [urlValidated, setUrlValidated] = useState(true);
+
     function validateName(value: string) {
         let name = value.trim();
 
@@ -39,6 +42,20 @@ export default function CreateForm() {
         if (body.length >= 10 && body.length <= descMaxLength) {
             setDesc(body);
             setDescValidated(true);
+        }
+    }
+
+    function validateUrl(value: string) {
+        value = value.trim();
+        if (value.length == 0) {
+            setUrlValidated(true);
+        } else {
+            try {
+                let url = new URL(value);
+                setUrlValidated(url.host == 'community.wanikani.com');
+            } catch (e) {
+                setUrlValidated(false);
+            }
         }
     }
 
@@ -74,7 +91,8 @@ export default function CreateForm() {
             name: name,
             desc: desc,
             privacy: isPrivate,
-            forking: allowForking
+            forking: allowForking,
+            threadUrl: url
         }).then(async (res) => {
             let r = await res.json();
             if (res.status == 200 && 'id' in r) {
@@ -150,6 +168,26 @@ export default function CreateForm() {
                 </div>
             </div>
             <div className={`flex items-center mb-3 ${(nameValidated && isPrivateValidated && allowForkingValidated) ? '' : 'hidden'}`}>
+                <div className={`circle mr-6 ${(urlValidated) ? 'checked' : ''}`}>
+                    <div className={`checkmark ${(urlValidated) ? '' : 'hidden'}`}></div>
+                </div>
+                <div className='flex-grow'>
+                    <label htmlFor='threadUrl' className='text-sm font-medium text-gray-700'>WaniKani Thread URL (optional)</label>
+                    <div className='mt-1'>
+                        <input
+                            name='threadUrl'
+                            type='text'
+                            className='border border-gray-300 w-full'
+                            maxLength={250}
+                            placeholder='https://community.wanikani.com/....'
+                            onChange={e => {
+                                validateUrl(e.target.value)
+                            }}
+                        />
+                    </div>
+                </div>
+            </div>
+            <div className={`flex items-center mb-3 ${(nameValidated && isPrivateValidated && allowForkingValidated && urlValidated) ? '' : 'hidden'}`}>
                 <div className={`circle mr-6 ${(descValidated) ? 'checked' : ''}`}>
                     <div className={`checkmark ${(descValidated) ? '' : 'hidden'}`}></div>
                 </div>

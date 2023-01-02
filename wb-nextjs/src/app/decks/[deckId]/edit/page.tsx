@@ -20,7 +20,6 @@ async function getDeckData(deckId, userId) {
                     id: true,
                     data: true,
                     level: true,
-                    lastProgress: true,
                     type: true
                 }
             }
