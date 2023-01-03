@@ -3,36 +3,44 @@ import { getSession } from '../../../lib/sessionApiFallback'
 import prisma from '../../../lib/prisma'
 import { Kanji, Vocab } from '../../../../types';
 
-async function isOwner(userId, deckId) {
-    const deck = await prisma.deck.findFirst({
-        where: {
-            id: deckId,
-            userId: userId
-        }
-    });
-    return deck;
-}
-
 function createVocabDataObject(vocab: Vocab) {
+    let sentences = [];
+
+    // build context sentences, if provided
+    if (vocab.ctx1.length > 0)
+        sentences.push([
+            vocab.ctx1jap,
+            vocab.ctx1
+        ]);
+
+    if (vocab.ctx2.length > 0)
+        sentences.push([
+            vocab.ctx2jap,
+            vocab.ctx2
+        ]);
+
     let obj = {
         'en': vocab.meanings,
         'id': null,
-        'on': vocab.onyomi,
-        'kan': vocab.characters,
-        'kun': vocab.kunyomi,
-        'emph': 'onyomi',
+        'aud': vocab.aud,
+        'voc': vocab.characters,
+        'kana': vocab.kana,
+        'kanji': vocab.kanji,
         'mhnt': vocab.meaningHint,
         'mnme': vocab.mmne,
         'rhnt': vocab.readingHint,
         'rmne': vocab.rmne,
-        'type': 'Kanji',
-        'nanori': [],
-        'category': 'Kanji',
-        'radicals': vocab.radicals,
+        'type': 'Vocabulary',
+        'category': 'Vocabulary',
         'characters': vocab.characters,
-        'vocabulary': vocab.vocabulary,
+        'sentences': sentences,
+        'collocations': vocab.collocations,
+        'parts_of_speech': vocab.parts_of_speech,
         'auxiliary_meanings': vocab.auxiliary_meanings,
-        'auxiliary_readings': vocab.auxiliary_readings
+        'auxiliary_readings': vocab.auxiliary_readings,
+        'relationships': {
+            'study_material': null
+        }
     };
 
     return obj;
@@ -57,7 +65,10 @@ function createKanjiDataObject(kanji: Kanji) {
         'characters': kanji.characters,
         'vocabulary': kanji.vocabulary,
         'auxiliary_meanings': kanji.auxiliary_meanings,
-        'auxiliary_readings': kanji.auxiliary_readings
+        'auxiliary_readings': kanji.auxiliary_readings,
+        'relationships': {
+            'study_material': null
+        }
     };
 
     return obj;

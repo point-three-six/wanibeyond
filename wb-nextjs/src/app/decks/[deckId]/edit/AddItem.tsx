@@ -19,6 +19,7 @@ export default function AddItem(props) {
     let [level, setLevel] = useState(0);
     let [characters, setCharacters] = useState('');
     let [aud, setAud] = useState('');
+    let [partsOfSpeech, setPartsOfSpeech] = useState(['noun']);
 
     let [ctx1, setCtx1] = useState('');
     let [ctx2, setCtx2] = useState('');
@@ -57,13 +58,13 @@ export default function AddItem(props) {
                 type: itemType,
                 level: level,
                 meanings: meanings,
-                characters: characters,
+                characters: characters.trim(),
                 radicals: radicals,
                 vocabulary: vocabulary,
-                meaningHint: meaningHint,
-                mmne: mmne,
-                readingHint: readingHint,
-                rmne: rmne,
+                meaningHint: meaningHint.trim(),
+                mmne: mmne.trim(),
+                readingHint: readingHint.trim(),
+                rmne: rmne.trim(),
                 onyomi: onyomi,
                 kunyomi: kunyomi,
                 auxiliary_meanings: auxMeanings,
@@ -77,17 +78,18 @@ export default function AddItem(props) {
                 level: level,
                 kanji: kanji,
                 meanings: meanings,
-                characters: characters,
+                parts_of_speech: partsOfSpeech,
+                characters: characters.trim(),
                 radicals: radicals,
                 vocabulary: vocabulary,
-                meaningHint: meaningHint,
-                mmne: mmne,
-                readingHint: readingHint,
-                rmne: rmne,
-                ctx1: ctx1,
-                ctx1jap: ctx1jap,
-                ctx2: ctx2,
-                ctx2jap: ctx2jap,
+                meaningHint: meaningHint.trim(),
+                mmne: mmne.trim(),
+                readingHint: readingHint.trim(),
+                rmne: rmne.trim(),
+                ctx1: ctx1.trim(),
+                ctx1jap: ctx1jap.trim(),
+                ctx2: ctx2.trim(),
+                ctx2jap: ctx2jap.trim(),
                 collocations: collocations,
                 auxiliary_meanings: auxMeanings,
                 auxiliary_readings: auxReadings

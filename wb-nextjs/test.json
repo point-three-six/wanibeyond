@@ -1,0 +1,37 @@
+{
+    "en": [
+        "Medical University",
+        "Medical School",
+        "Med School"
+    ],
+    "id": "wp-80",
+    "aud": "https://files.wanikani.com/cftzdda8pwl7d86vwgvoudvp2ov2",
+    "voc": "医大",
+    "kana": [
+        "いだい"
+    ],
+    "mhnt": "",
+    "mnme": "You've seen <ja>大学</ja> to mean \\\"college.\\\" So take the <ja>大</ja> and put it with <kanji>medicine</kanji> to create \\\"medicine college\\\", or <vocabulary>medical university</vocabulary>.",
+    "rhnt": "",
+    "rmne": "This is a jukugo word, which usually means on'yomi readings from the kanji. Since <ja>大</ja> has two on'yomi readings, here's a mnemonic to help you remember which one to use:\\r\\n\\r\\nYour local <vocabulary>medical university</vocabulary> really prides itself on its <reading>ea</reading>gle <reading>dye</reading> (<ja>いだい</ja>). It's the only dye in the world made straight out of eagles. A bit strange for a medical university, but impressive nonetheless!",
+    "type": "Vocabulary",
+    "kanji": [
+        681,
+        453
+    ],
+    "nanori": [],
+    "category": "Vocabulary",
+    "sentences": [
+        [
+            "わたしは、医大を目ざしてべん強しています。",
+            "I’m studying to get into medical school."
+        ]
+    ],
+    "characters": "医大",
+    "collocations": [],
+    "parts_of_speech": [
+        "noun"
+    ],
+    "auxiliary_meanings": [],
+    "auxiliary_readings": []
+}

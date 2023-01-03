@@ -27,6 +27,8 @@ export interface Vocab {
     kana: Array,
     mmne: string,
     rmne: string,
+    meaningHint: string,
+    readingHint: string,
     type: string,
     kanji: Array,
     category: string,
