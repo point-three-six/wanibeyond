@@ -41,13 +41,15 @@ model Deck {
 model Item {
   id         Int          @id @default(autoincrement())
   type       String
+  en         String
+  characters String
   data       Json
   deck       Deck         @relation(fields: [deckId], references: [id])
   deckId     Int
   level      Int          @default(0)
   assignment Assignment[]
 
-  @@index([deckId])
+  @@index([deckId, en, characters])
 }
 
 model Assignment {
@@ -68,4 +70,6 @@ model WkItem {
   characters String
   en         String
   data       Json
+
+  @@index([en, characters])
 }

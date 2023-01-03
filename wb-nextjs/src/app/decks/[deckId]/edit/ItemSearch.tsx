@@ -7,7 +7,8 @@ export default function ItemSearch(props) {
 
     async function getItems(input: string) {
         if (!input) return [];
-        const response = await fetch(`/api/native/get?type=${props.type}&item=${input}`)
+        console.log(`/api/items/get?type=${props.type}&item=${input}&deckId=${props.deckId}`)
+        const response = await fetch(`/api/items/get?type=${props.type}&item=${input}&deckId=${props.deckId}`)
         const data = await response.json()
 
         if (response.status == 200) {
@@ -15,7 +16,7 @@ export default function ItemSearch(props) {
 
             for (let item of data) {
                 options.push({
-                    label: item.characters,
+                    label: item.en + ' (' + item.characters + ')',
                     value: item.id
                 });
             }
@@ -28,7 +29,7 @@ export default function ItemSearch(props) {
 
     function getColor() {
         if (props.type == 'radical') return 'rgb(143, 205, 234)';
-        if (props.type == 'vocabulary') return 'rgb(219, 148, 233)';
+        if (props.type == 'vocab') return 'rgb(219, 148, 233)';
         return 'gainsboro';
     }
 

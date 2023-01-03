@@ -68,7 +68,7 @@ export default function ItemEditor(props) {
                         isAddingItem > -1 ?
                             <AddItem back={() => {
                                 setIsAddingItem(-1)
-                            }} level={isAddingItem} onItemAdded={handleOnItemAdded} /> :
+                            }} level={isAddingItem} deckId={deck.id} onItemAdded={handleOnItemAdded} /> :
                             <LevelList deck={deck} levels={levels} filter={filter} onAddItem={handleAddItem} />
                     }
                 </div>

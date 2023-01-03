@@ -89,7 +89,9 @@ async function addItem(userId, data) {
                 create: {
                     type: data.type,
                     level: data.level,
-                    data: '{}'
+                    data: '{}',
+                    en: data.meanings[0],
+                    characters: data.characters
                 }
             }
         },

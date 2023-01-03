@@ -44,11 +44,25 @@ export default function AddItem(props) {
 
     let [collocations, setCollocations] = useState([]);
 
+    let [isNoun, setIsNoun] = useState(false);
+    let [isVerb, setIsVerb] = useState(false);
+    let [isAdverb, setIsAdverb] = useState(false);
+    let [isNumeral, setIsNumeral] = useState(false);
+
     async function sendRequest(url, arg) {
         return await fetch(url, {
             method: 'POST',
             body: JSON.stringify(arg)
         })
+    }
+
+    function getPartsOfSpeech() {
+        let pos = [];
+        if (isNoun) pos.push('noun');
+        if (isVerb) pos.push('verb');
+        if (isAdverb) pos.push('adverb');
+        if (isNumeral) pos.push('numeral');
+        return pos;
     }
 
     // build the payload dependent on itemType
@@ -78,7 +92,7 @@ export default function AddItem(props) {
                 level: level,
                 kanji: kanji,
                 meanings: meanings,
-                parts_of_speech: partsOfSpeech,
+                parts_of_speech: getPartsOfSpeech(),
                 characters: characters.trim(),
                 radicals: radicals,
                 vocabulary: vocabulary,
@@ -161,6 +175,7 @@ export default function AddItem(props) {
                                 type='number'
                                 className='border border-gray-300 w-full'
                                 placeholder=''
+                                value={props.level}
                                 min={0}
                                 max={99}
                                 onChange={(e) => {
@@ -211,6 +226,44 @@ export default function AddItem(props) {
                         </div>
                     </div>
                 </div>
+                {/* parts of speech - vocab */}
+                <div className={`flex items-center mb-3 ${itemType == 'vocab' ? '' : 'hidden'}`}>
+                    <div className='flex-grow'>
+                        <label htmlFor='kana' className='text-sm font-medium text-gray-700'>
+                            Parts of Speech
+                        </label>
+                        <div className='mt-1'>
+                            <div className='flex justify-center'>
+                                <div>
+                                    <div className='form-check'>
+                                        <input checked={isNoun} onChange={() => setIsNoun(!isNoun)} type='checkbox' value='' id='posNoun' className='form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer' />
+                                        <label className='form-check-label inline-block text-gray-800' htmlFor='posNoun'>
+                                            Noun
+                                        </label>
+                                    </div>
+                                    <div className='form-check'>
+                                        <input checked={isVerb} onChange={() => setIsVerb(!isVerb)} type='checkbox' value='' id='posNoun' className='form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer' />
+                                        <label className='form-check-label inline-block text-gray-800' htmlFor='posNoun'>
+                                            Verb
+                                        </label>
+                                    </div>
+                                    <div className='form-check'>
+                                        <input checked={isAdverb} onChange={() => setIsAdverb(!isAdverb)} type='checkbox' value='' id='posNoun' className='form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer' />
+                                        <label className='form-check-label inline-block text-gray-800' htmlFor='posNoun'>
+                                            Adverb
+                                        </label>
+                                    </div>
+                                    <div className='form-check'>
+                                        <input checked={isNumeral} onChange={() => setIsNumeral(!isNumeral)} type='checkbox' value='' id='posNoun' className='form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer' />
+                                        <label className='form-check-label inline-block text-gray-800' htmlFor='posNoun'>
+                                            Numeral
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 {/* audio files - vocab */}
                 <div className={`flex items-center mb-3 ${itemType == 'vocab' ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
@@ -235,7 +288,7 @@ export default function AddItem(props) {
                     <div className='flex-grow'>
                         <label htmlFor='description' className='text-sm font-medium text-gray-700'>Kanji</label>
                         <div className='mt-1'>
-                            <ItemSearch type='kanji' onChange={setKanji} />
+                            <ItemSearch deckId={props.deckId} type='kanji' onChange={setKanji} />
                         </div>
                     </div>
                 </div>
@@ -244,7 +297,7 @@ export default function AddItem(props) {
                     <div className='flex-grow'>
                         <label htmlFor='description' className='text-sm font-medium text-gray-700'>Radicals</label>
                         <div className='mt-1'>
-                            <ItemSearch type='radical' onChange={setRadicals} />
+                            <ItemSearch deckId={props.deckId} type='radical' onChange={setRadicals} />
                         </div>
                     </div>
                 </div>
@@ -253,7 +306,7 @@ export default function AddItem(props) {
                     <div className='flex-grow'>
                         <label htmlFor='description' className='text-sm font-medium text-gray-700'>Vocabulary (search w/ english or hiragana)</label>
                         <div className='mt-1'>
-                            <ItemSearch type='vocabulary' onChange={setKanji} />
+                            <ItemSearch deckId={props.deckId} type='vocab' onChange={setKanji} />
                         </div>
                     </div>
                 </div>
