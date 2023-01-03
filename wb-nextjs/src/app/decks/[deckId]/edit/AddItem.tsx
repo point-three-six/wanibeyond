@@ -17,11 +17,22 @@ export default function AddItem(props) {
     // item data
     let [itemType, setItemType] = useState('');
     let [level, setLevel] = useState(0);
-    let [meaning, setMeaning] = useState('');
     let [characters, setCharacters] = useState('');
+    let [aud, setAud] = useState('');
 
+    let [ctx1, setCtx1] = useState('');
+    let [ctx2, setCtx2] = useState('');
+    let [ctx1jap, setCtx1jap] = useState('');
+    let [ctx2jap, setCtx2jap] = useState('');
+
+    let [meanings, setMeanings] = useState([]);
+    let [kana, setKana] = useState([]);
+    let [kanji, setKanji] = useState([]);
     let [radicals, setRadicals] = useState([]);
     let [vocabulary, setVocabulary] = useState([]);
+
+    let [auxMeanings, setAuxMeanings] = useState([]);
+    let [auxReadings, setAuxReadings] = useState([]);
 
     let [meaningHint, setMeaningHint] = useState('');
     let [mmne, setMmne] = useState('');
@@ -30,6 +41,8 @@ export default function AddItem(props) {
     let [onyomi, setOnyomi] = useState('');
     let [kunyomi, setKunyomi] = useState('');
 
+    let [collocations, setCollocations] = useState([]);
+
     async function sendRequest(url, arg) {
         return await fetch(url, {
             method: 'POST',
@@ -37,25 +50,57 @@ export default function AddItem(props) {
         })
     }
 
+    // build the payload dependent on itemType
+    function buildPayload() {
+        if (itemType == 'kanji') {
+            return {
+                type: itemType,
+                level: level,
+                meanings: meanings,
+                characters: characters,
+                radicals: radicals,
+                vocabulary: vocabulary,
+                meaningHint: meaningHint,
+                mmne: mmne,
+                readingHint: readingHint,
+                rmne: rmne,
+                onyomi: onyomi,
+                kunyomi: kunyomi,
+                auxiliary_meanings: auxMeanings,
+                auxiliary_readings: auxReadings
+            };
+        } else if (itemType == 'vocab') {
+            return {
+                type: itemType,
+                aud: aud,
+                kana: kana,
+                level: level,
+                kanji: kanji,
+                meanings: meanings,
+                characters: characters,
+                radicals: radicals,
+                vocabulary: vocabulary,
+                meaningHint: meaningHint,
+                mmne: mmne,
+                readingHint: readingHint,
+                rmne: rmne,
+                ctx1: ctx1,
+                ctx1jap: ctx1jap,
+                ctx2: ctx2,
+                ctx2jap: ctx2jap,
+                collocations: collocations,
+                auxiliary_meanings: auxMeanings,
+                auxiliary_readings: auxReadings
+            };
+        }
+    }
+
     function submit() {
-        sendRequest('/api/deck/add', {
-            type: itemType,
-            level: level,
-            meaning: meaning,
-            characters: characters,
-            radicals: radicals,
-            vocabulary: vocabulary,
-            meaningHint: meaningHint,
-            mmne: mmne,
-            readingHint: readingHint,
-            rmne: rmne,
-            onyomi: onyomi,
-            kunyomi: kunyomi
-        }).then(async (res) => {
+        sendRequest('/api/deck/add', buildPayload()).then(async (res) => {
             let r = await res.json();
             if (res.status == 200 && 'item' in r) {
-                // success
                 props.onItemAdded(r.item);
+                props.back();
             } else if ('e' in r) {
                 // error message returned
             }
@@ -79,11 +124,11 @@ export default function AddItem(props) {
                         {characters ? characters : 'example'}
                     </div>
                     <div className='meaning text-xs'>
-                        {meaning ? meaning : 'example'}
+                        {meanings[0] ? meanings[0] : 'example'}
                     </div>
                 </div>
             </div>
-            <div className=''>
+            <div>
                 {/* item type */}
                 <div className={`flex items-center mb-3`}>
                     <div className='flex-grow'>
@@ -123,25 +168,6 @@ export default function AddItem(props) {
                         </div>
                     </div>
                 </div>
-                {/* meaning */}
-                <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
-                    <div className='flex-grow'>
-                        <label htmlFor='meaning' className='text-sm font-medium text-gray-700'>
-                            Meaning
-                        </label>
-                        <div className='mt-1'>
-                            <input
-                                name='meaning'
-                                type='text'
-                                className='border border-gray-300 w-full'
-                                placeholder=''
-                                onChange={(e) => {
-                                    setMeaning(e.target.value)
-                                }}
-                            />
-                        </div>
-                    </div>
-                </div>
                 {/* characters */}
                 <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
@@ -161,6 +187,56 @@ export default function AddItem(props) {
                         </div>
                     </div>
                 </div>
+                {/* meaning */}
+                <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
+                    <div className='flex-grow'>
+                        <label htmlFor='meanings' className='text-sm font-medium text-gray-700'>
+                            Meanings (first is primary)
+                        </label>
+                        <div className='mt-1'>
+                            <MultiInput value={meanings} onChange={setMeanings} />
+                        </div>
+                    </div>
+                </div>
+                {/* kana - vocab */}
+                <div className={`flex items-center mb-3 ${itemType == 'vocab' ? '' : 'hidden'}`}>
+                    <div className='flex-grow'>
+                        <label htmlFor='kana' className='text-sm font-medium text-gray-700'>
+                            Kana
+                        </label>
+                        <div className='mt-1'>
+                            <MultiInput value={kana} onChange={setKana} />
+                        </div>
+                    </div>
+                </div>
+                {/* audio files - vocab */}
+                <div className={`flex items-center mb-3 ${itemType == 'vocab' ? '' : 'hidden'}`}>
+                    <div className='flex-grow'>
+                        <label htmlFor='aud' className='text-sm font-medium text-gray-700'>
+                            Audio File (url)
+                        </label>
+                        <div className='mt-1'>
+                            <input
+                                name='aud'
+                                type='text'
+                                className='border border-gray-300 w-full'
+                                placeholder=''
+                                onChange={(e) => {
+                                    setAud(e.target.value)
+                                }}
+                            />
+                        </div>
+                    </div>
+                </div>
+                {/* kanji -- vocab,  */}
+                <div className={`flex items-center mb-3 ${itemType == 'vocab' ? '' : 'hidden'}`}>
+                    <div className='flex-grow'>
+                        <label htmlFor='description' className='text-sm font-medium text-gray-700'>Kanji</label>
+                        <div className='mt-1'>
+                            <ItemSearch type='kanji' onChange={setKanji} />
+                        </div>
+                    </div>
+                </div>
                 {/* radicals -- kanji,  */}
                 <div className={`flex items-center mb-3 ${itemType == 'kanji' ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
@@ -175,7 +251,7 @@ export default function AddItem(props) {
                     <div className='flex-grow'>
                         <label htmlFor='description' className='text-sm font-medium text-gray-700'>Vocabulary (search w/ english or hiragana)</label>
                         <div className='mt-1'>
-                            <ItemSearch type='vocabulary' onChange={setVocabulary} />
+                            <ItemSearch type='vocabulary' onChange={setKanji} />
                         </div>
                     </div>
                 </div>
@@ -262,6 +338,104 @@ export default function AddItem(props) {
                                 }}
                             >
                             </textarea>
+                        </div>
+                    </div>
+                </div>
+                {/* auxilary meanings - vocab,kanji */}
+                <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
+                    <div className='flex-grow'>
+                        <label htmlFor='kana' className='text-sm font-medium text-gray-700'>
+                            Auxiliary Meanings (whitelist)
+                        </label>
+                        <div className='mt-1'>
+                            <MultiInput value={auxMeanings} onChange={setAuxMeanings} />
+                        </div>
+                    </div>
+                </div>
+                {/* auxilary readings - vocab,kanji */}
+                <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
+                    <div className='flex-grow'>
+                        <label htmlFor='kana' className='text-sm font-medium text-gray-700'>
+                            Auxiliary Readings (whitelist)
+                        </label>
+                        <div className='mt-1'>
+                            <MultiInput value={auxReadings} onChange={setAuxReadings} />
+                        </div>
+                    </div>
+                </div>
+                {/* ctx1 - vocab */}
+                <div className={`flex items-center mb-3 ${itemType == 'vocab' ? '' : 'hidden'}`}>
+                    <div className='flex-grow'>
+                        <label htmlFor='ctx1jap' className='text-sm font-medium text-gray-700'>
+                            Context Sentence #1 (日本語)
+                        </label>
+                        <div className='mt-1'>
+                            <input
+                                name='ctx1jap'
+                                type='text'
+                                className='border border-gray-300 w-full'
+                                placeholder=''
+                                onChange={(e) => {
+                                    setCtx1jap(e.target.value)
+                                }}
+                            />
+                        </div>
+                    </div>
+                </div>
+                {/* ctx1 - vocab */}
+                <div className={`flex items-center mb-3 ${itemType == 'vocab' ? '' : 'hidden'}`}>
+                    <div className='flex-grow'>
+                        <label htmlFor='ctx1' className='text-sm font-medium text-gray-700'>
+                            Context Sentence #1 (English)
+                        </label>
+                        <div className='mt-1'>
+                            <input
+                                name='ctx1'
+                                type='text'
+                                className='border border-gray-300 w-full'
+                                placeholder=''
+                                onChange={(e) => {
+                                    setCtx1(e.target.value)
+                                }}
+                            />
+                        </div>
+                    </div>
+                </div>
+                {/* ctx1 - vocab */}
+                <div className={`flex items-center mb-3 ${itemType == 'vocab' ? '' : 'hidden'}`}>
+                    <div className='flex-grow'>
+                        <label htmlFor='ctx2jap' className='text-sm font-medium text-gray-700'>
+                            Context Sentence #2 (日本語)
+                        </label>
+                        <div className='mt-1'>
+                            <input
+                                name='ctx2jap'
+                                type='text'
+                                className='border border-gray-300 w-full'
+                                placeholder=''
+                                onChange={(e) => {
+                                    setCtx2jap(e.target.value)
+                                }}
+                            />
+                        </div>
+                    </div>
+                </div>
+                {/* ctx2 - vocab */}
+                <div className={`flex items-center mb-3 ${itemType == 'vocab' ? '' : 'hidden'}`}>
+                    <div className='flex-grow'>
+                        <label htmlFor='ctx2' className='text-sm font-medium text-gray-700'>
+                            Context Sentence #2 (English)
+                        </label>
+                        <div className='mt-1'>
+                            <input
+                                name='ctx2'
+                                type='text'
+                                className='border border-gray-300 w-full'
+                                placeholder=''
+                                onChange={(e) => {
+                                    setCtx2(e.target.value)
+                                }}
+                            />
                         </div>
                     </div>
                 </div>

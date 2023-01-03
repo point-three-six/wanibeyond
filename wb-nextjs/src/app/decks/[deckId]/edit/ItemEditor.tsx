@@ -44,7 +44,6 @@ export default function ItemEditor(props) {
         let updatedDeck = deck;
         deck.items.push(data);
         setDeck(updatedDeck);
-        console.log(deck)
     }
 
     return (

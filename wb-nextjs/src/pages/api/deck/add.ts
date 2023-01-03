@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from '../../../lib/sessionApiFallback'
 import prisma from '../../../lib/prisma'
-import { Kanji } from '../../../../types';
+import { Kanji, Vocab } from '../../../../types';
 
 async function isOwner(userId, deckId) {
     const deck = await prisma.deck.findFirst({
@@ -13,19 +13,34 @@ async function isOwner(userId, deckId) {
     return deck;
 }
 
-({
-    "auxiliary_meanings": [],
-    "auxiliary_readings": [],
-    "relationships": {
-        "study_material": null
-    }
-})
+function createVocabDataObject(vocab: Vocab) {
+    let obj = {
+        'en': vocab.meanings,
+        'id': null,
+        'on': vocab.onyomi,
+        'kan': vocab.characters,
+        'kun': vocab.kunyomi,
+        'emph': 'onyomi',
+        'mhnt': vocab.meaningHint,
+        'mnme': vocab.mmne,
+        'rhnt': vocab.readingHint,
+        'rmne': vocab.rmne,
+        'type': 'Kanji',
+        'nanori': [],
+        'category': 'Kanji',
+        'radicals': vocab.radicals,
+        'characters': vocab.characters,
+        'vocabulary': vocab.vocabulary,
+        'auxiliary_meanings': vocab.auxiliary_meanings,
+        'auxiliary_readings': vocab.auxiliary_readings
+    };
+
+    return obj;
+}
 
 function createKanjiDataObject(kanji: Kanji) {
     let obj = {
-        'en': [
-            kanji.meaning
-        ],
+        'en': kanji.meanings,
         'id': null,
         'on': kanji.onyomi,
         'kan': kanji.characters,
@@ -51,6 +66,7 @@ function createKanjiDataObject(kanji: Kanji) {
 async function addItem(userId, data) {
     let obj;
     if (data.type == 'kanji') obj = createKanjiDataObject(data);
+    if (data.type == 'vocab') obj = createVocabDataObject(data);
 
     // insert item, returns it
     let r = await prisma.deck.update({
