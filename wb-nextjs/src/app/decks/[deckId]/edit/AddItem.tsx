@@ -53,8 +53,9 @@ export default function AddItem(props) {
             kunyomi: kunyomi
         }).then(async (res) => {
             let r = await res.json();
-            if (res.status == 200 && 'id' in r) {
+            if (res.status == 200 && 'item' in r) {
                 // success
+                props.onItemAdded(r.item);
             } else if ('e' in r) {
                 // error message returned
             }

@@ -8,7 +8,8 @@ import AddItem from './AddItem';
 import LevelList from './LevelList';
 
 export default function ItemEditor(props) {
-    const deck = props.deck;
+    const [deck, setDeck] = useState(props.deck);
+
     let levels = [0];
 
     deck.items.forEach(item => {
@@ -39,6 +40,13 @@ export default function ItemEditor(props) {
         setIsAddingItem(level);
     }
 
+    function handleOnItemAdded(data) {
+        let updatedDeck = deck;
+        deck.items.push(data);
+        setDeck(updatedDeck);
+        console.log(deck)
+    }
+
     return (
         <div className="editor max-width" >
             <div className='w-screen max-width flex justify-between gap-7'>
@@ -61,7 +69,7 @@ export default function ItemEditor(props) {
                         isAddingItem > -1 ?
                             <AddItem back={() => {
                                 setIsAddingItem(-1)
-                            }} level={isAddingItem} /> :
+                            }} level={isAddingItem} onItemAdded={handleOnItemAdded} /> :
                             <LevelList deck={deck} levels={levels} filter={filter} onAddItem={handleAddItem} />
                     }
                 </div>

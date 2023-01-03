@@ -80,6 +80,8 @@ async function addItem(userId, data) {
     // get created itemId and put it in the data object
     // update item
     let itemId = r.items[0].id;
+    obj.id = 'wp-' + itemId;
+    r.items[0].data = obj;
 
     await prisma.item.update({
         where: {
@@ -90,7 +92,7 @@ async function addItem(userId, data) {
         }
     });
 
-    return obj;
+    return r.items[0];
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -99,8 +101,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (session) {
         let data = JSON.parse(req.body);
 
-        addItem(session.id, data).then((r) => {
-            res.status(200).json(r);
+        let r = await addItem(session.id, data);
+        res.status(200).json({
+            item: r
         });
     } else {
         res.status(401).json({});

@@ -1,4 +1,5 @@
 export interface Kanji {
+    en: Array,
     type: string,
     level: number,
     characters: string,
