@@ -22,6 +22,8 @@ export default function ItemEditor(props) {
     });
 
     let [filter, setFilter] = useState('');
+    let [itemEditing, setItemEditing] = useState({});
+
     const dragItem = useRef();
     const dragOverItem = useRef();
     const [list, setList] = useState(['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5', 'Item 6']);
@@ -40,10 +42,23 @@ export default function ItemEditor(props) {
         setIsAddingItem(level);
     }
 
+    function handleEditItem(itemId) {
+        let item = getItemById(itemId);
+        setItemEditing(item);
+        setIsAddingItem(item.level);
+    }
+
     function handleOnItemAdded(data) {
         let updatedDeck = deck;
         deck.items.push(data);
         setDeck(updatedDeck);
+    }
+
+    function getItemById(id) {
+        for (let item of deck.items) {
+            if (item.id == id) return item;
+        }
+        return false;
     }
 
     return (
@@ -68,8 +83,9 @@ export default function ItemEditor(props) {
                         isAddingItem > -1 ?
                             <AddItem back={() => {
                                 setIsAddingItem(-1)
-                            }} level={isAddingItem} deckId={deck.id} onItemAdded={handleOnItemAdded} /> :
-                            <LevelList deck={deck} levels={levels} filter={filter} onAddItem={handleAddItem} />
+                                setItemEditing({})
+                            }} item={itemEditing} level={isAddingItem} deckId={deck.id} onItemAdded={handleOnItemAdded} /> :
+                            <LevelList deck={deck} levels={levels} filter={filter} onAddItem={handleAddItem} onItemClick={handleEditItem} />
                     }
                 </div>
             </div>

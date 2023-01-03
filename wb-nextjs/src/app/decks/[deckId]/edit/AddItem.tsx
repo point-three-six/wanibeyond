@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import MultiInput from './MultiInput';
 import ItemSearch from './ItemSearch';
 import '../../../../styles/checkmark.css'
+import { faCropSimple } from '@fortawesome/free-solid-svg-icons';
 
 function getTypeDisplayText(value: string) {
     if (value == '') return 'Characters';
@@ -14,40 +15,45 @@ function getTypeDisplayText(value: string) {
 }
 
 export default function AddItem(props) {
+    // this will only be set when EDITING an item
+    let eitm = Object.keys(props.item).length > 0 ? props.item : false;
+
     // item data
-    let [itemType, setItemType] = useState('');
-    let [level, setLevel] = useState(0);
-    let [characters, setCharacters] = useState('');
-    let [aud, setAud] = useState('');
-    let [partsOfSpeech, setPartsOfSpeech] = useState(['noun']);
+    let [itemType, setItemType] = useState(eitm ? eitm.type : '');
+    let [level, setLevel] = useState(props.level);
+    let [characters, setCharacters] = useState(eitm ? eitm.data.characters : '');
+    let [aud, setAud] = useState((eitm && eitm.data.aud) ? eitm.data.aud : '');
 
-    let [ctx1, setCtx1] = useState('');
-    let [ctx2, setCtx2] = useState('');
-    let [ctx1jap, setCtx1jap] = useState('');
-    let [ctx2jap, setCtx2jap] = useState('');
+    console.log(eitm.data)
+    let [ctx1, setCtx1] = useState(eitm && eitm.data.sentences && eitm.data.sentences.length >= 1 ? eitm.data.sentences[0][1] : '');
+    let [ctx1jap, setCtx1jap] = useState(eitm && eitm.data.sentences && eitm.data.sentences.length >= 1 ? eitm.data.sentences[0][0] : '');
 
-    let [meanings, setMeanings] = useState([]);
-    let [kana, setKana] = useState([]);
-    let [kanji, setKanji] = useState([]);
-    let [radicals, setRadicals] = useState([]);
-    let [vocabulary, setVocabulary] = useState([]);
+    let [ctx2, setCtx2] = useState(eitm && eitm.data.sentences && eitm.data.sentences.length >= 2 ? eitm.data.sentences[1][1] : '');
+    let [ctx2jap, setCtx2jap] = useState(eitm && eitm.data.sentences && eitm.data.sentences.length >= 2 ? eitm.data.sentences[1][0] : '');
 
-    let [auxMeanings, setAuxMeanings] = useState([]);
-    let [auxReadings, setAuxReadings] = useState([]);
+    let [meanings, setMeanings] = useState(eitm ? eitm.data.en : []);
+    let [kana, setKana] = useState(eitm && eitm.data.kana ? eitm.data.kana : []);
+    let [kanji, setKanji] = useState(eitm && eitm.data.kanji ? eitm.data.kanji : []);
+    let [radicals, setRadicals] = useState(eitm && eitm.data.radicals ? eitm.data.radicals : []);
+    let [vocabulary, setVocabulary] = useState(eitm && eitm.data.vocabulary ? eitm.data.vocabulary : []);
 
-    let [meaningHint, setMeaningHint] = useState('');
-    let [mmne, setMmne] = useState('');
-    let [readingHint, setReadingHint] = useState('');
-    let [rmne, setRmne] = useState('');
-    let [onyomi, setOnyomi] = useState('');
-    let [kunyomi, setKunyomi] = useState('');
+    let [auxMeanings, setAuxMeanings] = useState(eitm ? eitm.data.auxiliary_meanings : []);
+    let [auxReadings, setAuxReadings] = useState(eitm ? eitm.data.auxiliary_readings : []);
 
-    let [collocations, setCollocations] = useState([]);
+    let [meaningHint, setMeaningHint] = useState(eitm && eitm.data.mhnt ? eitm.data.mhnt : '');
+    let [mmne, setMmne] = useState(eitm ? eitm.data.mmne : '');
+    let [readingHint, setReadingHint] = useState(eitm && eitm.data.rhnt ? eitm.data.rhnt : '');
+    let [rmne, setRmne] = useState(eitm ? eitm.data.rmne : '');
+    let [onyomi, setOnyomi] = useState(eitm && eitm.data.onyomi ? eitm.data.onyomi : []);
+    let [kunyomi, setKunyomi] = useState(eitm && eitm.data.kunyomi ? eitm.data.kunyomi : []);
 
-    let [isNoun, setIsNoun] = useState(false);
-    let [isVerb, setIsVerb] = useState(false);
-    let [isAdverb, setIsAdverb] = useState(false);
-    let [isNumeral, setIsNumeral] = useState(false);
+    let [collocations, setCollocations] = useState(eitm && eitm.data.collocations ? eitm.data.collocations : []);
+
+    let predefinedPos = (eitm && 'parts_of_speech' in eitm.data) ? eitm.data.parts_of_speech : [];
+    let [isNoun, setIsNoun] = useState(predefinedPos ? predefinedPos.indexOf('noun') != -1 : false);
+    let [isVerb, setIsVerb] = useState(predefinedPos ? predefinedPos.indexOf('verb') != -1 : false);
+    let [isAdverb, setIsAdverb] = useState(predefinedPos ? predefinedPos.indexOf('adverb') != -1 : false);
+    let [isNumeral, setIsNumeral] = useState(predefinedPos ? predefinedPos.indexOf('numeral') != -1 : false);
 
     async function sendRequest(url, arg) {
         return await fetch(url, {
@@ -112,7 +118,14 @@ export default function AddItem(props) {
     }
 
     function submit() {
-        sendRequest('/api/deck/add', buildPayload()).then(async (res) => {
+        let payload = buildPayload();
+        let params = {
+            deckId: props.deckId,
+            update: eitm ? props.itemId : false,
+            payload: payload
+        };
+
+        sendRequest('/api/deck/add', params).then(async (res) => {
             let r = await res.json();
             if (res.status == 200 && 'item' in r) {
                 props.onItemAdded(r.item);
@@ -146,14 +159,14 @@ export default function AddItem(props) {
             </div>
             <div>
                 {/* item type */}
-                <div className={`flex items-center mb-3`}>
+                <div className={`flex items-center mb-3 ${eitm ? 'hidden' : ''}`}>
                     <div className='flex-grow'>
                         <label htmlFor='itemType' className='text-sm font-medium text-gray-700'>Item Type</label>
                         <div className='mt-1'>
                             <select
                                 name='privacy'
                                 className='border border-gray-300 w-full'
-                                defaultValue={''}
+                                defaultValue={itemType}
                                 onChange={e => setItemType(e.target.value)}
                             >
                                 <option value=''></option>
@@ -197,6 +210,7 @@ export default function AddItem(props) {
                                 type='text'
                                 className='border border-gray-300 w-full'
                                 placeholder=''
+                                value={characters}
                                 onChange={(e) => {
                                     setCharacters(e.target.value)
                                 }}
@@ -306,7 +320,7 @@ export default function AddItem(props) {
                     <div className='flex-grow'>
                         <label htmlFor='description' className='text-sm font-medium text-gray-700'>Vocabulary (search w/ english or hiragana)</label>
                         <div className='mt-1'>
-                            <ItemSearch deckId={props.deckId} type='vocab' onChange={setKanji} />
+                            <ItemSearch deckId={props.deckId} type='vocab' onChange={setVocabulary} />
                         </div>
                     </div>
                 </div>
@@ -337,6 +351,7 @@ export default function AddItem(props) {
                                 name='description'
                                 className='border border-gray-300 w-full'
                                 maxLength={500}
+                                value={mmne}
                                 onChange={e => {
                                     setMmne(e.target.value)
                                 }}
@@ -354,6 +369,7 @@ export default function AddItem(props) {
                                 name='description'
                                 className='border border-gray-300 w-full'
                                 maxLength={500}
+                                value={meaningHint}
                                 onChange={e => {
                                     setMeaningHint(e.target.value)
                                 }}
@@ -371,6 +387,7 @@ export default function AddItem(props) {
                                 name='description'
                                 className='border border-gray-300 w-full'
                                 maxLength={500}
+                                value={rmne}
                                 onChange={e => {
                                     setRmne(e.target.value)
                                 }}
@@ -388,6 +405,7 @@ export default function AddItem(props) {
                                 name='description'
                                 className='border border-gray-300 w-full'
                                 maxLength={500}
+                                value={readingHint}
                                 onChange={e => {
                                     setReadingHint(e.target.value)
                                 }}
@@ -501,7 +519,7 @@ export default function AddItem(props) {
                         onClick={submit}
                     >
                         <div className='mr-1 inline'>
-                            <span>+</span>
+                            <span>{eitm ? '>' : '+'}</span>
                             <span className='hidden'>
                                 <svg aria-hidden="true" role="status" className="inline mr-3 w-4 h-4 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB" />
@@ -509,7 +527,7 @@ export default function AddItem(props) {
                                 </svg>
                             </span>
                         </div>
-                        create {itemType}
+                        {eitm ? 'save' : 'create'} {itemType}
                     </button>
                 </div >
             </div>

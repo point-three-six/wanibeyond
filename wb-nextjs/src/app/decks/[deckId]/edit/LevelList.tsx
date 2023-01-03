@@ -49,7 +49,7 @@ export default function LevelList(props) {
                                 .filter(item => item.level == level)
                                 .filter(item => item.data.en[0].toLowerCase().indexOf(props.filter.toLowerCase()) != -1)
                                 .map(item =>
-                                    <div key={item.id} className={`item ${item.type}`}>
+                                    <div key={item.id} className={`item ${item.type}`} onClick={() => props.onItemClick(item.id)}>
                                         {getItemTitle(item)}
                                         <div className='meaning text-xs'>
                                             {item.data.en[0]}

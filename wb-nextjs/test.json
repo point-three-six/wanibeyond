@@ -1,36 +1,34 @@
 {
     "en": [
-        "soyboylover"
+        "weakest bitch"
     ],
-    "id": "wp-2",
-    "aud": "",
-    "voc": "場場",
-    "kana": [
-        "ばば"
+    "id": "wp-4",
+    "on": [
+        "うぇ"
     ],
-    "mhnt": "",
-    "mnme": "hgdfgdfgdfgdfgfdg",
-    "rhnt": "",
-    "rmne": "hgdfgdfgdfgdfgfdg",
-    "type": "Vocabulary",
-    "kanji": [
-        1
+    "kan": "弱",
+    "kun": [],
+    "emph": "onyomi",
+    "mhnt": "hint: the weakest bitch gets they dick beat",
+    "mmne": "the weakest bitch gets they dick beat",
+    "rhnt": "hint: yuh yuh",
+    "rmne": "yuh yuh yuh",
+    "type": "Kanji",
+    "nanori": [],
+    "category": "Kanji",
+    "radicals": [
+        "wk-160"
     ],
-    "category": "Vocabulary",
-    "sentences": [
-        [
-            "fuckfuck",
-            "goodgood"
-        ]
+    "characters": "弱",
+    "vocabulary": [
+        "wk-wk-wk-2956"
     ],
-    "characters": "場場",
-    "collocations": [],
     "relationships": {
         "study_material": null
     },
-    "parts_of_speech": [
-        "noun"
+    "auxiliary_meanings": [
+        "gang",
+        "ongang"
     ],
-    "auxiliary_meanings": [],
     "auxiliary_readings": []
 }

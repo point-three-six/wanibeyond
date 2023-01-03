@@ -27,7 +27,7 @@ function createVocabDataObject(vocab: Vocab) {
         'kana': vocab.kana,
         'kanji': vocab.kanji,
         'mhnt': vocab.meaningHint,
-        'mnme': vocab.mmne,
+        'mmne': vocab.mmne,
         'rhnt': vocab.readingHint,
         'rmne': vocab.rmne,
         'type': 'Vocabulary',
@@ -55,7 +55,7 @@ function createKanjiDataObject(kanji: Kanji) {
         'kun': kanji.kunyomi,
         'emph': 'onyomi',
         'mhnt': kanji.meaningHint,
-        'mnme': kanji.mmne,
+        'mmne': kanji.mmne,
         'rhnt': kanji.readingHint,
         'rmne': kanji.rmne,
         'type': 'Kanji',
@@ -74,7 +74,21 @@ function createKanjiDataObject(kanji: Kanji) {
     return obj;
 }
 
-async function addItem(userId, data) {
+async function updateItem(userId, itemId, data) {
+    let r = await prisma.item.update({
+        where: {
+            id: itemId,
+        },
+        data: {
+            en: data.meanings,
+            characters: data.characters,
+            data: data.payload
+        }
+    });
+    return r;
+}
+
+async function addItem(userId, deckId, data) {
     let obj;
     if (data.type == 'kanji') obj = createKanjiDataObject(data);
     if (data.type == 'vocab') obj = createVocabDataObject(data);
@@ -82,7 +96,7 @@ async function addItem(userId, data) {
     // insert item, returns it
     let r = await prisma.deck.update({
         where: {
-            id: 1,
+            id: deckId,
         },
         data: {
             items: {
@@ -130,10 +144,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (session) {
         let data = JSON.parse(req.body);
 
-        let r = await addItem(session.id, data);
-        res.status(200).json({
-            item: r
-        });
+        console.log(data)
+
+        if (data.update) {
+            console.log('UPDATING')
+            let r = await updateItem(session.id, data.update, data.payload);
+            res.status(200).json({});
+        } else {
+            console.log('INSERTING')
+            let r = await addItem(session.id, data.deckId, data.payload);
+            res.status(200).json({
+                item: r
+            });
+        }
     } else {
         res.status(401).json({});
     }

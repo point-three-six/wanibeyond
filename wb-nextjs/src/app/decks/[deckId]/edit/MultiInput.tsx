@@ -17,11 +17,19 @@ const createOption = (label: string) => ({
     value: label,
 });
 
-export default (props) => {
-    const [inputValue, setInputValue] = React.useState('');
-    const [myValue, setMyValue] = React.useState('');
+function buildOptions(arr) {
+    let options = [];
+    for (let val of arr) {
+        options.push(createOption(val));
+    }
+    return options;
+}
 
+export default (props) => {
     let value = props.value;
+
+    const [inputValue, setInputValue] = React.useState('');
+    const [myValue, setMyValue] = React.useState(buildOptions(value));
 
     const handleKeyDown: KeyboardEventHandler = (event) => {
         if (!inputValue) return;
