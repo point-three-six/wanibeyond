@@ -54,6 +54,16 @@ export default function ItemEditor(props) {
         setDeck(updatedDeck);
     }
 
+    function handleOnItemEdited(data) {
+        let updatedDeck = deck;
+        for (let i = 0; i < updatedDeck.items.length; i++) {
+            if (updatedDeck.items[i].id == data.id) {
+                updatedDeck.items[i] = data;
+            }
+        }
+        setDeck(updatedDeck);
+    }
+
     function getItemById(id) {
         for (let item of deck.items) {
             if (item.id == id) return item;
@@ -84,7 +94,7 @@ export default function ItemEditor(props) {
                             <AddItem back={() => {
                                 setIsAddingItem(-1)
                                 setItemEditing({})
-                            }} item={itemEditing} level={isAddingItem} deckId={deck.id} onItemAdded={handleOnItemAdded} /> :
+                            }} item={itemEditing} level={isAddingItem} deckId={deck.id} onItemAdded={handleOnItemAdded} onItemEdited={handleOnItemEdited} /> :
                             <LevelList deck={deck} levels={levels} filter={filter} onAddItem={handleAddItem} onItemClick={handleEditItem} />
                     }
                 </div>

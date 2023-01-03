@@ -119,16 +119,23 @@ export default function AddItem(props) {
 
     function submit() {
         let payload = buildPayload();
+
         let params = {
             deckId: props.deckId,
-            update: eitm ? props.itemId : false,
+            update: eitm ? eitm.id : false,
             payload: payload
         };
 
         sendRequest('/api/deck/add', params).then(async (res) => {
             let r = await res.json();
+
             if (res.status == 200 && 'item' in r) {
-                props.onItemAdded(r.item);
+                if (eitm) {
+                    props.onItemEdited(r.item);
+                } else {
+                    props.onItemAdded(r.item);
+                }
+
                 props.back();
             } else if ('e' in r) {
                 // error message returned

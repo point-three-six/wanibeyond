@@ -75,14 +75,27 @@ function createKanjiDataObject(kanji: Kanji) {
 }
 
 async function updateItem(userId, itemId, data) {
+    let obj;
+    if (data.type == 'kanji') obj = createKanjiDataObject(data);
+    if (data.type == 'vocab') obj = createVocabDataObject(data);
+
     let r = await prisma.item.update({
         where: {
             id: itemId,
         },
         data: {
-            en: data.meanings,
+            en: data.meanings[0],
             characters: data.characters,
-            data: data.payload
+            data: obj
+        },
+        select: {
+            id: true,
+            en: true,
+            characters: true,
+            deckId: true,
+            level: true,
+            type: true,
+            data: true
         }
     });
     return r;
@@ -144,12 +157,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (session) {
         let data = JSON.parse(req.body);
 
-        console.log(data)
-
         if (data.update) {
             console.log('UPDATING')
             let r = await updateItem(session.id, data.update, data.payload);
-            res.status(200).json({});
+            res.status(200).json({
+                item: r
+            });
         } else {
             console.log('INSERTING')
             let r = await addItem(session.id, data.deckId, data.payload);
