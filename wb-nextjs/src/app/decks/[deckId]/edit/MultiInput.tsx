@@ -19,6 +19,7 @@ const createOption = (label: string) => ({
 
 export default (props) => {
     const [inputValue, setInputValue] = React.useState('');
+    const [myValue, setMyValue] = React.useState('');
 
     let value = props.value;
 
@@ -28,7 +29,8 @@ export default (props) => {
             case 'Enter':
             case 'Tab':
                 // this is updating the value of props.value/value
-                props.onChange((prev) => [...prev, createOption(inputValue)]);
+                props.onChange((prev) => [...prev, inputValue]);
+                setMyValue((myValue) => [...myValue, createOption(inputValue)]);
                 setInputValue('');
                 event.preventDefault();
         }
@@ -41,11 +43,13 @@ export default (props) => {
             isClearable
             isMulti
             menuIsOpen={false}
-            onChange={(newValue) => setValue(newValue)}
+            onChange={(newValue) => {
+                console.log(newValue)
+            }}
             onInputChange={(newValue) => setInputValue(newValue)}
             onKeyDown={handleKeyDown}
             placeholder='Type and press enter for each value...'
-            value={value}
+            value={myValue}
             styles={{
                 control: (baseStyles, state) => ({
                     ...baseStyles,

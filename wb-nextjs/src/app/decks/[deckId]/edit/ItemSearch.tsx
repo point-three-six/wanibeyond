@@ -41,7 +41,11 @@ export default function ItemSearch(props) {
             defaultOptions
             loadOptions={promiseOptions}
             onChange={(value) => {
-                props.onChange(value)
+                let cleanedVals = [];
+                for (let item of value) {
+                    cleanedVals.push(item.value);
+                }
+                props.onChange(cleanedVals)
             }}
             placeholder='Search items...'
             styles={{
