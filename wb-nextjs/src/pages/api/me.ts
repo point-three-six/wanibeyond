@@ -15,7 +15,6 @@ async function getUserDecks(userId) {
                     data: true,
                     deckId: true,
                     level: true,
-                    lastProgress: true,
                     type: true
                 }
             }

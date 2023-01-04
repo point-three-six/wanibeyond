@@ -205,10 +205,11 @@ export default function AddItem(props) {
                                 type='number'
                                 className='border border-gray-300 w-full'
                                 placeholder=''
-                                value={props.level}
+                                value={level}
                                 min={0}
                                 max={99}
                                 onChange={(e) => {
+                                    console.log(e.target.value)
                                     setLevel(parseInt(e.target.value))
                                 }}
                             />
@@ -319,7 +320,7 @@ export default function AddItem(props) {
                     <div className='flex-grow'>
                         <label htmlFor='description' className='text-sm font-medium text-gray-700'>Kanji</label>
                         <div className='mt-1'>
-                            <ItemSearch deckId={props.deckId} type='kanji' onChange={setKanji} />
+                            <ItemSearch value={kanji} deckId={props.deckId} type='kanji' onChange={setKanji} />
                         </div>
                     </div>
                 </div>
@@ -328,7 +329,7 @@ export default function AddItem(props) {
                     <div className='flex-grow'>
                         <label htmlFor='description' className='text-sm font-medium text-gray-700'>Radicals</label>
                         <div className='mt-1'>
-                            <ItemSearch deckId={props.deckId} type='radical' onChange={setRadicals} />
+                            <ItemSearch value={radicals} deckId={props.deckId} type='radical' onChange={setRadicals} />
                         </div>
                     </div>
                 </div>
@@ -337,7 +338,7 @@ export default function AddItem(props) {
                     <div className='flex-grow'>
                         <label htmlFor='description' className='text-sm font-medium text-gray-700'>Vocabulary (search w/ english or hiragana)</label>
                         <div className='mt-1'>
-                            <ItemSearch deckId={props.deckId} type='vocab' onChange={setVocabulary} />
+                            <ItemSearch value={vocabulary} deckId={props.deckId} type='vocab' onChange={setVocabulary} />
                         </div>
                     </div>
                 </div>

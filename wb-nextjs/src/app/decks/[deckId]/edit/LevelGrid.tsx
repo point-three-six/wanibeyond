@@ -2,12 +2,12 @@
 
 import React from 'react'
 
-export default function LevelGrid() {
+export default function LevelGrid(props) {
     return (
         <>
             <div className="level-grid grid grid-cols-8 gap-2">
-                {[...Array(35)].map((x, i) =>
-                    <div key={i} className='level-grid-item'>{i}</div>
+                {props.levels.map((x) =>
+                    <div key={x} className='level-grid-item'>{x}</div>
                 )}
             </div>
         </>

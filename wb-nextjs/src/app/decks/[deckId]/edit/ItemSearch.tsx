@@ -32,6 +32,20 @@ export default function ItemSearch(props) {
         return 'gainsboro';
     }
 
+    const createOption = (label: string) => ({
+        label,
+        value: label,
+    });
+
+    function buildOptions(arr) {
+        if (!arr) return [];
+        let options = [];
+        for (let val of arr) {
+            options.push(createOption(val));
+        }
+        return options;
+    }
+
     const promiseOptions = async (inputValue: string) => await getItems(inputValue);
 
     return (
@@ -40,6 +54,7 @@ export default function ItemSearch(props) {
             cacheOptions
             defaultOptions
             loadOptions={promiseOptions}
+            value={buildOptions(props.value)}
             onChange={(value) => {
                 let cleanedVals = [];
                 for (let item of value) {

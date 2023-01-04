@@ -86,7 +86,7 @@ export default function ItemEditor(props) {
                     <div className='font-medium text-gray-700 mt-6 mb-2'>
                         Levels
                     </div>
-                    <LevelGrid />
+                    <LevelGrid levels={levels} />
                 </div>
                 <div className='w-3/4'>
                     {
