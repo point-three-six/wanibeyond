@@ -1,7 +1,28 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from '../../../lib/sessionApiFallback'
 import prisma from '../../../lib/prisma'
-import { Kanji, Vocab } from '../../../../types';
+import { Kanji, Radical, Vocab } from '../../../../types';
+
+function createRadicalDataObject(radical: Radical) {
+    let obj = {
+        'en': radical.en,
+        'id': null,
+        'rad': radical.characters,
+        'kanji': radical.kanji,
+        'mhnt': radical.meaningHint,
+        'mmne': radical.mmne,
+        'type': 'Radical',
+        'category': 'Radical',
+        'characters': radical.characters,
+        'auxiliary_meanings': radical.auxiliary_meanings,
+        'character_image_url': '',
+        'relationships': {
+            'study_material': null
+        }
+    };
+
+    return obj;
+}
 
 function createVocabDataObject(vocab: Vocab) {
     let sentences = [];
@@ -20,7 +41,7 @@ function createVocabDataObject(vocab: Vocab) {
         ]);
 
     let obj = {
-        'en': vocab.meanings,
+        'en': vocab.en,
         'id': null,
         'aud': vocab.aud,
         'voc': vocab.characters,
@@ -48,7 +69,7 @@ function createVocabDataObject(vocab: Vocab) {
 
 function createKanjiDataObject(kanji: Kanji) {
     let obj = {
-        'en': kanji.meanings,
+        'en': kanji.en,
         'id': null,
         'on': kanji.onyomi,
         'kan': kanji.characters,
@@ -78,13 +99,14 @@ async function updateItem(userId, itemId, data) {
     let obj;
     if (data.type == 'kanji') obj = createKanjiDataObject(data);
     if (data.type == 'vocab') obj = createVocabDataObject(data);
+    if (data.type == 'radical') obj = createRadicalDataObject(data);
 
     let r = await prisma.item.update({
         where: {
             id: itemId,
         },
         data: {
-            en: data.meanings[0],
+            en: data.en[0],
             characters: data.characters,
             data: obj
         },
@@ -105,6 +127,7 @@ async function addItem(userId, deckId, data) {
     let obj;
     if (data.type == 'kanji') obj = createKanjiDataObject(data);
     if (data.type == 'vocab') obj = createVocabDataObject(data);
+    if (data.type == 'radical') obj = createRadicalDataObject(data);
 
     // insert item, returns it
     let r = await prisma.deck.update({
@@ -117,7 +140,7 @@ async function addItem(userId, deckId, data) {
                     type: data.type,
                     level: data.level,
                     data: '{}',
-                    en: data.meanings[0],
+                    en: data.en[0],
                     characters: data.characters
                 }
             }

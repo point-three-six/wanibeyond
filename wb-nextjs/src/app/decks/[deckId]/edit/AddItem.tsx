@@ -24,7 +24,6 @@ export default function AddItem(props) {
     let [characters, setCharacters] = useState(eitm ? eitm.data.characters : '');
     let [aud, setAud] = useState((eitm && eitm.data.aud) ? eitm.data.aud : '');
 
-    console.log(eitm.data)
     let [ctx1, setCtx1] = useState(eitm && eitm.data.sentences && eitm.data.sentences.length >= 1 ? eitm.data.sentences[0][1] : '');
     let [ctx1jap, setCtx1jap] = useState(eitm && eitm.data.sentences && eitm.data.sentences.length >= 1 ? eitm.data.sentences[0][0] : '');
 
@@ -77,7 +76,7 @@ export default function AddItem(props) {
             return {
                 type: itemType,
                 level: level,
-                meanings: meanings,
+                en: meanings,
                 characters: characters.trim(),
                 radicals: radicals,
                 vocabulary: vocabulary,
@@ -97,7 +96,7 @@ export default function AddItem(props) {
                 kana: kana,
                 level: level,
                 kanji: kanji,
-                meanings: meanings,
+                en: meanings,
                 parts_of_speech: getPartsOfSpeech(),
                 characters: characters.trim(),
                 radicals: radicals,
@@ -113,6 +112,17 @@ export default function AddItem(props) {
                 collocations: collocations,
                 auxiliary_meanings: auxMeanings,
                 auxiliary_readings: auxReadings
+            };
+        } else if (itemType == 'radical') {
+            return {
+                type: itemType,
+                level: level,
+                en: meanings,
+                characters: characters.trim(),
+                kanji: kanji,
+                meaningHint: meaningHint.trim(),
+                mmne: mmne.trim(),
+                auxiliary_meanings: auxMeanings
             };
         }
     }
@@ -305,7 +315,7 @@ export default function AddItem(props) {
                     </div>
                 </div>
                 {/* kanji -- vocab,  */}
-                <div className={`flex items-center mb-3 ${itemType == 'vocab' ? '' : 'hidden'}`}>
+                <div className={`flex items-center mb-3 ${['vocab', 'radical'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
                         <label htmlFor='description' className='text-sm font-medium text-gray-700'>Kanji</label>
                         <div className='mt-1'>
@@ -386,7 +396,7 @@ export default function AddItem(props) {
                     </div>
                 </div>
                 {/* reading mnemonic -- kanji,*/}
-                <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
+                <div className={`flex items-center mb-3 ${['vocab', 'kanji'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
                         <label htmlFor='description' className='text-sm font-medium text-gray-700'>Reading Mnemonic</label>
                         <div className='mt-1'>
@@ -404,7 +414,7 @@ export default function AddItem(props) {
                     </div>
                 </div>
                 {/* reading hint -- kanji,  */}
-                <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
+                <div className={`flex items-center mb-3 ${['vocab', 'kanji'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
                         <label htmlFor='description' className='text-sm font-medium text-gray-700'>Reading Hint</label>
                         <div className='mt-1'>
@@ -433,7 +443,7 @@ export default function AddItem(props) {
                     </div>
                 </div>
                 {/* auxilary readings - vocab,kanji */}
-                <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
+                <div className={`flex items-center mb-3 ${['vocab', 'kanji'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
                         <label htmlFor='kana' className='text-sm font-medium text-gray-700'>
                             Auxiliary Readings (whitelist)

@@ -18,6 +18,7 @@ const createOption = (label: string) => ({
 });
 
 function buildOptions(arr) {
+    if (!arr) return [];
     let options = [];
     for (let val of arr) {
         options.push(createOption(val));
@@ -37,11 +38,8 @@ export default (props) => {
             case 'Enter':
             case 'Tab':
                 // check for dupes
-                console.log(myValue)
                 for (let option of myValue) {
-                    console.log('-', option)
                     if (option.value == inputValue) {
-                        console.log('dupe')
                         return;
                     }
                 }

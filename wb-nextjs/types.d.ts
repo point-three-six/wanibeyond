@@ -6,7 +6,6 @@ export interface Kanji {
     characters: string,
     radicals: Array,
     vocabulary: Array,
-    meanings: Array,
     meaningHint: string
     mmne: string,
     readingHint: string,
@@ -23,7 +22,6 @@ export interface Vocab {
     id: string,
     aud: Array,
     voc: string,
-    meanings: Array,
     kana: Array,
     mmne: string,
     rmne: string,
@@ -45,6 +43,7 @@ export interface Radical {
     id: string,
     rad: string,
     mmne: string,
+    meaningHint: string,
     type: string,
     kanji: Array,
     category: string,
