@@ -7,7 +7,6 @@ export default function ItemSearch(props) {
 
     async function getItems(input: string) {
         if (!input) return [];
-        console.log(`/api/items/get?type=${props.type}&item=${input}&deckId=${props.deckId}`)
         const response = await fetch(`/api/items/get?type=${props.type}&item=${input}&deckId=${props.deckId}`)
         const data = await response.json()
 

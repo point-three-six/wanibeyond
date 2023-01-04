@@ -36,6 +36,16 @@ export default (props) => {
         switch (event.key) {
             case 'Enter':
             case 'Tab':
+                // check for dupes
+                console.log(myValue)
+                for (let option of myValue) {
+                    console.log('-', option)
+                    if (option.value == inputValue) {
+                        console.log('dupe')
+                        return;
+                    }
+                }
+
                 // this is updating the value of props.value/value
                 props.onChange((prev) => [...prev, inputValue]);
                 setMyValue((myValue) => [...myValue, createOption(inputValue)]);
@@ -52,7 +62,7 @@ export default (props) => {
             isMulti
             menuIsOpen={false}
             onChange={(newValue) => {
-                console.log(newValue)
+                setMyValue(newValue)
             }}
             onInputChange={(newValue) => setInputValue(newValue)}
             onKeyDown={handleKeyDown}
