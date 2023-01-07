@@ -1,25 +1,23 @@
 {
-    "mmne": "aaa",
-    "rmne": "bbb",
-    "type": "kanji",
-    "level": 0,
-    "onyomi": [],
-    "kunyomi": [],
-    "meanings": [
-        "WeakBitch"
+    "en": [
+        "x"
     ],
-    "radicals": [
-        "wk-160"
+    "id": null,
+    "rad": "X",
+    "mhnt": "",
+    "mmne": "",
+    "type": "Radical",
+    "kanji": [
+        964,
+        670
     ],
-    "characters": "弱弱弱",
-    "vocabulary": [
-        "wk-wk-wk-2956"
-    ],
-    "meaningHint": "aaa",
-    "readingHint": "bbbb",
+    "category": "Radical",
+    "characters": "X",
+    "relationships": {
+        "study_material": null
+    },
     "auxiliary_meanings": [
-        "bitch",
-        "pussy"
+        "hey"
     ],
-    "auxiliary_readings": []
+    "character_image_url": ""
 }

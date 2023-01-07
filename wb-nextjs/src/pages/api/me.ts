@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from '../../lib/sessionApiFallback'
 import prisma from '../../lib/prisma';
 import doStuff from '../../lib/test';
+import injectItemData from '../../lib/itemInjector';
 
 async function getUserDecks(userId) {
     let decks = await prisma.deck.findMany({
@@ -20,6 +21,14 @@ async function getUserDecks(userId) {
             }
         }
     });
+
+    for (let i = 0; i < decks.length; i++) {
+        for (let x = 0; x < decks[i].items.length; x++) {
+            let injected = await injectItemData(decks[i].items[x].data);
+            decks[i].items[x].data = injected;
+        }
+    }
+
 
     return decks;
 }

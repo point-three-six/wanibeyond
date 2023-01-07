@@ -27,10 +27,11 @@ async function search(type: string, value: string, deckId: number) {
             characters: true
         }
     });
+
     // mark native item IDs with prefix "wk-"
     for (let i = 0; i < nativeItems.length; i++) {
-        let id = nativeItems[0].id;
-        nativeItems[0].id = 'wk-' + id;
+        let id = nativeItems[i].id;
+        nativeItems[i].id = 'wk-' + id;
     }
 
     const wpItems = await prisma.item.findMany({
@@ -59,6 +60,7 @@ async function search(type: string, value: string, deckId: number) {
             characters: true
         }
     });
+
     return nativeItems.concat(wpItems);
 }
 
