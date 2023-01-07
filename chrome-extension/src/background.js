@@ -58,6 +58,12 @@ async function getLessonData() {
     return items;
 }
 
+async function itemSRSCompleted(data) {
+    console.log('bg received itemSRSCompleted action')
+    console.log(data)
+    return true;
+}
+
 chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
     if (sender.origin === 'https://www.wanikani.com') {
         const action = msg.action;
@@ -69,6 +75,12 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
                     console.log(data)
                     sendResponse(data);
                 });
+                break;
+            case 'itemSRSCompleted':
+                itemSRSCompleted().then((data) => {
+                    sendResponse(data);
+                });
+                break;
             default:
         }
     } else {

@@ -70,6 +70,26 @@ export default function AddItem(props) {
         return pos;
     }
 
+    function formatAuxiliaryMeanings(meanings: string[]) {
+        let newMeanings = [];
+        for (let meaning of meanings) {
+            newMeanings.push({
+                'meaning': meaning,
+                'type': 'whitelist'
+            });
+        }
+    }
+
+    function formatAuxiliaryReadings(readings: string[]) {
+        let newReadings = [];
+        for (let reading of readings) {
+            newReadings.push({
+                'meaning': reading,
+                'type': 'whitelist'
+            });
+        }
+    }
+
     // build the payload dependent on itemType
     function buildPayload() {
         if (itemType == 'kanji') {
@@ -86,8 +106,8 @@ export default function AddItem(props) {
                 rmne: rmne.trim(),
                 onyomi: onyomi,
                 kunyomi: kunyomi,
-                auxiliary_meanings: auxMeanings,
-                auxiliary_readings: auxReadings
+                auxiliary_meanings: formatAuxiliaryMeanings(auxMeanings),
+                auxiliary_readings: formatAuxiliaryReadings(auxReadings)
             };
         } else if (itemType == 'vocab') {
             return {
@@ -110,8 +130,8 @@ export default function AddItem(props) {
                 ctx2: ctx2.trim(),
                 ctx2jap: ctx2jap.trim(),
                 collocations: collocations,
-                auxiliary_meanings: auxMeanings,
-                auxiliary_readings: auxReadings
+                auxiliary_meanings: formatAuxiliaryMeanings(auxMeanings),
+                auxiliary_readings: formatAuxiliaryReadings(auxReadings)
             };
         } else if (itemType == 'radical') {
             return {
@@ -122,7 +142,7 @@ export default function AddItem(props) {
                 kanji: kanji,
                 meaningHint: meaningHint.trim(),
                 mmne: mmne.trim(),
-                auxiliary_meanings: auxMeanings
+                auxiliary_meanings: formatAuxiliaryMeanings(auxMeanings)
             };
         }
     }

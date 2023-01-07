@@ -5,21 +5,30 @@
         items = data;
     });
 
-    console.log(JSON.stringify(window.__wp__.Interceptor))
-
     window.__wp__.Interceptor.hookIncoming('/lesson/queue', (data) => {
         return injectWPData(data);
     });
 
-
     window.__wp__.Interceptor.hookOutgoing('/json/lesson/completed', (data) => {
         let params = new URLSearchParams(data);
         let ids = params.getAll('keys[]');
-        // let filteredIDs = removeWPData(ids);
-        // params.set('keys[]', filteredIDs);
-        //return params.toString();
 
-        return [!containsWPItemId(ids), data];
+        let extracted = extractIDsByType(ids);
+
+        console.log(extracted)
+
+        let filteredIDs = extracted.wk;
+        params.set('keys[]', filteredIDs);
+        newData = params.toString();
+
+        if (extracted.wp.length > 0) {
+            chrome.runtime.sendMessage(window.__wp__.eid, { action: 'itemSRSCompleted' });
+        }
+
+        console.log('newData')
+        console.log(newData)
+
+        return [(filteredIDs > 0), newData];
     })
 
     function injectWPData(response) {
@@ -32,14 +41,24 @@
         return JSON.stringify(response);
     }
 
-    function containsWPItemId(ids) {
+    function extractIDsByType(ids) {
+        let wpIds = [];
+        let wkIds = [];
+
         for (let i in ids) {
             let id = ids[i];
 
-            if (typeof id == 'string' && id.indexOf('wp-') != -1) return true;
+            if (typeof id == 'string' && id.indexOf('wp-') != -1) {
+                wpIds.push(id);
+            } else {
+                wkIds.push(id);
+            }
         }
 
-        return false;
+        return {
+            'wk': wkIds,
+            'wp': wpIds
+        }
     }
 
     function removeWPData(ids) {
