@@ -107,13 +107,13 @@ async function getReviewData() {
 }
 
 
-async function itemSRSCompleted(itemIDs) {
+async function itemSRSCompleted(completions) {
     //note: itemIDs are strings in the format wk-###
 
     const res = await fetch(endpoint + '/api/items/completed', {
         headers: headers,
         method: 'POST',
-        body: JSON.stringify(itemIDs),
+        body: JSON.stringify(completions),
     });
     //const data = await res.json();
 
@@ -121,11 +121,13 @@ async function itemSRSCompleted(itemIDs) {
     if (res.status == 200) {
         let decks = userData.data.decks;
 
-        for (let id of itemIDs) {
+        for (let completion of completions) {
+            let id = completion[0];
+            let failed = completion[1];
             let numId = parseInt(id.substring(3, id.length));
 
-            for (let i in decks) {
-                let deck = decks[i];
+            for (let x in decks) {
+                let deck = decks[x];
 
                 for (let i in deck.items) {
                     let item = deck.items[i];
@@ -136,7 +138,14 @@ async function itemSRSCompleted(itemIDs) {
                                 lastAdvance: new Date().toString()
                             };
                         } else {
-                            deck.items[i].assignment[0].stage++;
+                            let curStage = deck.items[i].assignment[0].stage;
+
+                            // do we need to increment or decrement?
+                            if (failed && curStage > 0) {
+                                userData.data.decks[x].items[i].assignment[0].stage--;
+                            } else if (!failed && curStage < 8) {
+                                userData.data.decks[x].items[i].assignment[0].stage++;
+                            }
                         }
                     }
                 }
@@ -177,13 +186,11 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
 
         switch (action) {
             case 'getLessonData':
-                console.log('Action getLessonData . . .')
                 getLessonData().then((data) => {
                     sendResponse(data);
                 });
                 break;
             case 'getReviewData':
-                console.log('Action getReviewData . . .')
                 getReviewData().then((data) => {
                     sendResponse(data);
                 });

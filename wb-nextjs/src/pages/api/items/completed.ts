@@ -15,18 +15,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const session = getSession(req.cookies);
 
     if (session) {
-        let ids = [];
+        let completions = [];
         let data = JSON.parse(req.body);
 
         // ids come in the "wk-###" id format
         // so we need to convert
-        for (let id of data) {
+        for (let completion of data) {
+            let id = completion[0];
             let numerical = parseInt(id.substring(3, id.length));
-            ids.push(numerical);
+            completions.push([numerical, completion[1]]);
         }
 
         // now update assignments for each ID
-        for (let id of ids) {
+        for (let completion of completions) {
+            let id = completion[0];
+            let failed = completion[1];
             let assignment = await getAssignment(session.id, id);
 
             if (!assignment) {
@@ -46,19 +49,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     }
                 });
             } else {
-                let newStage = assignment.stage + 1;
-                if (newStage <= 8) {
-                    let updatedAssignment = await prisma.assignment.updateMany({
-                        where: {
-                            itemId: id,
-                            userId: session.id
-                        },
-                        data: {
-                            stage: newStage,
-                            lastAdvance: new Date(),
-                        }
-                    });
+                let curStage = assignment.stage;
+                let newStage = curStage;
+
+                if (failed && curStage > 0) {
+                    newStage--;
+                } else if (!failed && curStage < 8) {
+                    newStage++;
                 }
+
+                let updatedAssignment = await prisma.assignment.updateMany({
+                    where: {
+                        itemId: id,
+                        userId: session.id
+                    },
+                    data: {
+                        stage: newStage,
+                        lastAdvance: new Date(),
+                    }
+                });
             }
         };
 

@@ -105,7 +105,6 @@
             return response;
         }
 
-        // modify arguments before request
         let response;
         if (shortUrl in window.__wp__.Interceptor.hooksOutFetch) {
             let newArgs = window.__wp__.Interceptor.hooksOutFetch[shortUrl](...args);
@@ -114,7 +113,6 @@
             response = await origFetch(...args);
         }
 
-        // carry out fetch
         let contentType = response.headers.get('content-type');
 
         if (contentType.indexOf('application/json') != -1) {

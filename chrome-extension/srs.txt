@@ -8,3 +8,10 @@ LEVEL WHEN UPGRADED
 6: Master
 7: Enlightened
 8: Burned
+
+Notes:
+FAILED READINGS
+[0,#]
+
+FAILED MEANINGS
+[#,'']
