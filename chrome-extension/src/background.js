@@ -95,8 +95,10 @@ async function getReviewData() {
                 // inject assignment stage to item data
                 item.data.srs = item.assignment[0].stage;
 
-                //deck.items[i].data.__wp__ = true;
-                items.unshift(item.data)
+                if (calcIfSrsReady(item.assignment)) {
+                    //deck.items[i].data.__wp__ = true;
+                    items.unshift(item.data)
+                }
             }
         }
     }
@@ -105,20 +107,68 @@ async function getReviewData() {
 }
 
 
-async function itemSRSCompleted(items) {
+async function itemSRSCompleted(itemIDs) {
+    //note: itemIDs are strings in the format wk-###
+
     const res = await fetch(endpoint + '/api/items/completed', {
         headers: headers,
         method: 'POST',
-        body: JSON.stringify(items),
+        body: JSON.stringify(itemIDs),
     });
-    const data = await res.json();
+    //const data = await res.json();
 
-    // update locally
-    if (res.status() == 200) {
+    // update SRS stage values locally
+    if (res.status == 200) {
+        let decks = userData.data.decks;
 
+        for (let id of itemIDs) {
+            let numId = parseInt(id.substring(3, id.length));
+
+            for (let i in decks) {
+                let deck = decks[i];
+
+                for (let i in deck.items) {
+                    let item = deck.items[i];
+                    if (item.id == numId) {
+                        if (item.assignment.length == 0) {
+                            deck.items[i].assignment[0] = {
+                                stage: 0,
+                                lastAdvance: new Date().toString()
+                            };
+                        } else {
+                            deck.items[i].assignment[0].stage++;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     return true;
+}
+
+function calcIfSrsReady(assignment) {
+    let stage = assignment[0].stage;
+
+    let now = Date.now();
+    let last = new Date(assignment[0].lastAdvance).getTime();
+    let elapsed = now - last;
+
+    // in minutes
+    const times = {
+        0: 4 * 60,
+        1: 8 * 60,
+        2: 24 * 60,
+        3: 2 * 24 * 60,
+        4: 7 * 24 * 60,
+        5: 30 * 24 * 60,
+        6: 30 * 4 * 24 * 60,
+        7: 30 * 4 * 24 * 60,
+        8: 30 * 4 * 24 * 60
+    };
+
+    return true;
+    return (elapsed > times[stage] * 60000);
 }
 
 chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
@@ -149,5 +199,6 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
         sendResponse({ error: 'Access denied.' })
     }
 });
+
 
 init();

@@ -3,13 +3,12 @@ import { getSession } from '../../../lib/sessionApiFallback'
 import prisma from '../../../lib/prisma'
 
 async function getAssignment(userId, itemId) {
-    const assignment = await prisma.assignment.findFirst({
+    return await prisma.assignment.findFirst({
         where: {
-            id: itemId,
+            itemId: itemId,
             userId: userId
         }
     });
-    return assignment;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -30,8 +29,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         for (let id of ids) {
             let assignment = await getAssignment(session.id, id);
 
-            console.log(assignment)
-
             if (!assignment) {
                 let newAssignment = await prisma.assignment.create({
                     data: {
@@ -48,17 +45,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         lastAdvance: new Date()
                     }
                 });
-                console.log('created')
-                console.log(newAssignment)
             } else {
                 let newStage = assignment.stage + 1;
-                if (newStage < 8) {
-                    let updatedAssignment = await prisma.assignment.update({
+                if (newStage <= 8) {
+                    let updatedAssignment = await prisma.assignment.updateMany({
                         where: {
-                            id: id
+                            itemId: id,
+                            userId: session.id
                         },
                         data: {
-                            stage: newStage
+                            stage: newStage,
+                            lastAdvance: new Date(),
                         }
                     });
                 }

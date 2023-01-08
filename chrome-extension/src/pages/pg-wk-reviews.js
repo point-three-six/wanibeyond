@@ -1,10 +1,14 @@
-window.addEventListener("beforeunload", function () { debugger; }, false);
+//window.addEventListener("beforeunload", function () { debugger; }, false);
 
 (() => {
+    let itemsIds = [];
     let items = [];
 
     chrome.runtime.sendMessage(window.__wp__.eid, { action: 'getReviewData' }, (data) => {
         items = data;
+        for (let item of data) {
+            itemsIds.push(item.id);
+        }
     });
 
     window.__wp__.Interceptor.hookIncoming('/review/queue', (data) => {
@@ -15,42 +19,45 @@ window.addEventListener("beforeunload", function () { debugger; }, false);
         return injectWPItems(data);
     });
 
+    /* TODO: DO NOT LET CALL HAPPEN? */
     window.__wp__.Interceptor.hookOutgoingFetch('/review/items', (...args) => {
-        console.log('HOOKED OUTGOING /review/items')
         return args;
     });
 
     window.__wp__.Interceptor.hookIncomingFetch('/json/progress', (data, args) => {
-        console.log('HOOKED INCOMING /json/progress')
+        // list of ids that will need to be sent to WP
+        // for SRS upgrade
+        let wpIds = [];
 
-        // if we sent a request containing a WP id
-        // it will not be in the returned data.
+        // ideas in the original fetch request
         let requestIDs = Object.keys(JSON.parse(args[1].body));
 
-        for (let id of requestIDs) {
+        requestIDs.forEach(id => {
+            // the WaniKani endpoint will automatically drop
+            // our fake WP ids, so we will inject them back
+            // into the response
             if (!(id in data)) {
                 data[id] = [0, ''];
             }
+
+            // handle srs for WP items
+            let wpId = 'wp-' + (Number.MAX_SAFE_INTEGER - parseInt(id));
+            if (itemsIds.indexOf(wpId) != -1) {
+                wpIds.push(wpId);
+            }
+        });
+
+        // tell extension to upgrade SRS
+        if (wpIds.length > 0) {
+            chrome.runtime.sendMessage(window.__wp__.eid, { action: 'itemSRSCompleted', items: wpIds });
         }
 
         return data;
     });
 
-    window.__wp__.Interceptor.hookOutgoingFetch('/json/progress', (...args) => {
-        console.log('HOOKED OUTGOING /json/progress')
-        return args;
-    });
-
-    // window.__wp__.Interceptor.hookOutgoingFetch('/json/progress', (data) => {
-    //     console.log('HOOKED OUTGOING /json/progress')
-    //     console.log(data);
-    //     return data;
-    // });
-
     // window.__wp__.Interceptor.hookOutgoingFetch('/json/progress', (...args) => {
-
-    //     return [false, args];
-    // })
+    //     return args;
+    // });
 
     function injectWPIds(response) {
         response = JSON.parse(response);
@@ -68,8 +75,6 @@ window.addEventListener("beforeunload", function () { debugger; }, false);
 
         for (let i in items) {
             let id = items[i].id;
-
-            console.log(items[i])
 
             items[i].id = (typeof id == 'string') ? convertID(id) : id; // convert potential WP ids
             items[i].syn = [];
