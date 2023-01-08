@@ -1,7 +1,7 @@
 window.addEventListener("beforeunload", function () { debugger; }, false);
 
 (() => {
-    var items = [];
+    let items = [];
 
     chrome.runtime.sendMessage(window.__wp__.eid, { action: 'getReviewData' }, (data) => {
         items = data;
@@ -12,40 +12,76 @@ window.addEventListener("beforeunload", function () { debugger; }, false);
     });
 
     window.__wp__.Interceptor.hookIncomingFetch('/review/items', (data) => {
-        console.log('[INCOMING] HOOKED FETCH reviewItems request')
         return injectWPItems(data);
     });
 
     window.__wp__.Interceptor.hookOutgoingFetch('/review/items', (...args) => {
-        console.log('[OUTGOING] HOOKED FETCH reviewItems request')
-        console.log(args)
+        console.log('HOOKED OUTGOING /review/items')
         return args;
     });
 
-    // window.__wp__.Interceptor.hookOutgoing('/json/progress', (data) => {
-    //     console.log('HOOKED PROGRESS, heres the preview')
+    window.__wp__.Interceptor.hookIncomingFetch('/json/progress', (data, args) => {
+        console.log('HOOKED INCOMING /json/progress')
+
+        // if we sent a request containing a WP id
+        // it will not be in the returned data.
+        let requestIDs = Object.keys(JSON.parse(args[1].body));
+
+        for (let id of requestIDs) {
+            if (!(id in data)) {
+                data[id] = [0, ''];
+            }
+        }
+
+        return data;
+    });
+
+    window.__wp__.Interceptor.hookOutgoingFetch('/json/progress', (...args) => {
+        console.log('HOOKED OUTGOING /json/progress')
+        return args;
+    });
+
+    // window.__wp__.Interceptor.hookOutgoingFetch('/json/progress', (data) => {
+    //     console.log('HOOKED OUTGOING /json/progress')
     //     console.log(data);
-    //     return [true, data];
+    //     return data;
+    // });
+
+    // window.__wp__.Interceptor.hookOutgoingFetch('/json/progress', (...args) => {
+
+    //     return [false, args];
     // })
 
     function injectWPIds(response) {
         response = JSON.parse(response);
 
         for (let i in items) {
-            let id = items[i].id;
-            id = parseInt(id.substring(3, id.length))
-            response.unshift(Number.MAX_SAFE_INTEGER - id);
+            let id = convertID(items[i].id);
+            response.unshift(id);
         }
 
         return JSON.stringify(response);
     }
 
     function injectWPItems(data) {
+        //data = [];
+
         for (let i in items) {
+            let id = items[i].id;
+
+            console.log(items[i])
+
+            items[i].id = (typeof id == 'string') ? convertID(id) : id; // convert potential WP ids
+            items[i].syn = [];
             data.unshift(items[i]);
         }
 
         return data;
+    }
+
+    function convertID(id) {
+        let newId = parseInt(id.substring(3, id.length));
+        return Number.MAX_SAFE_INTEGER - newId;
     }
 
 })();

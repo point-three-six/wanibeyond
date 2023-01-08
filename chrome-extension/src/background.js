@@ -44,7 +44,7 @@ async function fetchUserData() {
 async function getLessonData() {
     let decks;
 
-    if (!userData) {
+    if (Object.keys(userData).length == 0) {
         let data = await getUserDataStore();
         decks = data.wp_data.data.decks;
     } else {
@@ -92,8 +92,11 @@ async function getReviewData() {
             // here we need to verify if the item is in the lesson stage.
             // an item is in the lesson stage if it has no generated assignment.
             if (item.assignment.length > 0) {
+                // inject assignment stage to item data
+                item.data.srs = item.assignment[0].stage;
+
                 //deck.items[i].data.__wp__ = true;
-                items.unshift(deck.items[i].data)
+                items.unshift(item.data)
             }
         }
     }

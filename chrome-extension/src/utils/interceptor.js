@@ -106,15 +106,13 @@
         }
 
         // modify arguments before request
-        const response = await origFetch(...args);
-
-        // let response;
-        // if (shortUrl in window.__wp__.Interceptor.hooksInFetch) {
-        //     let newArgs = window.__wp__.Interceptor.hooksOutFetch[shortUrl](...args);
-        //     response = await origFetch(...newArgs);
-        // } else {
-        //     response = await origFetch(...args);
-        // }
+        let response;
+        if (shortUrl in window.__wp__.Interceptor.hooksOutFetch) {
+            let newArgs = window.__wp__.Interceptor.hooksOutFetch[shortUrl](...args);
+            response = await origFetch(...newArgs);
+        } else {
+            response = await origFetch(...args);
+        }
 
         // carry out fetch
         let contentType = response.headers.get('content-type');
@@ -122,9 +120,8 @@
         if (contentType.indexOf('application/json') != -1) {
             let body = await response.clone().json();
 
-            if (shortUrl in window.__wp__.Interceptor.hooksOutFetch) {
-                let modifiedBody = window.__wp__.Interceptor.hooksInFetch[shortUrl](body);
-
+            if (shortUrl in window.__wp__.Interceptor.hooksInFetch) {
+                let modifiedBody = window.__wp__.Interceptor.hooksInFetch[shortUrl](body, args);
                 return {
                     type: 'basic',
                     ok: true,
