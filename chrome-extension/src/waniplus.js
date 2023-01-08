@@ -30,6 +30,9 @@
             case '/lesson/session':
                 dependencies.push('src/pages/pg-wk-lessons.js')
                 break
+            case '/review/session':
+                dependencies.push('src/pages/pg-wk-reviews.js')
+                break
             default:
                 break
         }

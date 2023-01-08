@@ -1,6 +1,7 @@
 const endpoint = 'http://localhost:3000'
 
-let userData = [];
+// use data returned from /api/me
+let userData = {};
 
 // store locally completed items until they can
 // be sent to the server to be processed.
@@ -19,7 +20,7 @@ function init() {
             console.log('User data set!')
         });
 
-    }, { method: 'GET', headers: headers });
+    });
 }
 
 async function sync() {
@@ -35,14 +36,20 @@ async function setUserData(data) {
 }
 
 async function fetchUserData() {
-    const res = await fetch(endpoint + '/api/me');
+    const res = await fetch(endpoint + '/api/me', { method: 'GET', headers: headers });
     const data = await res.json();
     return data;
 }
 
 async function getLessonData() {
-    let data = await getUserDataStore();
-    let decks = data.wp_data.data.decks;
+    let decks;
+
+    if (!userData) {
+        let data = await getUserDataStore();
+        decks = data.wp_data.data.decks;
+    } else {
+        decks = userData.data.decks;
+    }
 
     // congregate items from all enabled decks
     let items = [];
@@ -50,17 +57,64 @@ async function getLessonData() {
     for (let i in decks) {
         let deck = decks[i];
         for (let i in deck.items) {
-            deck.items[i].data.__wp__ = true;
-            items.unshift(deck.items[i].data)
+            let item = deck.items[i];
+
+            // here we need to verify if the item is in the lesson stage.
+            // an item is in the lesson stage if it has no generated assignment.
+            if (item.assignment.length == 0) {
+                //deck.items[i].data.__wp__ = true;
+                items.unshift(deck.items[i].data)
+            }
         }
     }
 
     return items;
 }
 
-async function itemSRSCompleted(data) {
-    console.log('bg received itemSRSCompleted action')
-    console.log(data)
+async function getReviewData() {
+    let decks;
+
+    if (!userData) {
+        let data = await getUserDataStore();
+        decks = data.wp_data.data.decks;
+    } else {
+        decks = userData.data.decks;
+    }
+
+    // congregate items from all enabled decks
+    let items = [];
+
+    for (let i in decks) {
+        let deck = decks[i];
+        for (let i in deck.items) {
+            let item = deck.items[i];
+
+            // here we need to verify if the item is in the lesson stage.
+            // an item is in the lesson stage if it has no generated assignment.
+            if (item.assignment.length > 0) {
+                //deck.items[i].data.__wp__ = true;
+                items.unshift(deck.items[i].data)
+            }
+        }
+    }
+
+    return items;
+}
+
+
+async function itemSRSCompleted(items) {
+    const res = await fetch(endpoint + '/api/items/completed', {
+        headers: headers,
+        method: 'POST',
+        body: JSON.stringify(items),
+    });
+    const data = await res.json();
+
+    // update locally
+    if (res.status() == 200) {
+
+    }
+
     return true;
 }
 
@@ -72,12 +126,17 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
             case 'getLessonData':
                 console.log('Action getLessonData . . .')
                 getLessonData().then((data) => {
-                    console.log(data)
+                    sendResponse(data);
+                });
+                break;
+            case 'getReviewData':
+                console.log('Action getReviewData . . .')
+                getReviewData().then((data) => {
                     sendResponse(data);
                 });
                 break;
             case 'itemSRSCompleted':
-                itemSRSCompleted().then((data) => {
+                itemSRSCompleted(msg.items).then((data) => {
                     sendResponse(data);
                 });
                 break;

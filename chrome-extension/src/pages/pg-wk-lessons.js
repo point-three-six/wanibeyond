@@ -15,18 +15,13 @@
 
         let extracted = extractIDsByType(ids);
 
-        console.log(extracted)
-
         let filteredIDs = extracted.wk;
         params.set('keys[]', filteredIDs);
         newData = params.toString();
 
         if (extracted.wp.length > 0) {
-            chrome.runtime.sendMessage(window.__wp__.eid, { action: 'itemSRSCompleted' });
+            chrome.runtime.sendMessage(window.__wp__.eid, { action: 'itemSRSCompleted', items: extracted.wp });
         }
-
-        console.log('newData')
-        console.log(newData)
 
         return [(filteredIDs > 0), newData];
     })

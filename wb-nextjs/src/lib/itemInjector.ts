@@ -7,12 +7,8 @@ function extractIDsByType(ids: Array<number | string>) {
     for (let i = 0; i < ids.length; i++) {
         let id = ids[i];
         if (typeof id == 'string') { // wk items will be a string with the format wk-###
-            let lasti = id.lastIndexOf('wk');
-
-            if (lasti != -1) {
-                let numericalId = parseInt(id.substring(lasti + 3, id.length));
-                wkIds.push(numericalId);
-            }
+            let numericalId = parseInt(id.substring(3, id.length));
+            wkIds.push(numericalId);
         } else {
             wpIds.push(id);
         }
@@ -67,7 +63,6 @@ export default async function injectItemData(itemData) {
                         let wkItem = wkItems[x];
 
                         if ('wk-' + wkItem.id == id) {
-                            console.log(wkItem.id)
 
                             let obj = {
                                 'en': '',
@@ -138,8 +133,6 @@ export default async function injectItemData(itemData) {
             }
         }
     }
-
-    console.log(itemData)
 
     return itemData;
 }

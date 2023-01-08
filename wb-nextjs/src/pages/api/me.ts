@@ -11,12 +11,20 @@ async function getUserDecks(userId) {
         },
         include: {
             items: {
-                select: {
-                    id: true,
-                    data: true,
-                    deckId: true,
-                    level: true,
-                    type: true
+                // select: {
+                //     id: true,
+                //     data: true,
+                //     deckId: true,
+                //     level: true,
+                //     type: true
+                // },
+                include: {
+                    assignment: {
+                        select: {
+                            stage: true,
+                            lastAdvance: true
+                        }
+                    }
                 }
             }
         }
