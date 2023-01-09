@@ -14,6 +14,7 @@
             padding: 0;
             margin: 0;
             width: 250px;
+            font-size: .9em;
         }
 
         #header {
@@ -22,7 +23,11 @@
             font-size: 1.25em;
             font-weight: bold;
             background-color: slategray;
-            color: snow;
+            color: rgb(252, 252, 252);
+        }
+
+        #loading {
+            text-align: center;
         }
 
         #content {
@@ -34,10 +39,37 @@
         #footer {
             text-align: center;
             font-size: .85em;
+            margin: 5px;
+            margin-top: 15px;
+        }
+
+        #decks {
+            display: flex;
+        }
+
+        .deck {
+            flex: 1;
+            padding: 5px;
+            font-weight: bold;
+            background-color: #f4f3f3;
         }
 
         .hidden {
             display: none;
+        }
+
+        .label {
+            font-weight: bold;
+            color: slategray;
+            font-size: .9em;
+        }
+
+        a,
+        a:hover,
+        a:focus,
+        a:visited {
+            color: black;
+            text-decoration: none;
         }
     </style>
 </head>
@@ -47,11 +79,22 @@
         WaniPlus
     </div>
     <div id="content">
-        <div id="user" class="hidden">
-            You are logged in.
+        <div id="loading">
+            Loading . . .
         </div>
-        <div id="guest">
-            You are a guest.
+        <div id="user" class="hidden">
+            <div class="label" style="margin-bottom:5px">
+                User
+            </div>
+            <div style="margin-bottom:15px">
+                <span id="username">
+                    You are not signed in to WaniPlus.
+                </span>
+            </div>
+            <div class="label" style="margin-bottom:5px">
+                Installed Decks
+            </div>
+            <div id="decks"></div>
         </div>
     </div>
     <div id="footer">

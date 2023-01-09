@@ -14,7 +14,7 @@ async function sync() {
     // first check to see if our user is logged in.
     session = await getSession();
 
-    if (Object.keys(session) > 0) {
+    if (Object.keys(session).length > 0) {
         isGuest = false;
 
         userData = await fetchUserData();
@@ -84,7 +84,7 @@ async function getSession() {
 }
 
 async function getGuestData() {
-    return (await chrome.storage.local.get(['wp_guest'])).wp_data;
+    return (await chrome.storage.local.get(['wp_guest'])).wp_guest;
 }
 
 async function setGuestData(data) {
@@ -245,7 +245,7 @@ function calcIfSrsReady(assignment) {
 }
 
 chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
-    if (sender.origin === 'https://www.wanikani.com') {
+    if (sender.origin === 'https://www.wanikani.com' || sender.origin === 'https://www.waniplus.com') {
         const action = msg.action;
 
         switch (action) {
@@ -266,7 +266,8 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
                 break;
             case 'getState':
                 sendResponse({
-                    loggedIn: false
+                    session: session,
+                    decks: userData.data.decks
                 })
                 break;
             default:
@@ -276,5 +277,20 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
     }
 });
 
+chrome.runtime.onMessage.addListener(
+    function (msg, sender, sendResponse) {
+        const action = msg.action;
+
+        switch (action) {
+            case 'getState':
+                sendResponse({
+                    session: session,
+                    decks: userData.data.decks
+                })
+                break;
+            default:
+        }
+    }
+);
 
 sync();
