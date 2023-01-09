@@ -41,6 +41,26 @@ async function getUserDecks(userId) {
     return decks;
 }
 
+async function getGuestDecks(ids: number[]) {
+    let decks = await prisma.deck.findMany({
+        where: {
+            id: { in: ids },
+        },
+        include: {
+            items: true
+        }
+    });
+
+    for (let i = 0; i < decks.length; i++) {
+        for (let x = 0; x < decks[i].items.length; x++) {
+            let injected = await injectItemData(decks[i].items[x].data);
+            decks[i].items[x].data = injected;
+        }
+    }
+
+    return decks;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     //doStuff();
     const session = getSession(req.cookies);
@@ -57,6 +77,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
         });
     } else {
-        res.status(200).json({});
+        let guestDecks = await getGuestDecks(req.body.decks);
+
+        res.status(200).json(guestDecks);
     }
 }

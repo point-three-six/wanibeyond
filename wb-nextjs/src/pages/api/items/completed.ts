@@ -45,7 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                                 id: id
                             }
                         },
-                        lastAdvance: new Date()
+                        lastAdvance: new Date().toISOString()
                     }
                 });
             } else {
@@ -65,7 +65,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     },
                     data: {
                         stage: newStage,
-                        lastAdvance: new Date(),
+                        lastAdvance: new Date().toISOString(),
                     }
                 });
             }

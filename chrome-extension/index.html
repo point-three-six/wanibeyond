@@ -1,1 +1,62 @@
-hi
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>WaniPlus</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <script src='popup.js'></script>
+    <style>
+        body,
+        html {
+            padding: 0;
+            margin: 0;
+            width: 250px;
+        }
+
+        #header {
+            text-align: center;
+            padding: 4px;
+            font-size: 1.25em;
+            font-weight: bold;
+            background-color: slategray;
+            color: snow;
+        }
+
+        #content {
+            padding: 8px;
+            margin-top: 4px;
+            margin-bottom: 4px;
+        }
+
+        #footer {
+            text-align: center;
+            font-size: .85em;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="header">
+        WaniPlus
+    </div>
+    <div id="content">
+        <div id="user" class="hidden">
+            You are logged in.
+        </div>
+        <div id="guest">
+            You are a guest.
+        </div>
+    </div>
+    <div id="footer">
+        <span id="version"></span>
+    </div>
+</body>
+
+</html>

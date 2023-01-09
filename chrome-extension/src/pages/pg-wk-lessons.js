@@ -20,7 +20,12 @@
         newData = params.toString();
 
         if (extracted.wp.length > 0) {
-            chrome.runtime.sendMessage(window.__wp__.eid, { action: 'itemSRSCompleted', items: extracted.wp });
+            let completions = [];
+            extracted.wp.forEach(id => {
+                completions.push([id, false]);
+            });
+
+            chrome.runtime.sendMessage(window.__wp__.eid, { action: 'itemSRSCompleted', items: completions });
         }
 
         return [(filteredIDs > 0), newData];
