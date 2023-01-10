@@ -63,7 +63,7 @@ async function getGuestDecks(ids: number[]) {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     //doStuff();
-    const session = getSession(req.cookies);
+    const session = await getSession(req.cookies);
 
     if (session) {
         let myDecks = await getUserDecks(session.id);

@@ -20,7 +20,7 @@ async function changeLevel(userId, itemId, deckId, newLevel) {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const session = getSession(req.cookies);
+    const session = await getSession(req.cookies);
 
     let data = JSON.parse(req.body);
 

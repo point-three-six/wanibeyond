@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation'
-import useSWR from 'swr'
+import { setCookie } from 'cookies-next';
 
 const fetcher = (url: string) => fetch(url).then(res => res.json())
 
@@ -25,8 +25,19 @@ export default function page() {
             email: email,
             username: username,
             password: password
-        }).then((res) => {
+        }).then(async (res) => {
             if (res.status == 200) {
+                let data = await res.json();
+
+                const token = data.token;
+
+                setCookie('wp_session', token, {
+                    path: '/',
+                    maxAge: 3600 * 24 * 7 * 30, // Expires after 1hr
+                    sameSite: true
+                });
+
+                router.refresh();
                 router.push('/')
             }
         })

@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from '../../lib/sessionApiFallback'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const session = getSession(req.cookies);
+    const session = await getSession(req.cookies);
 
     if (session) {
         res.status(200).json({

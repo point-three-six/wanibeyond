@@ -35,7 +35,7 @@ function validateUrl(value: string) {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const session = getSession(req.cookies);
+    const session = await getSession(req.cookies);
 
     if (session) {
         let data = JSON.parse(req.body);
