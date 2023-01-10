@@ -7,11 +7,11 @@
     if (debug) console.debug('WaniPlus: ', version);
 
     function init() {
-        const dependencies = getDependencies();
-        injectDependencies(dependencies);
+        const deps = getDeps();
+        injectDeps(deps);
     }
 
-    function getDependencies() {
+    function getDeps() {
         let loc = window.location.pathname;
         if (loc.charAt(loc.length - 1) == '/') {
             loc = loc.replace(/\/+$/, '')
@@ -40,17 +40,18 @@
         return dependencies;
     }
 
-    function injectDependencies(dependencies) {
-        for (let i = 0; i < dependencies.length; i++) {
-            if (debug) console.log('Injecting dependency:', dependencies[i])
 
-            let s = document.createElement('script');
-            s.src = chrome.runtime.getURL(dependencies[i]);
-            (document.head || document.documentElement).appendChild(s);
-            s.onload = function () {
-                s.remove();
-            };
-        }
+    function injectDeps(deps) {
+        if (debug) console.log('Injecting dependency:', deps[0])
+        let s = document.createElement('script');
+        s.src = chrome.runtime.getURL(deps[0]);
+        (document.head || document.documentElement).appendChild(s);
+        s.onload = function () {
+            if (deps.length > 0) injectDeps(deps);
+            s.remove();
+        };
+        deps.shift();
+        console.log(deps)
     }
 
     init();

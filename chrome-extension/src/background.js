@@ -10,8 +10,6 @@ headers.append('pragma', 'no-cache');
 headers.append('cache-control', 'no-cache');
 
 async function sync() {
-    console.log('sync')
-
     // first check to see if our user is logged in.
     session = await getSession();
 
@@ -43,18 +41,17 @@ async function sync() {
 
         // check if the guest has decks installed
         if (guestData.data.decks.length > 0) {
-            let deckIDs = [];
-            guestData.data.decks.forEach(deck => {
-                deckIDs.push(deck.id);
-            });
-
+            let deckIDs = guestData.data.decks.map(deck => deck.id);
             let decks = await fetchUserData(deckIDs);
+
             guestData.data.decks = insertGuestSRSData(decks, guestData.srs);
         }
 
         userData = guestData;
         setGuestData(userData);
     }
+
+    console.log('sync')
 }
 
 function insertGuestSRSData(decks, srs) {
@@ -71,8 +68,6 @@ function insertGuestSRSData(decks, srs) {
 
             return item;
         });
-
-        return deck;
     });
 
     return decks;
@@ -93,6 +88,7 @@ async function getGuestData() {
 }
 
 async function setGuestData(data) {
+    data.updatedAt = new Date().getTime();
     await chrome.storage.local.set({ 'wp_guest': data });
 }
 
@@ -101,6 +97,7 @@ async function getUserData() {
 }
 
 async function setUserData(data) {
+    data.updatedAt = new Date().getTime();
     await chrome.storage.local.set({ 'wp_data': data });
 }
 
@@ -197,7 +194,7 @@ async function itemSRSCompleted(completions) {
                         if (item.assignment.length == 0) {
                             deck.items[i].assignment[0] = {
                                 stage: 0,
-                                lastAdvance: new Date().toString()
+                                lastAdvance: new Date().toISOString()
                             };
                         } else {
                             let curStage = deck.items[i].assignment[0].stage;
@@ -249,7 +246,6 @@ function calcIfSrsReady(assignment) {
         8: 30 * 4 * 24 * 60
     };
 
-    return true;
     return (elapsed > times[stage] * 60000);
 }
 
@@ -302,5 +298,24 @@ chrome.runtime.onMessage.addListener(
     }
 );
 
+// quick load state until there is a sync
+chrome.storage.local.get(['wp_data', 'wp_guest'], ({ wp_data, wp_guest }) => {
+    isGuest = false;
+    if (wp_data && wp_guest) {
+        if (wp_data.updatedAt > wp_guest.updatedAt) {
+            userData = wp_data;
+        } else {
+            userData = wp_guest;
+            isGuest = true;
+        }
+    } else {
+        userData = wp_data;
+    }
+});
+
+chrome.alarms.create({ delayInMinutes: 5, periodInMinutes: 5 });
+chrome.alarms.onAlarm.addListener(() => {
+    sync();
+});
+
 sync();
-setInterval(sync, 1000 * 60 * 15);
