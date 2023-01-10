@@ -2,10 +2,12 @@
     var items = [];
 
     chrome.runtime.sendMessage(window.__wp__.eid, { action: 'getLessonData' }, (data) => {
+        console.log('send msg');
         items = data;
     });
 
     window.__wp__.Interceptor.hookIncoming('/lesson/queue', (data) => {
+        console.log('hook request')
         return injectWPData(data);
     });
 

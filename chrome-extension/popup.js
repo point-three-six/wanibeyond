@@ -28,12 +28,13 @@ window.addEventListener('load', () => {
 
     chrome.runtime.sendMessage({ action: 'getState' }, (state) => {
         let session = state.session;
+        let decks = state.decks || [];
 
         if ('user' in session) {
             document.getElementById('username').innerText = session.user.username;
         }
 
-        buildDecksEl(state.decks);
+        buildDecksEl(decks);
         hideLoading();
         showUser();
     });

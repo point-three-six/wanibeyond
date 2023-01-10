@@ -3,6 +3,9 @@
 import React from 'react'
 
 export default function LevelList(props) {
+    let dragItem: object;
+    let dragOverLevel: number;
+
     function getItemTitle(item) {
         if (item.type == 'radical') return item.data.rad;
         if (item.type == 'kanji') return item.data.kan;
@@ -11,32 +14,42 @@ export default function LevelList(props) {
         return '';
     }
 
-    const dragStart = (e, position) => {
-        dragItem.current = position;
-        console.log(e.target.innerHTML);
+    const dragStart = (e, item) => {
+        dragItem = item;
     };
 
-    const dragEnter = (e, position) => {
-        dragOverItem.current = position;
-        console.log(e.target.innerHTML);
+    const dragEnter = (e, level) => {
+        dragOverLevel = level;
     };
-
 
     const drop = (e) => {
-        const copyListItems = [...list];
-        const dragItemContent = copyListItems[dragItem.current];
-        copyListItems.splice(dragItem.current, 1);
-        copyListItems.splice(dragOverItem.current, 0, dragItemContent);
-        dragItem.current = null;
-        dragOverItem.current = null;
-        setList(copyListItems);
+        if (dragItem.level != dragOverLevel) {
+            updateItemLevel(dragItem, dragOverLevel);
+        }
     };
+
+    async function updateItemLevel(item, newLevel) {
+        const res = await fetch(`/api/deck/changeLevel`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                itemId: item.id,
+                level: newLevel,
+                deckId: props.deck.id
+            })
+        })
+
+        if (res.status == 200) {
+            props.onItemLevelChange(item, newLevel);
+        }
+    }
 
     return (
         <div>
             {
                 props.levels.map(level =>
-                    <div key={level}>
+                    <div id={`level-${level}`} key={level}
+                        onDragEnter={(e) => dragEnter(e, level)}
+                        onDragEnd={drop}>
                         <div className='flex items-center'>
                             <div className='flex-grow h-px bg-gray-400'></div>
                             <span className='flex-shrink text-lg text-slate-500 px-4 font-light'>
@@ -49,7 +62,7 @@ export default function LevelList(props) {
                                 .filter(item => item.level == level)
                                 .filter(item => item.data.en[0].toLowerCase().indexOf(props.filter.toLowerCase()) != -1)
                                 .map(item =>
-                                    <div key={item.id} className={`item ${item.type}`} onClick={() => props.onItemClick(item.id)}>
+                                    <div key={item.id} draggable onDragStart={(e) => dragStart(e, item)} className={`item ${item.type}`} onClick={() => props.onItemClick(item.id)}>
                                         {getItemTitle(item)}
                                         <div className='meaning text-xs'>
                                             {item.data.en[0]}

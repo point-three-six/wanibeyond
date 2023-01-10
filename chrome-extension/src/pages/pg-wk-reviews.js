@@ -5,6 +5,8 @@
     let items = [];
 
     chrome.runtime.sendMessage(window.__wp__.eid, { action: 'getReviewData' }, (data) => {
+        console.log(options)
+
         items = data;
         for (let item of data) {
             itemsIds.push(item.id);

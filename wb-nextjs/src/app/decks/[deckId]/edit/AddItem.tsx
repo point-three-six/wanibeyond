@@ -54,6 +54,11 @@ export default function AddItem(props) {
     let [isAdverb, setIsAdverb] = useState(predefinedPos ? predefinedPos.indexOf('adverb') != -1 : false);
     let [isNumeral, setIsNumeral] = useState(predefinedPos ? predefinedPos.indexOf('numeral') != -1 : false);
 
+    console.log(auxMeanings)
+    console.log(auxReadings)
+
+    console.log(eitm)
+
     async function sendRequest(url, arg) {
         return await fetch(url, {
             method: 'POST',
@@ -78,6 +83,7 @@ export default function AddItem(props) {
                 'type': 'whitelist'
             });
         }
+        return newMeanings;
     }
 
     function formatAuxiliaryReadings(readings: string[]) {
@@ -88,6 +94,7 @@ export default function AddItem(props) {
                 'type': 'whitelist'
             });
         }
+        return newReadings;
     }
 
     // build the payload dependent on itemType

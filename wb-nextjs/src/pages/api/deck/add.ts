@@ -181,13 +181,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         let data = JSON.parse(req.body);
 
         if (data.update) {
-            console.log('UPDATING')
             let r = await updateItem(session.id, data.update, data.payload);
             res.status(200).json({
                 item: r
             });
         } else {
-            console.log('INSERTING')
             let r = await addItem(session.id, data.deckId, data.payload);
             res.status(200).json({
                 item: r

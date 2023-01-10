@@ -9,24 +9,15 @@ import LevelList from './LevelList';
 
 export default function ItemEditor(props) {
     const [deck, setDeck] = useState(props.deck);
-
-    let levels = [0];
-
-    deck.items.forEach(item => {
-        const level = item.level;
-        if (levels.indexOf(level) == -1) levels.push(level)
-    });
-
-    levels.sort(function (a, b) {
-        return a - b;
-    });
+    const [levels, setLevels] = useState(
+        props.deck.items
+            .map(item => item.level)
+            .filter((e, i, arr) => arr.indexOf(e) === i)
+            .sort()
+    );
 
     let [filter, setFilter] = useState('');
     let [itemEditing, setItemEditing] = useState({});
-
-    const dragItem = useRef();
-    const dragOverItem = useRef();
-    const [list, setList] = useState(['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5', 'Item 6']);
 
     // the VALUE of this will indicate the LEVEL
     // and item is currently being added to.
@@ -71,6 +62,17 @@ export default function ItemEditor(props) {
         return false;
     }
 
+    function onItemLevelChange(item, newLevel) {
+        for (let i = 0; i < deck.items.length; i++) {
+            if (deck.items[i].id == item.id) {
+                deck.items[i].level = newLevel;
+            }
+        }
+
+        // force redraw of the LevelList
+        setLevels([...levels]);
+    }
+
     return (
         <div className="editor max-width" >
             <div className='w-screen max-width flex justify-between gap-7'>
@@ -91,26 +93,26 @@ export default function ItemEditor(props) {
                 <div className='w-3/4'>
                     {
                         isAddingItem > -1 ?
-                            <AddItem back={() => {
-                                setIsAddingItem(-1)
-                                setItemEditing({})
-                            }} item={itemEditing} level={isAddingItem} deckId={deck.id} onItemAdded={handleOnItemAdded} onItemEdited={handleOnItemEdited} /> :
-                            <LevelList deck={deck} levels={levels} filter={filter} onAddItem={handleAddItem} onItemClick={handleEditItem} />
+                            <AddItem
+                                back={() => {
+                                    setIsAddingItem(-1)
+                                    setItemEditing({})
+                                }}
+                                item={itemEditing}
+                                level={isAddingItem}
+                                deckId={deck.id}
+                                onItemAdded={handleOnItemAdded}
+                                onItemEdited={handleOnItemEdited} /> :
+                            <LevelList
+                                deck={deck}
+                                levels={levels}
+                                filter={filter}
+                                onAddItem={handleAddItem}
+                                onItemClick={handleEditItem}
+                                onItemLevelChange={onItemLevelChange} />
                     }
                 </div>
             </div>
-            {/* {
-                list &&
-                list.map((item, index) => (
-                    <div style={{ backgroundColor: 'lightblue', margin: '20px 25%', textAlign: 'center', fontSize: '40px' }}
-                        key={index}
-                        onDragStart={(e) => dragStart(e, index)}
-                        onDragEnter={(e) => dragEnter(e, index)}
-                        onDragEnd={drop}
-                        draggable>
-                        {item}
-                    </div>
-                ))} */}
         </div >
     )
 }

@@ -10,6 +10,7 @@ headers.append('pragma', 'no-cache');
 headers.append('cache-control', 'no-cache');
 
 async function sync() {
+    console.log('sync')
 
     // first check to see if our user is logged in.
     session = await getSession();
@@ -204,6 +205,10 @@ async function itemSRSCompleted(completions) {
                                 userData.data.decks[x].items[i].assignment[0].stage++;
                             }
                         }
+
+                        if (isGuest) {
+                            userData.srs[item.id] = userData.data.decks[x].items[i].assignment;
+                        }
                     }
                 }
             }
@@ -294,3 +299,4 @@ chrome.runtime.onMessage.addListener(
 );
 
 sync();
+setInterval(sync, 1000 * 60 * 15);
