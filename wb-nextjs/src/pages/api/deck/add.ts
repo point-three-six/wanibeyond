@@ -108,7 +108,8 @@ async function updateItem(userId, itemId, data) {
         data: {
             en: data.en[0],
             characters: data.characters,
-            data: obj
+            data: obj,
+            level: data.level
         },
         select: {
             id: true,

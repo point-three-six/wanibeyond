@@ -54,11 +54,6 @@ export default function AddItem(props) {
     let [isAdverb, setIsAdverb] = useState(predefinedPos ? predefinedPos.indexOf('adverb') != -1 : false);
     let [isNumeral, setIsNumeral] = useState(predefinedPos ? predefinedPos.indexOf('numeral') != -1 : false);
 
-    console.log(auxMeanings)
-    console.log(auxReadings)
-
-    console.log(eitm)
-
     async function sendRequest(url, arg) {
         return await fetch(url, {
             method: 'POST',
@@ -75,27 +70,13 @@ export default function AddItem(props) {
         return pos;
     }
 
-    function formatAuxiliaryMeanings(meanings: string[]) {
-        let newMeanings = [];
-        for (let meaning of meanings) {
-            newMeanings.push({
-                'meaning': meaning,
+    const formatAuxiliary = (label: string, values: string[]) =>
+        (values || []).map((value) => {
+            return {
+                label: value,
                 'type': 'whitelist'
-            });
-        }
-        return newMeanings;
-    }
-
-    function formatAuxiliaryReadings(readings: string[]) {
-        let newReadings = [];
-        for (let reading of readings) {
-            newReadings.push({
-                'meaning': reading,
-                'type': 'whitelist'
-            });
-        }
-        return newReadings;
-    }
+            }
+        });
 
     // build the payload dependent on itemType
     function buildPayload() {
@@ -113,8 +94,8 @@ export default function AddItem(props) {
                 rmne: rmne.trim(),
                 onyomi: onyomi,
                 kunyomi: kunyomi,
-                auxiliary_meanings: formatAuxiliaryMeanings(auxMeanings),
-                auxiliary_readings: formatAuxiliaryReadings(auxReadings)
+                auxiliary_meanings: formatAuxiliary('meaning', auxMeanings),
+                auxiliary_readings: formatAuxiliary('reading', auxReadings)
             };
         } else if (itemType == 'vocab') {
             return {
@@ -137,8 +118,8 @@ export default function AddItem(props) {
                 ctx2: ctx2.trim(),
                 ctx2jap: ctx2jap.trim(),
                 collocations: collocations,
-                auxiliary_meanings: formatAuxiliaryMeanings(auxMeanings),
-                auxiliary_readings: formatAuxiliaryReadings(auxReadings)
+                auxiliary_meanings: formatAuxiliary('meaning', auxMeanings),
+                auxiliary_readings: formatAuxiliary('reading', auxReadings)
             };
         } else if (itemType == 'radical') {
             return {
@@ -149,7 +130,7 @@ export default function AddItem(props) {
                 kanji: kanji,
                 meaningHint: meaningHint.trim(),
                 mmne: mmne.trim(),
-                auxiliary_meanings: formatAuxiliaryMeanings(auxMeanings)
+                auxiliary_meanings: formatAuxiliary('meaning', auxMeanings),
             };
         }
     }
@@ -466,7 +447,7 @@ export default function AddItem(props) {
                             Auxiliary Meanings (whitelist)
                         </label>
                         <div className='mt-1'>
-                            <MultiInput value={auxMeanings} onChange={setAuxMeanings} />
+                            <MultiInput value={(auxMeanings || []).map((aux) => aux.meaning || aux.reading)} onChange={setAuxMeanings} />
                         </div>
                     </div>
                 </div>
@@ -477,7 +458,7 @@ export default function AddItem(props) {
                             Auxiliary Readings (whitelist)
                         </label>
                         <div className='mt-1'>
-                            <MultiInput value={auxReadings} onChange={setAuxReadings} />
+                            <MultiInput value={(auxReadings || []).map((aux) => aux.meaning || aux.reading)} onChange={setAuxReadings} />
                         </div>
                     </div>
                 </div>

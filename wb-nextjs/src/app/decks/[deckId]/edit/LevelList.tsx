@@ -23,7 +23,7 @@ export default function LevelList(props) {
     };
 
     const drop = (e) => {
-        if (dragItem.level != dragOverLevel) {
+        if (dragItem && dragItem.level != dragOverLevel) {
             updateItemLevel(dragItem, dragOverLevel);
         }
     };

@@ -4,26 +4,25 @@ import React from 'react';
 import AsyncSelect from 'react-select/async';
 
 export default function ItemSearch(props) {
+    let isSearchActive: boolean = false;
+    let searchResults: any[] = [];
 
     async function getItems(input: string) {
         if (!input) return [];
+
         const response = await fetch(`/api/items/get?type=${props.type}&item=${input}&deckId=${props.deckId}`)
         const data = await response.json()
 
         if (response.status == 200) {
-            let options = [];
-
-            for (let item of data) {
-                options.push({
+            return data.map(item => {
+                return {
                     label: item.en + ' (' + item.characters + ')',
                     value: item.id
-                });
-            }
-
-            return options;
-        } else {
-            return [];
+                }
+            });
         }
+
+        return [];
     }
 
     function getColor() {
@@ -39,11 +38,7 @@ export default function ItemSearch(props) {
 
     function buildOptions(arr) {
         if (!arr) return [];
-        let options = [];
-        for (let val of arr) {
-            options.push(createOption(val));
-        }
-        return options;
+        return arr.map(val => createOption(val));
     }
 
     const promiseOptions = async (inputValue: string) => await getItems(inputValue);
@@ -56,11 +51,9 @@ export default function ItemSearch(props) {
             loadOptions={promiseOptions}
             value={buildOptions(props.value)}
             onChange={(value) => {
-                let cleanedVals = [];
-                for (let item of value) {
-                    cleanedVals.push(item.value);
-                }
-                props.onChange(cleanedVals)
+                props.onChange(
+                    value.map(item => item.value)
+                )
             }}
             placeholder='Search items...'
             styles={{

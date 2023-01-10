@@ -8,13 +8,13 @@ import AddItem from './AddItem';
 import LevelList from './LevelList';
 
 export default function ItemEditor(props) {
-    const [deck, setDeck] = useState(props.deck);
-    const [levels, setLevels] = useState(
-        props.deck.items
-            .map(item => item.level)
+    const generateLevels = (items) =>
+        items.map(item => item.level)
             .filter((e, i, arr) => arr.indexOf(e) === i)
             .sort()
-    );
+
+    const [deck, setDeck] = useState(props.deck);
+    const [levels, setLevels] = useState(generateLevels(deck.items));
 
     let [filter, setFilter] = useState('');
     let [itemEditing, setItemEditing] = useState({});
@@ -40,19 +40,22 @@ export default function ItemEditor(props) {
     }
 
     function handleOnItemAdded(data) {
-        let updatedDeck = deck;
         deck.items.push(data);
-        setDeck(updatedDeck);
+        setDeck(deck);
     }
 
     function handleOnItemEdited(data) {
-        let updatedDeck = deck;
-        for (let i = 0; i < updatedDeck.items.length; i++) {
-            if (updatedDeck.items[i].id == data.id) {
-                updatedDeck.items[i] = data;
+        for (let i = 0; i < deck.items.length; i++) {
+            if (deck.items[i].id == data.id) {
+                deck.items[i] = data;
+
+                //check to see if a new level was created
+                if (levels.indexOf(data.level) == -1) {
+                    setLevels(generateLevels(deck.items));
+                }
             }
         }
-        setDeck(updatedDeck);
+        setDeck(deck);
     }
 
     function getItemById(id) {

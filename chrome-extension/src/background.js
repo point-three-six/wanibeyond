@@ -79,9 +79,13 @@ function insertGuestSRSData(decks, srs) {
 }
 
 async function getSession() {
-    const res = await fetch(endpoint + '/api/session', { method: 'GET', headers: headers });
-    const data = await res.json();
-    return data;
+    try {
+        const res = await fetch(endpoint + '/api/session', { method: 'GET', headers: headers });
+        const data = await res.json();
+        return data;
+    } catch (e) {
+        return {};
+    }
 }
 
 async function getGuestData() {
