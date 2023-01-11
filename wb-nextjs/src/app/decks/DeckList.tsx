@@ -1,19 +1,15 @@
-import React from 'react'
-import prisma from '../../lib/prisma'
 import Deck from './Deck'
 
-export default async function DeckList() {
-  let decks = await prisma.deck.findMany();
-
+export default async function DeckList(props) {
   return (
     <>
-      <ul>
+      <div className='grid grid-cols-4 gap-4 mb-8'>
         {
-          decks.map((deck) => (
-            <Deck data={deck} />
+          props.decks.map((deck) => (
+            <Deck key={deck.id} deck={deck} />
           ))
         }
-      </ul>
+      </div>
     </>
   )
 }

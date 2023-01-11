@@ -1,4 +1,4 @@
-.editor .item {
+.item {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -26,29 +26,29 @@
     font-weight: bold;
 }
 
-.editor .item.add {
+.item.add {
     border: 1px dashed rgb(206, 206, 206);
     color: rgb(206, 206, 206);
     background-color: transparent;
     font-weight: bold;
 }
 
-.editor .item.kanji {
+.item.kanji {
     border-color: rgb(245, 153, 168);
     background-color: pink;
 }
 
-.editor .item.radical {
+.item.radical {
     border-color: rgb(107, 191, 230);
     background-color: rgb(143, 205, 234);
 }
 
-.editor .item.vocab {
+.item.vocab {
     border-color: rgb(201, 107, 219);
     background-color: rgb(219, 148, 233);
 }
 
-.editor .item.kana {
+.item.kana {
     border-color: rgb(234, 166, 77);
     background-color: rgb(240, 186, 114);
 }
