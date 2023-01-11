@@ -101,6 +101,8 @@ async function updateItem(userId, itemId, data) {
     if (data.type == 'vocab') obj = createVocabDataObject(data);
     if (data.type == 'radical') obj = createRadicalDataObject(data);
 
+    obj.id = 'wp-' + itemId;
+
     let r = await prisma.item.update({
         where: {
             id: itemId,
@@ -163,6 +165,8 @@ async function addItem(userId, deckId, data) {
     obj.id = 'wp-' + itemId;
     r.items[0].data = obj;
 
+    console.log('adding item ', itemId)
+
     await prisma.item.update({
         where: {
             id: itemId,
@@ -171,6 +175,8 @@ async function addItem(userId, deckId, data) {
             data: obj
         }
     });
+
+    console.log(r.items)
 
     return r.items[0];
 }

@@ -8,10 +8,12 @@ import AddItem from './AddItem';
 import LevelList from './LevelList';
 
 export default function ItemEditor(props) {
-    const generateLevels = (items) =>
-        items.map(item => item.level)
+    const generateLevels = (items) => {
+        let lvls = items.map(item => item.level)
             .filter((e, i, arr) => arr.indexOf(e) === i)
             .sort()
+        return (lvls.length > 0) ? lvls : [0];
+    }
 
     const [deck, setDeck] = useState(props.deck);
     const [levels, setLevels] = useState(generateLevels(deck.items));
@@ -42,6 +44,7 @@ export default function ItemEditor(props) {
     function handleOnItemAdded(data) {
         deck.items.push(data);
         setDeck(deck);
+        setLevels(generateLevels(deck.items));
     }
 
     function handleOnItemEdited(data) {

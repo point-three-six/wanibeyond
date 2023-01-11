@@ -19,7 +19,8 @@
 
         let dependencies = [
             'src/utils/context.js',
-            'src/utils/interceptor.js'
+            'src/utils/interceptor.js',
+            'src/utils/notify.js'
         ];
 
         switch (loc) {
@@ -51,7 +52,6 @@
             s.remove();
         };
         deps.shift();
-        console.log(deps)
     }
 
     init();

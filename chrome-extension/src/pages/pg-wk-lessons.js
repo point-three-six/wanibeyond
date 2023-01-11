@@ -2,12 +2,10 @@
     var items = [];
 
     chrome.runtime.sendMessage(window.__wp__.eid, { action: 'getLessonData' }, (data) => {
-        console.log('send msg');
         items = data;
     });
 
     window.__wp__.Interceptor.hookIncoming('/lesson/queue', (data) => {
-        console.log('hook request')
         return injectWPData(data);
     });
 
@@ -27,7 +25,10 @@
                 completions.push([id, false]);
             });
 
-            chrome.runtime.sendMessage(window.__wp__.eid, { action: 'itemSRSCompleted', items: completions });
+            console.log('sending srs complete')
+            chrome.runtime.sendMessage(window.__wp__.eid, { action: 'itemSRSCompleted', items: completions }, (res) => {
+                if (!res) window.__wp__.notify('No connection to WaniPlus. Item progress was not saved.');
+            });
         }
 
         return [(filteredIDs > 0), newData];

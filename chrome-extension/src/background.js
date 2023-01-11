@@ -13,6 +13,11 @@ async function sync() {
     // first check to see if our user is logged in.
     session = await getSession();
 
+    if (!session) {
+        console.log('Failed to sync, no connection to WaniPlus endpoint.');
+        return false;
+    }
+
     if (Object.keys(session).length > 0) {
         isGuest = false;
 
@@ -79,7 +84,7 @@ async function getSession() {
         const data = await res.json();
         return data;
     } catch (e) {
-        return {};
+        return false;
     }
 }
 
@@ -166,61 +171,66 @@ async function getReviewData() {
 
 async function itemSRSCompleted(completions) {
     //note: itemIDs are strings in the format wk-###
-
     if (!isGuest) {
-        const res = await fetch(endpoint + '/api/items/completed', {
-            headers: headers,
-            method: 'POST',
-            body: JSON.stringify(completions),
-        });
+        try {
+            const res = await fetch(endpoint + '/api/items/completed', {
+                headers: headers,
+                method: 'POST',
+                body: JSON.stringify(completions),
+            });
+            if (res.status != 200) return false;
+        } catch (e) {
+            // failed to fetch. we need to preserve SRS.
+            return false;
+        }
     }
 
     // update SRS stage values locally
-    if (isGuest || res.status == 200) {
-        let decks = userData.data.decks;
+    let decks = userData.data.decks;
 
-        for (let completion of completions) {
-            let id = completion[0];
-            let failed = completion[1];
-            let numId = parseInt(id.substring(3, id.length));
+    for (let completion of completions) {
+        let id = completion[0];
+        let failed = completion[1];
+        let numId = parseInt(id.substring(3, id.length));
 
-            for (let x in decks) {
-                let deck = decks[x];
+        for (let x in decks) {
+            let deck = decks[x];
 
-                for (let i in deck.items) {
-                    let item = deck.items[i];
+            for (let i in deck.items) {
+                let item = deck.items[i];
 
-                    if (item.id == numId) {
-                        if (item.assignment.length == 0) {
-                            deck.items[i].assignment[0] = {
-                                stage: 0,
-                                lastAdvance: new Date().toISOString()
-                            };
-                        } else {
-                            let curStage = deck.items[i].assignment[0].stage;
+                if (item.id == numId) {
+                    if (item.assignment.length == 0) {
+                        deck.items[i].assignment[0] = {
+                            stage: 0,
+                            lastAdvance: new Date().toISOString()
+                        };
 
-                            // do we need to increment or decrement?
-                            if (failed && curStage > 0) {
-                                userData.data.decks[x].items[i].assignment[0].stage--;
-                            } else if (!failed && curStage < 8) {
-                                userData.data.decks[x].items[i].assignment[0].stage++;
-                            }
+                        console.log('create assignment')
+                    } else {
+                        let curStage = deck.items[i].assignment[0].stage;
+
+                        // do we need to increment or decrement?
+                        if (failed && curStage > 0) {
+                            userData.data.decks[x].items[i].assignment[0].stage--;
+                        } else if (!failed && curStage < 8) {
+                            userData.data.decks[x].items[i].assignment[0].stage++;
                         }
+                    }
 
-                        if (isGuest) {
-                            userData.srs[item.id] = userData.data.decks[x].items[i].assignment;
-                        }
+                    if (isGuest) {
+                        userData.srs[item.id] = userData.data.decks[x].items[i].assignment;
                     }
                 }
             }
         }
+    }
 
-        // update local userData
-        if (isGuest) {
-            setGuestData(userData);
-        } else {
-            setUserData(userData);
-        }
+    // update local userData
+    if (isGuest) {
+        setGuestData(userData);
+    } else {
+        setUserData(userData);
     }
 
     return true;
