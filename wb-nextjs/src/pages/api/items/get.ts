@@ -37,6 +37,7 @@ async function search(type: string, value: string, deckId: number) {
     const wpItems = await prisma.item.findMany({
         where: {
             deckId: deckId,
+            deleted: false,
             OR: [
                 {
                     en: {

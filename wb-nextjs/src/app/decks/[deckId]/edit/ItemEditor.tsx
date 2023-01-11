@@ -68,7 +68,7 @@ export default function ItemEditor(props) {
         return false;
     }
 
-    function onItemLevelChange(item, newLevel) {
+    function handleOnItemLevelChange(item, newLevel) {
         for (let i = 0; i < deck.items.length; i++) {
             if (deck.items[i].id == item.id) {
                 deck.items[i].level = newLevel;
@@ -77,6 +77,12 @@ export default function ItemEditor(props) {
 
         // force redraw of the LevelList
         setLevels([...levels]);
+    }
+
+    function handleOnItemDeleted(deletedItem) {
+        deck.items = deck.items.filter(item => item.id != deletedItem.id);
+        setDeck(deck);
+        setLevels(generateLevels(deck.items));
     }
 
     return (
@@ -108,14 +114,16 @@ export default function ItemEditor(props) {
                                 level={isAddingItem}
                                 deckId={deck.id}
                                 onItemAdded={handleOnItemAdded}
-                                onItemEdited={handleOnItemEdited} /> :
+                                onItemEdited={handleOnItemEdited}
+                                onItemDeleted={handleOnItemDeleted}
+                            /> :
                             <LevelList
                                 deck={deck}
                                 levels={levels}
                                 filter={filter}
                                 onAddItem={handleAddItem}
                                 onItemClick={handleEditItem}
-                                onItemLevelChange={onItemLevelChange} />
+                                onItemLevelChange={handleOnItemLevelChange} />
                     }
                 </div>
             </div>

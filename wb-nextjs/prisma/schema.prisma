@@ -47,6 +47,7 @@ model Item {
   deck       Deck         @relation(fields: [deckId], references: [id])
   deckId     Int
   level      Int          @default(0)
+  deleted    Boolean      @default(false)
   assignment Assignment[]
 
   @@index([deckId, en, characters])

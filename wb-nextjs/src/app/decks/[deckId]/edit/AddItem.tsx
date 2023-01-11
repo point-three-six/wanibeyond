@@ -5,6 +5,7 @@ import MultiInput from './MultiInput';
 import ItemSearch from './ItemSearch';
 import '../../../../styles/checkmark.css'
 import { faCropSimple } from '@fortawesome/free-solid-svg-icons';
+import DeleteModal from './DeleteModal';
 
 function getTypeDisplayText(value: string) {
     if (value == '') return 'Characters';
@@ -17,6 +18,9 @@ function getTypeDisplayText(value: string) {
 export default function AddItem(props) {
     // this will only be set when EDITING an item
     let eitm = Object.keys(props.item).length > 0 ? props.item : false;
+
+    // modal state
+    let [showDeleteModal, setShowDeleteModal] = useState(false);
 
     // item data
     let [itemType, setItemType] = useState(eitm ? eitm.type : '');
@@ -161,15 +165,38 @@ export default function AddItem(props) {
         })
     }
 
+    async function deleteItem(item) {
+        const res = await fetch(`/api/deck/deleteItem`, {
+            method: 'DELETE',
+            body: JSON.stringify({
+                itemId: item.id,
+                deckId: props.deckId
+            })
+        })
+
+        if (res.status == 200) {
+            setShowDeleteModal(false);
+            props.onItemDeleted(props.item);
+            props.back();
+        }
+    }
+
 
     return (
         <div className={props.addingItem}>
+            <DeleteModal
+                hidden={!showDeleteModal}
+                onDelete={() => deleteItem(props.item)}
+                onCancel={() => setShowDeleteModal(false)}
+            />
             <div className='flex justify-between mb-4'>
-                <div className='font-medium text-gray-700'>
+                <div className='font-medium text-gray-700 underline'>
                     <a href="#" onClick={() => props.back()}>{`<< go back`}</a>
                 </div>
-                <div className='font-medium text-gray-700'>
-                    Level {props.level}
+                <div className='font-medium text-red-500 underline'>
+                    <a href="#" onClick={() => setShowDeleteModal(true)}>
+                        delete item
+                    </a>
                 </div>
             </div>
             <div className='text-center'>

@@ -18,6 +18,9 @@ async function getUserDecks(userId) {
                 //     level: true,
                 //     type: true
                 // },
+                where: {
+                    deleted: false
+                },
                 include: {
                     assignment: {
                         select: {

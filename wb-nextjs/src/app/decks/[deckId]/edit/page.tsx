@@ -16,6 +16,9 @@ async function getDeckData(deckId, userId) {
                 }
             },
             items: {
+                where: {
+                    deleted: false,
+                },
                 select: {
                     id: true,
                     data: true,

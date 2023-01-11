@@ -56,15 +56,13 @@
 
         // tell extension to upgrade SRS
         if (completions.length > 0) {
-            chrome.runtime.sendMessage(window.__wp__.eid, { action: 'itemSRSCompleted', items: completions });
+            chrome.runtime.sendMessage(window.__wp__.eid, { action: 'itemSRSCompleted', items: completions }, (res) => {
+                if (!res) window.__wp__.notify('No connection to WaniPlus. Item progress was not saved.');
+            });
         }
 
         return data;
     });
-
-    // window.__wp__.Interceptor.hookOutgoingFetch('/json/progress', (...args) => {
-    //     return args;
-    // });
 
     function injectWPIds(response) {
         response = JSON.parse(response);
