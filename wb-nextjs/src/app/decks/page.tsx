@@ -14,6 +14,7 @@ export default async function DeckListPage() {
 
   return (
     <div>
+      <h1 className="text-4xl font-extrabold text-slate-700 mb-2">Decks</h1>
       {/* @ts-ignore */}
       <div className='font-medium text-gray-700 mb-2'>
         Most Popular

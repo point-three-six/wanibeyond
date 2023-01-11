@@ -1,5 +1,6 @@
 import ItemList from './ItemList';
 import prisma from '../../../lib/prisma';
+import InstallButton from '../../components/InstallButton';
 
 export default async function DeckPage({ params: { deckId } }) {
   let id = parseInt(deckId);
@@ -30,11 +31,16 @@ export default async function DeckPage({ params: { deckId } }) {
   return (
     <>
       <div className='max-width'>
-        <div>
-          <div className='font-bold text-xl text-slate-700'>
-            {deck.name}
+        <div className='flex justify-between mb-5'>
+          <div>
+            <div className='font-bold text-xl text-slate-700'>
+              {deck.name}
+            </div>
+            Created by {deck.user.username}
           </div>
-          Created by {deck.user.username}
+          <div>
+            <InstallButton deckId={deck.id} />
+          </div>
         </div>
         <ItemList items={deck.items} />
       </div>

@@ -19,8 +19,8 @@
   },
   "externally_connectable": {
     "matches": [
-      "https://*.wanikani.com/*",
-      "https://*.waniplus.com/*",
+      "https://www.wanikani.com/*",
+      "https://www.waniplus.com/*",
       "http://localhost:3000/*"
     ]
   },
@@ -46,9 +46,9 @@
         "https://www.wanikani.com/*"
       ],
       "js": [
-        "src/waniplus.js"
+        "src/wanikani.js"
       ],
-      "run_at": "document_start"
+      "run_at": "document_idle"
     }
   ],
   "action": {

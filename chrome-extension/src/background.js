@@ -259,11 +259,26 @@ function calcIfSrsReady(assignment) {
     return (elapsed > times[stage] * 60000);
 }
 
+function hasDeck(id) {
+    for (let deck of userData.data.decks) {
+        if (deck.id == id) return true;
+    }
+    return false;
+}
+
 chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
-    if (sender.origin === 'https://www.wanikani.com' || sender.origin === 'https://www.waniplus.com') {
+    if (['http://localhost:3000', 'https://www.wanikani.com', 'https://www.waniplus.com'].indexOf(sender.origin) != -1) {
         const action = msg.action;
 
         switch (action) {
+            case 'hasDeck':
+                sendResponse(hasDeck(msg.message));
+                break;
+            case 'install':
+                setTimeout(() => {
+                    sendResponse(true);
+                }, 1000);
+                break;
             case 'getLessonData':
                 getLessonData().then((data) => {
                     sendResponse(data);
