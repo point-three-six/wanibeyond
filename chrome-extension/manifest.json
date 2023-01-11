@@ -48,7 +48,7 @@
       "js": [
         "src/wanikani.js"
       ],
-      "run_at": "document_idle"
+      "run_at": "document_start"
     }
   ],
   "action": {

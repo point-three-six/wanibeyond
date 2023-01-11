@@ -1,28 +1,33 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from '../../lib/sessionApiFallback'
 import prisma from '../../lib/prisma';
-import doStuff from '../../lib/test';
 import injectItemData from '../../lib/itemInjector';
 
-async function getUserDecks(userId) {
+async function getUserDecks(userId, ids: number[]) {
     let decks = await prisma.deck.findMany({
         where: {
-            userId: userId
+            id: { in: ids },
         },
-        include: {
+        select: {
+            id: true,
+            name: true,
+            threadUrl: true,
             items: {
-                // select: {
-                //     id: true,
-                //     data: true,
-                //     deckId: true,
-                //     level: true,
-                //     type: true
-                // },
                 where: {
                     deleted: false
                 },
-                include: {
+                select: {
+                    id: true,
+                    data: true,
+                    en: true,
+                    level: true,
+                    characters: true,
                     assignment: {
+                        where: {
+                            user: {
+                                id: userId
+                            }
+                        },
                         select: {
                             stage: true,
                             lastAdvance: true
@@ -44,32 +49,13 @@ async function getUserDecks(userId) {
     return decks;
 }
 
-async function getGuestDecks(ids: number[]) {
-    let decks = await prisma.deck.findMany({
-        where: {
-            id: { in: ids },
-        },
-        include: {
-            items: true
-        }
-    });
-
-    for (let i = 0; i < decks.length; i++) {
-        for (let x = 0; x < decks[i].items.length; x++) {
-            let injected = await injectItemData(decks[i].items[x].data);
-            decks[i].items[x].data = injected;
-        }
-    }
-
-    return decks;
-}
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    //doStuff();
+
+    let body = JSON.parse(req.body);
     const session = await getSession(req.cookies);
 
     if (session) {
-        let myDecks = await getUserDecks(session.id);
+        let myDecks = await getUserDecks(session.id, body.decks);
 
         res.status(200).json({
             user: {
@@ -80,8 +66,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
         });
     } else {
-        let guestDecks = await getGuestDecks(req.body.decks);
+        let guestDecks = await getUserDecks(-1, body.decks);
 
-        res.status(200).json(guestDecks);
+        res.status(200).json({
+            user: {},
+            data: {
+                decks: guestDecks
+            }
+        });
     }
 }

@@ -10,18 +10,25 @@ headers.append('pragma', 'no-cache');
 headers.append('cache-control', 'no-cache');
 
 async function sync() {
-    // first check to see if our user is logged in.
-    session = await getSession();
+    let installedDecks = await getInstalledDecks();
 
-    if (!session) {
+    let me = await fetchUserData(installedDecks);
+
+
+    console.log('- - me (', (Object.keys(me.user).length > 0) ? 'user' : 'guest', ') - -')
+
+    if (!me) {
         console.log('Failed to sync, no connection to WaniPlus endpoint.');
         return false;
     }
 
+    session = me.user;
+
     if (Object.keys(session).length > 0) {
         isGuest = false;
-
-        userData = await fetchUserData();
+        userData = {
+            data: me.data
+        };
         setUserData(userData);
     } else {
         isGuest = true;
@@ -32,38 +39,27 @@ async function sync() {
             await chrome.storage.local.set({
                 'wp_guest': {
                     data: {
-                        decks: [{ "id": 1, "userId": 1, "name": "WaniPlus", "description": "My WP deck.", "dateCreated": "2023-01-08T04:41:20.467Z", "dateUpdated": "2023-01-08T04:41:20.467Z", "allowForks": true, "isPrivate": false, "threadUrl": null, "items": [{ "id": 1, "type": "kanji", "en": "Task", "characters": "用", "data": { "en": ["Task"], "id": "wp-1", "on": ["よう"], "kan": "用", "kun": [], "emph": "onyomi", "mhnt": "hint", "mmne": "task", "rhnt": "hint", "rmne": "task", "type": "Kanji", "nanori": [], "category": "Kanji", "radicals": [], "characters": "用", "vocabulary": [], "relationships": { "study_material": null } }, "deckId": 1, "level": 0 }, { "id": 2, "type": "vocab", "en": "Big Task", "characters": "大用", "data": { "en": ["Big Task"], "id": "wp-2", "aud": "", "voc": "大用", "kana": ["だいよう"], "mhnt": "no hint 4 u", "mmne": "A really big task, like a big chongus-sized task.", "rhnt": "no hint 4 u", "rmne": "Learn to read man . . .", "type": "Vocabulary", "kanji": [{ "en": "Task", "ja": "用", "slug": "task", "type": "Kanji", "characters": "", "characters_img_url": "", "kan": "用" }], "category": "Vocabulary", "sentences": [], "characters": "大用", "collocations": [], "relationships": { "study_material": null }, "parts_of_speech": ["noun"] }, "deckId": 1, "level": 0 }] }],
-                    },
-                    srs: {
-                        1: {
-                            stage: 6,
-                            lastAdvance: new Date().toISOString()
-                        }
+                        decks: [],
+                        srs: {}
                     }
                 }
             })
         }
 
-        // check if the guest has decks installed
-        if (guestData.data.decks.length > 0) {
-            let deckIDs = guestData.data.decks.map(deck => deck.id);
-            let decks = await fetchUserData(deckIDs);
+        console.log(guestData.data.srs)
 
-            guestData.data.decks = insertGuestSRSData(decks, guestData.srs);
-        }
+        guestData.data.decks = insertGuestSRSData(me.data.decks, guestData.data.srs);
 
         userData = guestData;
         setGuestData(userData);
     }
 
-    console.log('sync')
+    return true;
 }
 
 function insertGuestSRSData(decks, srs) {
     decks.map(deck => {
         deck.items.map(item => {
-            item.assignment = [];
-
             if (item.id in srs) {
                 item.assignment = [{
                     stage: srs[item.id].stage,
@@ -107,15 +103,19 @@ async function setUserData(data) {
 }
 
 async function fetchUserData(deckIDs) {
-    const res = await fetch(endpoint + '/api/me', {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify({
-            decks: (deckIDs) ? deckIDs : []
-        })
-    });
-    const data = await res.json();
-    return data;
+    try {
+        const res = await fetch(endpoint + '/api/me', {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({
+                decks: (deckIDs) ? deckIDs : []
+            })
+        });
+        const data = await res.json();
+        return data;
+    } catch (e) {
+        return false;
+    }
 }
 
 async function getLessonData() {
@@ -170,6 +170,8 @@ async function getReviewData() {
 }
 
 async function itemSRSCompleted(completions) {
+    console.log(completions)
+
     //note: itemIDs are strings in the format wk-###
     if (!isGuest) {
         try {
@@ -193,6 +195,8 @@ async function itemSRSCompleted(completions) {
         let failed = completion[1];
         let numId = parseInt(id.substring(3, id.length));
 
+        console.log(numId)
+
         for (let x in decks) {
             let deck = decks[x];
 
@@ -210,6 +214,9 @@ async function itemSRSCompleted(completions) {
                     } else {
                         let curStage = deck.items[i].assignment[0].stage;
 
+                        console.log('curStage')
+                        console.log(curStage)
+
                         // do we need to increment or decrement?
                         if (failed && curStage > 0) {
                             userData.data.decks[x].items[i].assignment[0].stage--;
@@ -219,7 +226,7 @@ async function itemSRSCompleted(completions) {
                     }
 
                     if (isGuest) {
-                        userData.srs[item.id] = userData.data.decks[x].items[i].assignment;
+                        userData.data.srs[item.id] = userData.data.decks[x].items[i].assignment[0];
                     }
                 }
             }
@@ -259,11 +266,34 @@ function calcIfSrsReady(assignment) {
     return (elapsed > times[stage] * 60000);
 }
 
-function hasDeck(id) {
-    for (let deck of userData.data.decks) {
-        if (deck.id == id) return true;
+async function getInstalledDecks() {
+    return (await chrome.storage.local.get(['wp_installed'])).wp_installed || [];
+}
+
+async function installDeck(deckId) {
+    let decks = await getInstalledDecks();
+    if (decks.indexOf(deckId) === -1) {
+        decks.push(deckId);
+        await chrome.storage.local.set({ 'wp_installed': decks });
+        await sync();
+        return true;
     }
     return false;
+}
+
+async function uninstallDeck(deckId) {
+    let decks = await getInstalledDecks();
+    if (decks.indexOf(deckId) !== -1) {
+        await chrome.storage.local.set({ 'wp_installed': decks.filter(id => id != deckId) });
+        await sync();
+        return true;
+    }
+    return false;
+}
+
+async function isDeckInstalled(id) {
+    let decks = await getInstalledDecks();
+    return decks.indexOf(id) != -1;
 }
 
 chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
@@ -272,12 +302,19 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
 
         switch (action) {
             case 'hasDeck':
-                sendResponse(hasDeck(msg.message));
+                isDeckInstalled(msg.data).then((isInstalled) => {
+                    sendResponse(isInstalled);
+                });
                 break;
             case 'install':
-                setTimeout(() => {
-                    sendResponse(true);
-                }, 1000);
+                installDeck(msg.data).then((wasInstalled) => {
+                    sendResponse(wasInstalled);
+                });
+                break;
+            case 'uninstall':
+                uninstallDeck(msg.data).then((wasUninstalled) => {
+                    sendResponse(wasUninstalled);
+                });
                 break;
             case 'getLessonData':
                 getLessonData().then((data) => {

@@ -25,7 +25,6 @@
                 completions.push([id, false]);
             });
 
-            console.log('sending srs complete')
             chrome.runtime.sendMessage(window.__wp__.eid, { action: 'itemSRSCompleted', items: completions }, (res) => {
                 if (!res) window.__wp__.notify('No connection to WaniPlus. Item progress was not saved.');
             });
@@ -62,20 +61,6 @@
             'wk': wkIds,
             'wp': wpIds
         }
-    }
-
-    function removeWPData(ids) {
-        let newIDs = [];
-
-        for (let i in ids) {
-            let id = ids[i];
-
-            if (typeof id == 'string' && id.indexOf('wp-') != -1) continue;
-            if (typeof id == Number && id > 99900) continue;
-            newIDs.push(id);
-        }
-
-        return newIDs;
     }
 })();
 
