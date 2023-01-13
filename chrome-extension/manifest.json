@@ -26,21 +26,6 @@
       "http://localhost:3000/*"
     ]
   },
-  "web_accessible_resources": [
-    {
-      "resources": [
-        "src/utils/context.js",
-        "src/utils/interceptor.js",
-        "src/utils/notify.js",
-        "src/pages/pg-wk-home.js",
-        "src/pages/pg-wk-lessons.js",
-        "src/pages/pg-wk-reviews.js"
-      ],
-      "matches": [
-        "https://www.wanikani.com/*"
-      ]
-    }
-  ],
   "action": {
     "default_popup": "index.html"
   }

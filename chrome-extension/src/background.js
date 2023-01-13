@@ -1,7 +1,7 @@
 chrome.runtime.onInstalled.addListener(async () => {
     const scripts = [{
         id: 'waniplus',
-        js: ['src/utils/context.js', 'src/utils/interceptor.js'],
+        js: ['src/utils/context.js', 'src/utils/interceptor.js', 'src/utils/notify.js', 'src/utils/updateLevel.js'],
         matches: ['https://www.wanikani.com/*'],
         runAt: 'document_start',
         world: 'MAIN',
@@ -42,6 +42,7 @@ const endpoint = 'http://localhost:3000'
 let isGuest = true;
 let session = {};
 let userData = {};
+let level = 0;
 
 let headers = new Headers();
 headers.append('pragma', 'no-cache');
@@ -135,6 +136,41 @@ async function setUserData(data) {
     await chrome.storage.local.set({ 'wp_data': data });
 }
 
+async function getInstalledDecks() {
+    return (await chrome.storage.local.get(['wp_installed'])).wp_installed || [];
+}
+
+async function installDeck(deckId) {
+    let decks = await getInstalledDecks();
+    if (decks.indexOf(deckId) === -1) {
+        decks.push(deckId);
+        await chrome.storage.local.set({ 'wp_installed': decks });
+        await sync();
+        return true;
+    }
+    return false;
+}
+
+async function uninstallDeck(deckId) {
+    let decks = await getInstalledDecks();
+    if (decks.indexOf(deckId) !== -1) {
+        await chrome.storage.local.set({ 'wp_installed': decks.filter(id => id != deckId) });
+        await sync();
+        return true;
+    }
+    return false;
+}
+
+async function isDeckInstalled(id) {
+    let decks = await getInstalledDecks();
+    return decks.indexOf(id) != -1;
+}
+
+async function setLevel(level) {
+    await chrome.storage.local.set({ 'wp_level': level });
+}
+
+
 async function fetchUserData(deckIDs) {
     try {
         const res = await fetch(endpoint + '/api/me', {
@@ -164,7 +200,7 @@ async function getLessonData() {
 
             // here we need to verify if the item is in the lesson stage.
             // an item is in the lesson stage if it has no generated assignment.
-            if (item.assignment.length == 0) {
+            if (item.assignment.length == 0 && level >= item.level) {
                 //deck.items[i].data.__wp__ = true;
                 items.unshift(deck.items[i].data)
             }
@@ -187,7 +223,7 @@ async function getReviewData() {
 
             // here we need to verify if the item is in the lesson stage.
             // an item is in the lesson stage if it has no generated assignment.
-            if (item.assignment.length > 0) {
+            if (item.assignment.length > 0 && level >= item.level) {
                 // inject assignment stage to item data
                 item.data.srs = item.assignment[0].stage;
 
@@ -290,36 +326,6 @@ function calcIfSrsReady(assignment) {
     return (elapsed > times[stage] * 60000);
 }
 
-async function getInstalledDecks() {
-    return (await chrome.storage.local.get(['wp_installed'])).wp_installed || [];
-}
-
-async function installDeck(deckId) {
-    let decks = await getInstalledDecks();
-    if (decks.indexOf(deckId) === -1) {
-        decks.push(deckId);
-        await chrome.storage.local.set({ 'wp_installed': decks });
-        await sync();
-        return true;
-    }
-    return false;
-}
-
-async function uninstallDeck(deckId) {
-    let decks = await getInstalledDecks();
-    if (decks.indexOf(deckId) !== -1) {
-        await chrome.storage.local.set({ 'wp_installed': decks.filter(id => id != deckId) });
-        await sync();
-        return true;
-    }
-    return false;
-}
-
-async function isDeckInstalled(id) {
-    let decks = await getInstalledDecks();
-    return decks.indexOf(id) != -1;
-}
-
 chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
     if (['http://localhost:3000', 'https://www.wanikani.com', 'https://www.waniplus.com'].indexOf(sender.origin) != -1) {
         const action = msg.action;
@@ -355,6 +361,10 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
                     sendResponse(data);
                 });
                 break;
+            case 'setLevel':
+                setLevel(msg.level);
+                sendResponse(true);
+                break;
             case 'getState':
                 sendResponse({
                     session: session,
@@ -385,8 +395,10 @@ chrome.runtime.onMessage.addListener(
 );
 
 // quick load state until there is a sync
-chrome.storage.local.get(['wp_data', 'wp_guest'], ({ wp_data, wp_guest }) => {
+chrome.storage.local.get(['wp_data', 'wp_guest', 'wp_level'], ({ wp_data, wp_guest, wp_level }) => {
     isGuest = false;
+    level = wp_level;
+
     if (wp_data && wp_guest) {
         if (wp_data.updatedAt > wp_guest.updatedAt) {
             userData = wp_data;
