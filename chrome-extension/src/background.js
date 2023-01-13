@@ -1,3 +1,41 @@
+chrome.runtime.onInstalled.addListener(async () => {
+    const scripts = [{
+        id: 'waniplus',
+        js: ['src/utils/context.js', 'src/utils/interceptor.js'],
+        matches: ['https://www.wanikani.com/*'],
+        runAt: 'document_start',
+        world: 'MAIN',
+    },
+    {
+        id: 'waniplus-home',
+        js: ['src/pages/pg-wk-home.js'],
+        matches: ['https://www.wanikani.com/'],
+        runAt: 'document_start',
+        world: 'MAIN',
+    },
+    {
+        id: 'waniplus-lessons',
+        js: ['src/pages/pg-wk-lessons.js'],
+        matches: ['https://www.wanikani.com/lesson/session'],
+        runAt: 'document_start',
+        world: 'MAIN',
+    },
+    {
+        id: 'waniplus-reviews',
+        js: ['src/pages/pg-wk-reviews.js'],
+        matches: ['https://www.wanikani.com/review/session'],
+        runAt: 'document_start',
+        world: 'MAIN',
+    }];
+
+    const ids = scripts.map(s => s.id);
+    await chrome.scripting.unregisterContentScripts({ ids }).catch(() => { });
+    await chrome.scripting.registerContentScripts(scripts).catch(() => { });
+    //chrome.scripting.getRegisteredContentScripts((r) => console.log(r));
+    sync();
+});
+
+
 const endpoint = 'http://localhost:3000'
 
 // use data returned from /api/me
@@ -13,9 +51,6 @@ async function sync() {
     let installedDecks = await getInstalledDecks();
 
     let me = await fetchUserData(installedDecks);
-
-
-    console.log('- - me (', (Object.keys(me.user).length > 0) ? 'user' : 'guest', ') - -')
 
     if (!me) {
         console.log('Failed to sync, no connection to WaniPlus endpoint.');
@@ -45,8 +80,6 @@ async function sync() {
                 }
             })
         }
-
-        console.log(guestData.data.srs)
 
         guestData.data.decks = insertGuestSRSData(me.data.decks, guestData.data.srs);
 
@@ -170,8 +203,6 @@ async function getReviewData() {
 }
 
 async function itemSRSCompleted(completions) {
-    console.log(completions)
-
     //note: itemIDs are strings in the format wk-###
     if (!isGuest) {
         try {
@@ -195,8 +226,6 @@ async function itemSRSCompleted(completions) {
         let failed = completion[1];
         let numId = parseInt(id.substring(3, id.length));
 
-        console.log(numId)
-
         for (let x in decks) {
             let deck = decks[x];
 
@@ -209,13 +238,8 @@ async function itemSRSCompleted(completions) {
                             stage: 0,
                             lastAdvance: new Date().toISOString()
                         };
-
-                        console.log('create assignment')
                     } else {
                         let curStage = deck.items[i].assignment[0].stage;
-
-                        console.log('curStage')
-                        console.log(curStage)
 
                         // do we need to increment or decrement?
                         if (failed && curStage > 0) {

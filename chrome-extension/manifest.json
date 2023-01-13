@@ -6,10 +6,12 @@
   "permissions": [
     "storage",
     "alarms",
-    "unlimitedStorage"
+    "unlimitedStorage",
+    "scripting"
   ],
   "host_permissions": [
-    "https://waniplus.com/*",
+    "https://*.wanikani.com/*",
+    "https://*.waniplus.com/*",
     "http://localhost:3000/*"
   ],
   "optional_permissions": [],
@@ -28,7 +30,6 @@
     {
       "resources": [
         "src/utils/context.js",
-        "src/utils/api.js",
         "src/utils/interceptor.js",
         "src/utils/notify.js",
         "src/pages/pg-wk-home.js",
@@ -38,17 +39,6 @@
       "matches": [
         "https://www.wanikani.com/*"
       ]
-    }
-  ],
-  "content_scripts": [
-    {
-      "matches": [
-        "https://www.wanikani.com/*"
-      ],
-      "js": [
-        "src/wanikani.js"
-      ],
-      "run_at": "document_start"
     }
   ],
   "action": {

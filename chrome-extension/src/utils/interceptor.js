@@ -1,3 +1,6 @@
+window.__wp__ = window.__wp__ || {};
+window.__wp__.eid = 'kjchkccopfleoicagpoopmkodahnfaom';
+
 (() => {
     function Interceptor() {
         this.hooksIn = {};

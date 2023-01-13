@@ -6,6 +6,8 @@
     });
 
     window.__wp__.Interceptor.hookIncoming('/lesson/queue', (data) => {
+        console.log('hooked')
+        console.log(items)
         return injectWPData(data);
     });
 
