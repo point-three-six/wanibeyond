@@ -6,7 +6,8 @@ export default async function DeckPage({ params: { deckId } }) {
   let id = parseInt(deckId);
   const deck = await prisma.deck.findFirst({
     where: {
-      id: id
+      id: id,
+      isPrivate: false
     },
     include: {
       user: {

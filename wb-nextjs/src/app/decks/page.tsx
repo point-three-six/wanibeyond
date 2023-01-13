@@ -1,10 +1,28 @@
 import DeckList from './DeckList';
 import prisma from '../../lib/prisma'
+import { getSession } from '../../lib/session'
 
 export default async function DeckListPage() {
-  let decksByPopularity = await prisma.deck.findMany();
+  // let sessionData = await getSession();
+
+  // let myDecks;
+  // if (Object.keys(sessionData).length > 0) {
+  //   myDecks = await prisma.deck.findMany({
+  //     where: {
+  //       userId: sessionData.id
+  //     }
+  //   });
+  // }
+
+  let decksByPopularity = await prisma.deck.findMany({
+    where: {
+      isPrivate: false
+    }
+  });
   let decksByDate = await prisma.deck.findMany({
-    where: {},
+    where: {
+      isPrivate: false
+    },
     orderBy: [
       {
         dateCreated: 'desc'
@@ -13,19 +31,18 @@ export default async function DeckListPage() {
   });
 
   return (
-    <div>
+    <div className='max-width'>
       <h1 className="text-4xl font-extrabold text-slate-700 mb-2">Decks</h1>
-      {/* @ts-ignore */}
       <div className='font-medium text-gray-700 mb-2'>
         Most Popular
       </div>
       {/* @ts-ignore */}
-      <DeckList decks={decksByPopularity} />
+      <DeckList url='/decks/' decks={decksByPopularity} />
       <div className='font-medium text-gray-700 mb-2'>
         Recently Created
       </div>
       {/* @ts-ignore */}
-      <DeckList decks={decksByDate} />
+      <DeckList url='/decks/' decks={decksByDate} />
     </div >
   )
 }
