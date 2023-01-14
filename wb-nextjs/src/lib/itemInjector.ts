@@ -5,7 +5,7 @@ function extractIDsByType(ids: Array<number | string>) {
     let wkIds = [];
 
     for (let i = 0; i < ids.length; i++) {
-        let id = ids[i];
+        let id = ids[i].value;
         if (typeof id == 'string') { // wk items will be a string with the format wk-###
             let numericalId = parseInt(id.substring(3, id.length));
             wkIds.push(numericalId);
@@ -51,7 +51,7 @@ export default async function injectItemData(itemData) {
     // data has been retrieved, now we need to inject it.
     for (let key in itemData) {
         if (fields.indexOf(key) != -1) {
-            let ids = itemData[key];
+            let ids = itemData[key].map(item => item.value);
 
             // loop through ids and inject
             for (let i = 0; i < ids.length; i++) {
@@ -81,7 +81,7 @@ export default async function injectItemData(itemData) {
                                 obj.type = 'Radical';
                                 obj['rad'] = wkItem.characters;
                             }
-                            if (wkItem.type == 'vocab') {
+                            if (wkItem.type == 'vocab' || wkItem.type == 'kanavocab') {
                                 obj.type = 'Vocabulary';
                                 obj['voc'] = wkItem.characters;
                             }
@@ -116,7 +116,7 @@ export default async function injectItemData(itemData) {
                                 obj.type = 'Radical';
                                 obj['rad'] = wpItem.characters;
                             }
-                            if (wpItem.type == 'vocab') {
+                            if (wpItem.type == 'vocab' || wpItem.type == 'kanavocab') {
                                 obj.type = 'Vocabulary';
                                 obj['voc'] = wpItem.characters;
                             }

@@ -1,20 +1,31 @@
 {
     "en": [
-        "hiro",
-        "hero"
+        "test"
     ],
-    "id": "wp-13",
-    "rad": "ひひひ",
-    "mhnt": "hint hint",
-    "mmne": "hint hint",
-    "type": "Radical",
-    "kanji": [],
-    "category": "Radical",
-    "kanavocab": true,
-    "characters": "ひひひ",
+    "id": "wp-12",
+    "aud": "",
+    "voc": "かに",
+    "kana": [
+        "れあお"
+    ],
+    "mhnt": "test",
+    "mmne": "test",
+    "rhnt": "test",
+    "rmne": "test",
+    "type": "Vocabulary",
+    "kanji": [
+        10
+    ],
+    "category": "Vocabulary",
+    "sentences": [],
+    "characters": "かに",
+    "collocations": [],
     "relationships": {
         "study_material": null
     },
+    "parts_of_speech": [
+        "noun"
+    ],
     "auxiliary_meanings": [],
-    "character_image_url": ""
+    "auxiliary_readings": []
 }

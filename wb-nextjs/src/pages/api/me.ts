@@ -52,6 +52,7 @@ async function getUserDecks(userId, ids: number[]) {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     let body = JSON.parse(req.body);
+
     const session = await getSession(req.cookies);
 
     if (session) {

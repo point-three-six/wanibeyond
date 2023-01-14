@@ -10,7 +10,7 @@ export default function LevelList(props) {
         if (item.type == 'radical') return item.data.rad;
         if (item.type == 'kanji') return item.data.kan;
         if (item.type == 'vocab') return item.data.voc;
-        if (item.type == 'kana') return item.data.hir;
+        if (item.type == 'kanavocab') return item.data.characters;
         return '';
     }
 
