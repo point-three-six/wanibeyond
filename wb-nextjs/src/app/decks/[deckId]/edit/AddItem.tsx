@@ -11,7 +11,7 @@ function getTypeDisplayText(value: string) {
     if (value == '') return 'Characters';
     if (value == 'kanji') return 'Kanji Character';
     if (value == 'vocab') return 'Vocabulary Word';
-    if (value == 'kana') return 'Kana';
+    if (value == 'kanavocab') return 'Kana-only Vocab';
     if (value == 'radical') return 'Radical Character';
 }
 
@@ -125,7 +125,7 @@ export default function AddItem(props) {
                 auxiliary_meanings: formatAuxiliary('meaning', auxMeanings),
                 auxiliary_readings: formatAuxiliary('reading', auxReadings)
             };
-        } else if (itemType == 'radical') {
+        } else if (itemType == 'radical' || itemType == 'kanavocab') {
             return {
                 type: itemType,
                 level: level,
@@ -213,7 +213,9 @@ export default function AddItem(props) {
                 {/* item type */}
                 <div className={`flex items-center mb-3 ${eitm ? 'hidden' : ''}`}>
                     <div className='flex-grow'>
-                        <label htmlFor='itemType' className='text-sm font-medium text-gray-700'>Item Type</label>
+                        <label htmlFor='itemType' className='text-sm font-medium text-gray-700'>
+                            Item Type <span className='text-red-500'>*</span>
+                        </label>
                         <div className='mt-1'>
                             <select
                                 name='privacy'
@@ -225,7 +227,7 @@ export default function AddItem(props) {
                                 <option value='kanji'>Kanji</option>
                                 <option value='vocab'>Vocab</option>
                                 <option value='radical'>Radical</option>
-                                {/* <option value='kana'>Kana-only Vocab</option> */}
+                                <option value='kanavocab'>Kana-only Vocab</option>
                             </select>
                         </div>
                     </div>
@@ -233,7 +235,9 @@ export default function AddItem(props) {
                 {/* item type */}
                 <div className={`flex items-center mb-3`}>
                     <div className='flex-grow'>
-                        <label htmlFor='level' className='text-sm font-medium text-gray-700'>Level</label>
+                        <label htmlFor='level' className='text-sm font-medium text-gray-700'>
+                            Level <span className='text-red-500'>*</span>
+                        </label>
                         <div className='mt-1'>
                             <input
                                 name='level'
@@ -255,7 +259,7 @@ export default function AddItem(props) {
                 <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
                         <label htmlFor='characters' className='text-sm font-medium text-gray-700'>
-                            {getTypeDisplayText(itemType)}
+                            {getTypeDisplayText(itemType)} <span className='text-red-500'>*</span>
                         </label>
                         <div className='mt-1'>
                             <input
@@ -265,7 +269,7 @@ export default function AddItem(props) {
                                 placeholder=''
                                 value={characters}
                                 onChange={(e) => {
-                                    if (itemType == 'vocab') {
+                                    if (['vocab', 'kanavocab'].indexOf(itemType) != -1) {
                                         setCharacters(wanakana.toKana(e.target.value))
                                     } else {
                                         setCharacters(e.target.value)
@@ -279,7 +283,7 @@ export default function AddItem(props) {
                 <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
                         <label htmlFor='meanings' className='text-sm font-medium text-gray-700'>
-                            Meanings (first is primary)
+                            Meanings (first is primary) <span className='text-red-500'>*</span>
                         </label>
                         <div className='mt-1'>
                             <MultiInput value={meanings} onChange={setMeanings} />
@@ -355,7 +359,7 @@ export default function AddItem(props) {
                     </div>
                 </div>
                 {/* kanji -- vocab,  */}
-                <div className={`flex items-center mb-3 ${['vocab', 'radical'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
+                <div className={`flex items-center mb-3 ${['vocab', 'radical', 'kanavocab'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
                         <label htmlFor='description' className='text-sm font-medium text-gray-700'>Kanji</label>
                         <div className='mt-1'>
@@ -402,7 +406,9 @@ export default function AddItem(props) {
                 {/* meaning mnemonic kanji,*/}
                 <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
-                        <label htmlFor='description' className='text-sm font-medium text-gray-700'>Meaning Mnemonic</label>
+                        <label htmlFor='description' className='text-sm font-medium text-gray-700'>
+                            Meaning Mnemonic <span className='text-red-500'>*</span>
+                        </label>
                         <div className='mt-1'>
                             <textarea
                                 name='description'
@@ -438,7 +444,9 @@ export default function AddItem(props) {
                 {/* reading mnemonic -- kanji,*/}
                 <div className={`flex items-center mb-3 ${['vocab', 'kanji'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
-                        <label htmlFor='description' className='text-sm font-medium text-gray-700'>Reading Mnemonic</label>
+                        <label htmlFor='description' className='text-sm font-medium text-gray-700'>
+                            Reading Mnemonic <span className='text-red-500'>*</span>
+                        </label>
                         <div className='mt-1'>
                             <textarea
                                 name='description'
@@ -489,12 +497,12 @@ export default function AddItem(props) {
                             Auxiliary Readings (whitelist)
                         </label>
                         <div className='mt-1'>
-                            <MultiInput value={(auxReadings || []).map((aux) => aux.meaning || aux.reading)} onChange={setAuxReadings} />
+                            <MultiInput value={(auxReadings || []).map((aux) => aux.meaning || aux.reading)} onChange={setAuxReadings} kana={true} />
                         </div>
                     </div>
                 </div>
                 {/* ctx1 - vocab */}
-                <div className={`flex items-center mb-3 ${itemType == 'vocab' ? '' : 'hidden'}`}>
+                <div className={`flex items-center mb-3 ${['vocab', 'kanavocab'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
                         <label htmlFor='ctx1jap' className='text-sm font-medium text-gray-700'>
                             Context Sentence #1 (日本語)
@@ -513,7 +521,7 @@ export default function AddItem(props) {
                     </div>
                 </div>
                 {/* ctx1 - vocab */}
-                <div className={`flex items-center mb-3 ${itemType == 'vocab' ? '' : 'hidden'}`}>
+                <div className={`flex items-center mb-3 ${['vocab', 'kanavocab'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
                         <label htmlFor='ctx1' className='text-sm font-medium text-gray-700'>
                             Context Sentence #1 (English)
@@ -532,7 +540,7 @@ export default function AddItem(props) {
                     </div>
                 </div>
                 {/* ctx1 - vocab */}
-                <div className={`flex items-center mb-3 ${itemType == 'vocab' ? '' : 'hidden'}`}>
+                <div className={`flex items-center mb-3 ${['vocab', 'kanavocab'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
                         <label htmlFor='ctx2jap' className='text-sm font-medium text-gray-700'>
                             Context Sentence #2 (日本語)
@@ -551,7 +559,7 @@ export default function AddItem(props) {
                     </div>
                 </div>
                 {/* ctx2 - vocab */}
-                <div className={`flex items-center mb-3 ${itemType == 'vocab' ? '' : 'hidden'}`}>
+                <div className={`flex items-center mb-3 ${['vocab', 'kanavocab'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
                         <label htmlFor='ctx2' className='text-sm font-medium text-gray-700'>
                             Context Sentence #2 (English)
@@ -569,7 +577,7 @@ export default function AddItem(props) {
                         </div>
                     </div>
                 </div>
-                <div className={`text-center mt-8 ${(itemType) ? '' : 'hidden'}`}>
+                <div className={`text-center mt-8 ${['vocab', 'kanavocab'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
                     <button
                         type='button'
                         className='text-white bg-blue-500 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2'

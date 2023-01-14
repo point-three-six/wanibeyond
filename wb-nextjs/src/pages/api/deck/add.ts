@@ -3,7 +3,7 @@ import { getSession } from '../../../lib/sessionApiFallback'
 import prisma from '../../../lib/prisma'
 import { Kanji, Radical, Vocab } from '../../../../types';
 
-function createRadicalDataObject(radical: Radical) {
+function createRadicalDataObject(radical: Radical, isKanaVocab) {
     let obj = {
         'en': radical.en,
         'id': null,
@@ -20,6 +20,11 @@ function createRadicalDataObject(radical: Radical) {
             'study_material': null
         }
     };
+
+    if (isKanaVocab) {
+        obj.kanavocab = true;
+    }
+
 
     return obj;
 }
@@ -99,7 +104,7 @@ async function updateItem(userId, itemId, data) {
     let obj;
     if (data.type == 'kanji') obj = createKanjiDataObject(data);
     if (data.type == 'vocab') obj = createVocabDataObject(data);
-    if (data.type == 'radical') obj = createRadicalDataObject(data);
+    if (data.type == 'radical' || data.type == 'kanavocab') obj = createRadicalDataObject(data, (data.type == 'kanavocab') ? true : false);
 
     obj.id = 'wp-' + itemId;
 
@@ -130,7 +135,7 @@ async function addItem(userId, deckId, data) {
     let obj;
     if (data.type == 'kanji') obj = createKanjiDataObject(data);
     if (data.type == 'vocab') obj = createVocabDataObject(data);
-    if (data.type == 'radical') obj = createRadicalDataObject(data);
+    if (data.type == 'radical' || data.type == 'kanavocab') obj = createRadicalDataObject(data, (data.type == 'kanavocab') ? true : false);
 
     // insert item, returns it
     let r = await prisma.deck.update({

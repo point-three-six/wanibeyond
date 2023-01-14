@@ -15,14 +15,14 @@ chrome.runtime.onInstalled.addListener(async () => {
     },
     {
         id: 'waniplus-lessons',
-        js: ['src/pages/pg-wk-lessons.js'],
+        js: ['src/utils/kanaVocab.js', 'src/pages/pg-wk-lessons.js'],
         matches: ['https://www.wanikani.com/lesson/session'],
         runAt: 'document_start',
         world: 'MAIN',
     },
     {
         id: 'waniplus-reviews',
-        js: ['src/pages/pg-wk-reviews.js'],
+        js: ['src/utils/kanaVocab.js', 'src/pages/pg-wk-reviews.js'],
         matches: ['https://www.wanikani.com/review/session'],
         runAt: 'document_start',
         world: 'MAIN',

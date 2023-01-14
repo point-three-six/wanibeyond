@@ -1,23 +1,20 @@
 {
     "en": [
-        "x"
+        "hiro",
+        "hero"
     ],
-    "id": null,
-    "rad": "X",
-    "mhnt": "",
-    "mmne": "",
+    "id": "wp-13",
+    "rad": "ひひひ",
+    "mhnt": "hint hint",
+    "mmne": "hint hint",
     "type": "Radical",
-    "kanji": [
-        964,
-        670
-    ],
+    "kanji": [],
     "category": "Radical",
-    "characters": "X",
+    "kanavocab": true,
+    "characters": "ひひひ",
     "relationships": {
         "study_material": null
     },
-    "auxiliary_meanings": [
-        "hey"
-    ],
+    "auxiliary_meanings": [],
     "character_image_url": ""
 }
