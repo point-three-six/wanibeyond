@@ -1,6 +1,4 @@
 
-console.log('injected kanaVocab')
-
 window.addEventListener('load', async function () {
     const style = document.createElement('style');
     style.textContent = '.kanavocab { background-color:orange; }';

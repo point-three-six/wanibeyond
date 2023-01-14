@@ -52,7 +52,7 @@ export default function ItemSearch(props) {
             value={buildOptions(props.value)}
             onChange={(value) => {
                 props.onChange(
-                    value.map(item => item.value)
+                    value.map(item => item.label)
                 )
             }}
             placeholder='Search items...'
