@@ -6,8 +6,6 @@
     });
 
     window.__wp__.Interceptor.hookIncoming('/lesson/queue', (data) => {
-        console.log('hooked')
-        console.log(items)
         return injectWPData(data);
     });
 
@@ -64,5 +62,25 @@
             'wp': wpIds
         }
     }
+
+    window.addEventListener('ready', function () {
+        let r = 0;
+        let k = 0;
+        let v = 0;
+        items.forEach(item => {
+            console.log(item.type)
+            if (item.type.toLowerCase() == 'radical') r++;
+            if (item.type.toLowerCase() == 'kanji') k++;
+            if (item.type.toLowerCase() == 'vocabulary') v++;
+        });
+
+        let rEl = document.querySelector('#radical-count span');
+        let kEl = document.querySelector('#kanji-count span');
+        let vEl = document.querySelector('#vocabulary-count span');
+
+        rEl.innerHTML = (parseInt(rEl.innerText) + r);
+        kEl.innerHTML = (parseInt(kEl.innerText) + k);
+        vEl.innerHTML = (parseInt(vEl.innerText) + v);
+    });
 })();
 

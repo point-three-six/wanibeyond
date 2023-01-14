@@ -265,7 +265,11 @@ export default function AddItem(props) {
                                 placeholder=''
                                 value={characters}
                                 onChange={(e) => {
-                                    setCharacters(e.target.value)
+                                    if (itemType == 'vocab') {
+                                        setCharacters(wanakana.toKana(e.target.value))
+                                    } else {
+                                        setCharacters(e.target.value)
+                                    }
                                 }}
                             />
                         </div>
@@ -289,7 +293,7 @@ export default function AddItem(props) {
                             Kana
                         </label>
                         <div className='mt-1'>
-                            <MultiInput value={kana} onChange={setKana} />
+                            <MultiInput value={kana} onChange={setKana} kana={true} />
                         </div>
                     </div>
                 </div>
@@ -382,7 +386,7 @@ export default function AddItem(props) {
                     <div className='flex-grow'>
                         <label htmlFor='privacy' className='text-sm font-medium text-gray-700'>On'yomi</label>
                         <div className='mt-1'>
-                            <MultiInput value={onyomi} onChange={setOnyomi} />
+                            <MultiInput value={onyomi} onChange={setOnyomi} kana={true} />
                         </div>
                     </div>
                 </div>
@@ -391,7 +395,7 @@ export default function AddItem(props) {
                     <div className='flex-grow'>
                         <label htmlFor='privacy' className='text-sm font-medium text-gray-700'>Kun'yomi</label>
                         <div className='mt-1'>
-                            <MultiInput value={kunyomi} onChange={setKunyomi} />
+                            <MultiInput value={kunyomi} onChange={setKunyomi} kana={true} />
                         </div>
                     </div>
                 </div>

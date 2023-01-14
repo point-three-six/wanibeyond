@@ -6,6 +6,7 @@ import DeckDetails from './DeckDetails';
 import '../../../../styles/editor.css';
 import AddItem from './AddItem';
 import LevelList from './LevelList';
+import Script from 'next/script'
 
 export default function ItemEditor(props) {
     const generateLevels = (items) => {
@@ -87,6 +88,10 @@ export default function ItemEditor(props) {
 
     return (
         <div className="editor max-width" >
+            <Script
+                src="/wanakana.js"
+                strategy="lazyOnload"
+            />
             <div className='w-screen max-width flex justify-between gap-7'>
                 <div className='w-1/4'>
                     <div className='font-medium text-gray-700 mb-2'>

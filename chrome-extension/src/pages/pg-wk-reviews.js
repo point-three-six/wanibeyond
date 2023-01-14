@@ -6,7 +6,8 @@
 
     chrome.runtime.sendMessage(window.__wp__.eid, { action: 'getReviewData' }, (data) => {
         items = data;
-        items.forEach(item => itemsIds.push(item.id))
+        items.forEach(item => itemsIds.push(item.id));
+        updateItemCounts(items);
     });
 
     window.__wp__.Interceptor.hookIncoming('/review/queue', (data) => {
@@ -93,6 +94,5 @@
         let newId = parseInt(id.substring(3, id.length));
         return Number.MAX_SAFE_INTEGER - newId;
     }
-
 })();
 

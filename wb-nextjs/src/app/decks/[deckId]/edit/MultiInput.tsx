@@ -62,7 +62,10 @@ export default (props) => {
             onChange={(newValue) => {
                 setMyValue(newValue)
             }}
-            onInputChange={(newValue) => setInputValue(newValue)}
+            onInputChange={(newValue) => {
+                if (props.kana) newValue = wanakana.toKana(newValue);
+                setInputValue(newValue)
+            }}
             onKeyDown={handleKeyDown}
             placeholder='Type and press enter for each value...'
             value={myValue}
