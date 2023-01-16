@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation'
 import { setCookie } from 'cookies-next';
+import Link from 'next/link';
 
 export default function page() {
     const router = useRouter()
@@ -43,8 +44,8 @@ export default function page() {
 
     return (
         <>
-            <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-                <div className="w-full max-w-md space-y-8">
+            <div className="flex page-width min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+                <div className="w-full space-y-8">
                     <div>
                         <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
                             Sign In
@@ -99,6 +100,10 @@ export default function page() {
                                 Sign In
                             </button>
                         </div>
+                    </div>
+
+                    <div className='mt-4'>
+                        Alternatively, <Link href='/signup' className='text-blue-400'>create your account now</Link>
                     </div>
                 </div>
             </div>

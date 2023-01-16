@@ -34,7 +34,7 @@ export default async function DeckListPage() {
     <div className='max-width'>
       <h1 className="text-4xl font-extrabold text-slate-700 mb-2">Decks</h1>
       <div className='font-medium text-gray-700 mb-2'>
-        Most Popular
+        Popular Now
       </div>
       {/* @ts-ignore */}
       <DeckList url='/decks/' decks={decksByPopularity} />

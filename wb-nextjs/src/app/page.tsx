@@ -9,6 +9,9 @@ export default function Page() {
         With our platform, users can create custom decks that add new Radicals, Kanji, and Vocabulary directly to WaniKani.
         Additionally, you can opt-in to share your created decks with other users!
       </div>
+      <div className='mt-7 font-bold'>
+        [ this homepage is a work in progress ]
+      </div>
     </div>
   )
 }

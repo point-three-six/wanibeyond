@@ -294,7 +294,7 @@ export default function AddItem(props) {
                 <div className={`flex items-center mb-3 ${itemType == 'vocab' ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
                         <label htmlFor='kana' className='text-sm font-medium text-gray-700'>
-                            Kana
+                            Reading
                         </label>
                         <div className='mt-1'>
                             <MultiInput value={kana} onChange={setKana} kana={true} />

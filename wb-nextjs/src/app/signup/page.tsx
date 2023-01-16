@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation'
 import { setCookie } from 'cookies-next';
+import Link from 'next/link';
 
 const fetcher = (url: string) => fetch(url).then(res => res.json())
 
@@ -119,6 +120,10 @@ export default function page() {
                             >
                                 Sign Up
                             </button>
+                        </div>
+
+                        <div className='mt-4'>
+                            Already have an account? <Link href='/signin' className='text-blue-400'>Sign in now</Link>
                         </div>
                     </div>
                 </div>

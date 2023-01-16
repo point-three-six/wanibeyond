@@ -403,6 +403,8 @@ chrome.runtime.onMessage.addListener(
 
         switch (action) {
             case 'getState':
+                console.log('oek')
+                console.log(userData)
                 sendResponse({
                     session: session,
                     decks: userData.data.decks,
@@ -433,6 +435,7 @@ chrome.storage.local.get(['wp_data', 'wp_guest', 'wp_level', 'wp_order'], ({ wp_
     } else {
         userData = wp_data;
     }
+    console.log('quick loaded')
 });
 
 chrome.alarms.create({ delayInMinutes: 5, periodInMinutes: 5 });
