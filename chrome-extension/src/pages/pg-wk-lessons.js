@@ -1,8 +1,10 @@
 (() => {
-    var items = [];
+    let items = [];
+    let loadOrder = 'random';
 
-    chrome.runtime.sendMessage(window.__wp__.eid, { action: 'getLessonData' }, (data) => {
-        items = data;
+    chrome.runtime.sendMessage(window.__wp__.eid, { action: 'getLessonData' }, (res) => {
+        items = res.items;
+        loadOrder = res.order;
     });
 
     window.__wp__.Interceptor.hookIncoming('/lesson/queue', (data) => {
@@ -36,11 +38,27 @@
     function injectWPData(response) {
         response = JSON.parse(response);
 
-        for (let i in items) {
-            response['queue'].unshift(items[i]);
-        }
+        items.forEach((item, i) => {
+            if (loadOrder == 'random') {
+                var rand = Math.floor(Math.random() * (response['queue'].length)) + 1;
+                response['queue'].splice(rand, 0, item);
+            } else if (loadOrder == 'front') {
+                response['queue'].unshift(items[i]);
+            } else {
+                response['queue'].push(items[i]);
+            }
+        });
 
         return JSON.stringify(response);
+    }
+
+    // thanks
+    // https://stackoverflow.com/a/12646864/1748664
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
     }
 
     function extractIDsByType(ids) {
@@ -62,25 +80,5 @@
             'wp': wpIds
         }
     }
-
-    window.addEventListener('ready', function () {
-        let r = 0;
-        let k = 0;
-        let v = 0;
-        items.forEach(item => {
-            console.log(item.type)
-            if (item.type.toLowerCase() == 'radical') r++;
-            if (item.type.toLowerCase() == 'kanji') k++;
-            if (item.type.toLowerCase() == 'vocabulary') v++;
-        });
-
-        let rEl = document.querySelector('#radical-count span');
-        let kEl = document.querySelector('#kanji-count span');
-        let vEl = document.querySelector('#vocabulary-count span');
-
-        rEl.innerHTML = (parseInt(rEl.innerText) + r);
-        kEl.innerHTML = (parseInt(kEl.innerText) + k);
-        vEl.innerHTML = (parseInt(vEl.innerText) + v);
-    });
 })();
 

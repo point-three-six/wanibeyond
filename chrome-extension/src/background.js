@@ -32,17 +32,19 @@ chrome.runtime.onInstalled.addListener(async () => {
     await chrome.scripting.unregisterContentScripts({ ids }).catch(() => { });
     await chrome.scripting.registerContentScripts(scripts).catch(() => { });
     //chrome.scripting.getRegisteredContentScripts((r) => console.log(r));
+
     sync();
 });
 
 
-const endpoint = 'http://localhost:3000'
+const endpoint = 'https://waniplus.com'
 
 // use data returned from /api/me
 let isGuest = true;
 let session = {};
 let userData = {};
 let level = 0;
+let loadOrder = 'random';
 
 let headers = new Headers();
 headers.append('pragma', 'no-cache');
@@ -69,7 +71,7 @@ async function sync() {
     } else {
         isGuest = true;
 
-        let guestData = (await chrome.storage.local.get(['wp_guest'])).wp_guest;
+        let guestData = await getGuestData();
 
         if (Object.keys(guestData).length == 0) {
             await chrome.storage.local.set({
@@ -119,7 +121,7 @@ async function getSession() {
 }
 
 async function getGuestData() {
-    return (await chrome.storage.local.get(['wp_guest'])).wp_guest;
+    return (await chrome.storage.local.get(['wp_guest'])).wp_guest || {};
 }
 
 async function setGuestData(data) {
@@ -134,6 +136,16 @@ async function getUserData() {
 async function setUserData(data) {
     data.updatedAt = new Date().getTime();
     await chrome.storage.local.set({ 'wp_data': data });
+}
+
+async function getLoadOrder() {
+    return (await chrome.storage.local.get(['wp_order'])).wp_order || 'random';
+}
+
+async function setLoadOrder(val) {
+    let order = val || 'random';
+    loadOrder = val;
+    await chrome.storage.local.set({ 'wp_order': order });
 }
 
 async function getInstalledDecks() {
@@ -327,7 +339,7 @@ function calcIfSrsReady(assignment) {
 }
 
 chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
-    if (['http://localhost:3000', 'https://www.wanikani.com', 'https://www.waniplus.com'].indexOf(sender.origin) != -1) {
+    if (['http://localhost:3000', 'https://www.wanikani.com', 'https://wanikani.com', 'https://www.waniplus.com', 'https://waniplus.com'].indexOf(sender.origin) != -1) {
         const action = msg.action;
 
         switch (action) {
@@ -348,12 +360,18 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
                 break;
             case 'getLessonData':
                 getLessonData().then((data) => {
-                    sendResponse(data);
+                    sendResponse({
+                        items: data,
+                        order: loadOrder
+                    });
                 });
                 break;
             case 'getReviewData':
                 getReviewData().then((data) => {
-                    sendResponse(data);
+                    sendResponse({
+                        items: data,
+                        order: loadOrder
+                    });
                 });
                 break;
             case 'itemSRSCompleted':
@@ -368,7 +386,8 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
             case 'getState':
                 sendResponse({
                     session: session,
-                    decks: userData.data.decks
+                    decks: userData.data.decks,
+                    loadOrder: loadOrder
                 })
                 break;
             default:
@@ -386,8 +405,12 @@ chrome.runtime.onMessage.addListener(
             case 'getState':
                 sendResponse({
                     session: session,
-                    decks: userData.data.decks
+                    decks: userData.data.decks,
+                    loadOrder: loadOrder
                 })
+                break;
+            case 'setLoadOrder':
+                setLoadOrder(msg.order);
                 break;
             default:
         }
@@ -395,9 +418,10 @@ chrome.runtime.onMessage.addListener(
 );
 
 // quick load state until there is a sync
-chrome.storage.local.get(['wp_data', 'wp_guest', 'wp_level'], ({ wp_data, wp_guest, wp_level }) => {
+chrome.storage.local.get(['wp_data', 'wp_guest', 'wp_level', 'wp_order'], ({ wp_data, wp_guest, wp_level, wp_order }) => {
     isGuest = false;
     level = wp_level;
+    loadOrder = wp_order || 'random';
 
     if (wp_data && wp_guest) {
         if (wp_data.updatedAt > wp_guest.updatedAt) {

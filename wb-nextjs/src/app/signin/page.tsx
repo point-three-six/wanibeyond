@@ -49,8 +49,6 @@ export default function page() {
                         <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
                             Sign In
                         </h2>
-                        {email}
-                        {password}
                     </div>
                     <div className="mt-8 space-y-6">
                         <div className="-space-y-px rounded-md shadow-sm">

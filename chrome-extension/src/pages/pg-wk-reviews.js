@@ -3,11 +3,13 @@
 (() => {
     let itemsIds = [];
     let items = [];
+    let loadOrder = 'random';
 
-    chrome.runtime.sendMessage(window.__wp__.eid, { action: 'getReviewData' }, (data) => {
-        items = data;
+    chrome.runtime.sendMessage(window.__wp__.eid, { action: 'getReviewData' }, (res) => {
+        items = res.items;
         items.forEach(item => itemsIds.push(item.id));
         updateItemCounts(items);
+        loadOrder = res.order;
     });
 
     window.__wp__.Interceptor.hookIncoming('/review/queue', (data) => {
@@ -79,13 +81,21 @@
     function injectWPItems(data) {
         //data = [];
 
-        for (let i in items) {
+        items.forEach((item, i) => {
             let id = items[i].id;
 
             items[i].id = (typeof id == 'string') ? convertID(id) : id; // convert potential WP ids
             items[i].syn = [];
-            data.unshift(items[i]);
-        }
+
+            if (loadOrder == 'random') {
+                var rand = Math.floor(Math.random() * (data.length)) + 1;
+                data.splice(rand, 0, item);
+            } else if (loadOrder == 'front') {
+                data.unshift(items[i]);
+            } else {
+                data.push(items[i]);
+            }
+        });
 
         return data;
     }

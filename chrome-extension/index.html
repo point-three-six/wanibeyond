@@ -18,12 +18,20 @@
         }
 
         #header {
+            padding: 6px;
             text-align: center;
-            padding: 4px;
-            font-size: 1.25em;
+            font-size: 1.5em;
             font-weight: bold;
-            background-color: slategray;
             color: rgb(252, 252, 252);
+            background-image: linear-gradient(90deg, #FF00AA 33.33%, #AA00FF 33.33%, #AA00FF 66.66%, #00AAFF 66.66%);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            margin: 0px;
+        }
+
+        #header .title {
+            padding: 3px;
+            background-color: rgba(0, 0, 0, .3);
         }
 
         #loading {
@@ -64,7 +72,7 @@
         a:hover,
         a:focus,
         a:visited {
-            color: black;
+            color: #FF00AA;
             text-decoration: none;
         }
     </style>
@@ -72,7 +80,9 @@
 
 <body>
     <div id="header">
-        WaniPlus
+        <div class="title">
+            WaniPlus
+        </div>
     </div>
     <div id="content">
         <div id="loading">
@@ -88,9 +98,21 @@
                 </span>
             </div>
             <div class="label" style="margin-bottom:5px">
+                Item Load Order
+            </div>
+            <div style="margin-bottom:15px">
+                <select id="load-order" style="padding:3px;">
+                    <option value=" front">Front</option>
+                    <option value=" random">Random</option>
+                    <option value="back">Back</option>
+                </select>
+            </div>
+            <div class="label" style="margin-bottom:5px">
                 Installed Decks
             </div>
-            <div id="decks"></div>
+            <div id="decks">
+                No decks installed. <a href="https://waniplus.com/decks" target="_blank">browse available decks</a>.
+            </div>
         </div>
     </div>
     <div id="footer">

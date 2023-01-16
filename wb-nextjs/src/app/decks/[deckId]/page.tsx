@@ -43,7 +43,7 @@ export default async function DeckPage({ params: { deckId } }) {
             <InstallButton deckId={deck.id} />
           </div>
         </div>
-        <ItemList items={deck.items} />
+        <ItemList deckId={deck.id} items={deck.items} />
       </div>
     </>
   )

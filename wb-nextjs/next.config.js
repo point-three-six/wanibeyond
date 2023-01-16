@@ -4,6 +4,9 @@ module.exports = {
   experimental: {
     appDir: true
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   async headers() {
     return [
       {

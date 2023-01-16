@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import '../../../styles/editor.css';
 
 export default function ItemList(props) {
@@ -34,12 +35,14 @@ export default function ItemList(props) {
                             {props.items
                                 .filter(item => item.level == level)
                                 .map(item =>
-                                    <div key={item.id} className={`item ${item.type}`}>
-                                        {getItemTitle(item)}
-                                        <div className='meaning text-xs'>
-                                            {item.data.en[0]}
+                                    <Link key={item.id} href={`/decks/${props.deckId}/item/${item.id}/`}>
+                                        <div className={`item ${item.type}`}>
+                                            {getItemTitle(item)}
+                                            <div className='meaning text-xs'>
+                                                {item.data.en[0]}
+                                            </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 )}
                         </div>
                     </div>

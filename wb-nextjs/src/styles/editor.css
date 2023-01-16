@@ -22,8 +22,22 @@
     max-width: 130px;
     min-height: 130px;
     max-height: 130px;
-    font-size: 1.3em;
+    font-size: 1.8em;
     font-weight: bold;
+}
+
+.item.super {
+    min-width: 100%;
+    max-width: 100%;
+    max-height: none;
+}
+
+.item.super .chars {
+    font-size: 3.5em;
+}
+
+.item.super .meaning {
+    font-size: 1.4em;
 }
 
 .item.add {

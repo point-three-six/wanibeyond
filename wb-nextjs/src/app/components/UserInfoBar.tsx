@@ -10,17 +10,19 @@ export default async function UserInfoBar() {
             <div className='inline-block nav-dropdown'>
                 {
                     Object.keys(sessionData).length > 0 ?
-                        sessionData.username :
+                        <>
+                            {sessionData.username}
+                            <div className='nav-dropdown-content bg-white font-bold'>
+                                <div className='entry p-2 text-left text-slate-800 hover:bg-slate-100'>
+                                    <Link href='/decks/me' className='px-2 py-1'>My Decks</Link>
+                                </div>
+                                <div className='entry p-2 text-left text-slate-800 hover:bg-slate-100'>
+                                    <Link href='/decks/create' className='px-2 py-1'>Create Deck</Link>
+                                </div>
+                            </div>
+                        </> :
                         <Link href='/signin' className='px-2 py-1 text-white '>Sign In</Link>
                 }
-                <div className='nav-dropdown-content bg-white font-bold'>
-                    <div className='entry p-2 text-left text-slate-800 hover:bg-slate-100'>
-                        <Link href='/decks/me' className='px-2 py-1'>My Decks</Link>
-                    </div>
-                    <div className='entry p-2 text-left text-slate-800 hover:bg-slate-100'>
-                        <Link href='/decks/create' className='px-2 py-1'>Create Deck</Link>
-                    </div>
-                </div>
             </div>
         </div>
     )
