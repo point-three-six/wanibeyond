@@ -1,24 +1,39 @@
 {
     "en": [
-        "test"
+        "ballz"
     ],
-    "id": "wp-12",
+    "id": "wp-2",
     "aud": "",
-    "voc": "かに",
+    "voc": "金玉",
     "kana": [
-        "れあお"
+        "きんだま"
     ],
-    "mhnt": "test",
-    "mmne": "test",
-    "rhnt": "test",
-    "rmne": "test",
+    "mhnt": "hint",
+    "mmne": "babababa",
+    "rhnt": "",
+    "rmne": "read read read read",
     "type": "Vocabulary",
     "kanji": [
-        10
+        {
+            "label": "Gold (金)",
+            "value": "wk-10"
+        },
+        {
+            "label": "King (王)",
+            "value": "wk-20"
+        },
+        {
+            "label": "Ten (十)",
+            "value": "wk-30"
+        },
+        {
+            "label": "Ten (十)",
+            "value": "wk-448"
+        }
     ],
     "category": "Vocabulary",
     "sentences": [],
-    "characters": "かに",
+    "characters": "金玉",
     "collocations": [],
     "relationships": {
         "study_material": null

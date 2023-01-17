@@ -26,6 +26,16 @@
     font-weight: bold;
 }
 
+.item.small {
+    min-width: 60px;
+    max-width: 60px;
+    min-height: 60px;
+    max-height: 60px;
+    font-size: .7em;
+    font-weight: bold;
+}
+
+
 .item.super {
     min-width: 100%;
     max-width: 100%;
