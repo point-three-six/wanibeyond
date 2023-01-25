@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation'
 import { setCookie } from 'cookies-next';
 import Link from 'next/link';
+import sendExtMsg from '../../lib/wpExtension';
 
 export default function page() {
     const router = useRouter()
@@ -33,10 +34,14 @@ export default function page() {
                     sameSite: true
                 });
 
-                router.refresh()
-                router.push('/')
+                // if they have the extension installed
+                // tell it to sync
+                sendExtMsg('sync', true, () => { });
+
+                router.refresh();
+                router.push('/');
             } else {
-                console.log(res)
+                console.log(res);
                 // setError
             }
         })

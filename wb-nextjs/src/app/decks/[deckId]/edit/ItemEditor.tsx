@@ -7,6 +7,7 @@ import '../../../../styles/editor.css';
 import AddItem from './AddItem';
 import LevelList from './LevelList';
 import Script from 'next/script'
+import InstallButton from '../../../components/InstallButton';
 
 export default function ItemEditor(props) {
     const generateLevels = (items) => {
@@ -87,27 +88,28 @@ export default function ItemEditor(props) {
     }
 
     return (
-        <div className="editor max-width" >
+        <div className="editor flex justify-center max-width" >
             <Script
                 src="/wanakana.js"
                 strategy="lazyOnload"
             />
-            <div className='w-screen max-width flex justify-between gap-7'>
-                <div className='w-1/4'>
-                    <div className='font-medium text-gray-700 mb-2'>
-                        Filter
+            <div className='editor-width'>
+                <div className='xs:flex justify-between'>
+                    <div className='flex-initial'>
+                        <div className='font-medium text-gray-700 mb-2'>
+                            Filter
+                        </div>
+                        <input type='text' onChange={e => updateFilter(e.target.value)} />
+                        <div className='font-medium text-gray-700 mt-6 mb-2'>
+                            Details
+                        </div>
+                        <DeckDetails deck={deck} />
                     </div>
-                    <input type='text' onChange={e => updateFilter(e.target.value)} />
-                    <div className='font-medium text-gray-700 mt-6 mb-2'>
-                        Details
+                    <div className='flex-initial'>
+                        <InstallButton deckId={deck.id} />
                     </div>
-                    <DeckDetails deck={deck} />
-                    <div className='font-medium text-gray-700 mt-6 mb-2'>
-                        Levels
-                    </div>
-                    <LevelGrid levels={levels} />
                 </div>
-                <div className='w-3/4'>
+                <div className='mt-6'>
                     {
                         isAddingItem > -1 ?
                             <AddItem

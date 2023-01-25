@@ -1,3 +1,7 @@
+.editor-width {
+    width: 750px;
+}
+
 .item {
     display: inline-flex;
     align-items: center;

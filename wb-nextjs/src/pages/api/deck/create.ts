@@ -42,7 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // validate form data
         if (data.name.length < 3 || data.name.length >= 45) return res.status(422).json({ e: 'Invalid name.' });
-        if (data.desc.length < 10 || data.desc.length >= 300) return res.status(422).json({ e: 'Invalid description.' });
+        if (data.desc.length < 0 || data.desc.length >= 300) return res.status(422).json({ e: 'Invalid description.' });
         if (data.privacy !== true && data.privacy !== false) return res.status(422).json({ e: 'Invalid privacy setting.' });
         if (data.forking !== true && data.forking !== false) return res.status(422).json({ e: 'Invalid forking setting.' });
         if (data.threadUrl.length > 0 && validateUrl(data.threadUrl)) return res.status(422).json({ e: 'Invalid thread URL.' });

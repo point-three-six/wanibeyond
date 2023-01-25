@@ -14,7 +14,7 @@ export default function CreateForm() {
     let [nameValidated, setNameValidated] = useState(false);
 
     let [desc, setDesc] = useState('');
-    let [descValidated, setDescValidated] = useState(false);
+    let [descValidated, setDescValidated] = useState(true);
 
     let [isPrivate, setIsPrivate] = useState(false);
     let [isPrivateValidated, setIsPrivateValidated] = useState(false);
@@ -39,7 +39,7 @@ export default function CreateForm() {
     function validateDesc(value: string) {
         let body = value.trim();
 
-        if (body.length >= 10 && body.length <= descMaxLength) {
+        if (body.length >= 0 && body.length <= descMaxLength) {
             setDesc(body);
             setDescValidated(true);
         }
@@ -96,6 +96,7 @@ export default function CreateForm() {
         }).then(async (res) => {
             let r = await res.json();
             if (res.status == 200 && 'id' in r) {
+                router.refresh();
                 router.push(`/decks/${r.id}/edit`)
             }
         })
