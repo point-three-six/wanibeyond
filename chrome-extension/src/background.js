@@ -1,54 +1,41 @@
-chrome.runtime.onInstalled.addListener(async () => {
-    const scripts = [{
-        id: 'waniplus',
-        js: ['src/utils/context.js', 'src/utils/interceptor.js', 'src/utils/notify.js', 'src/utils/updateLevel.js'],
-        matches: ['https://www.wanikani.com/*'],
-        runAt: 'document_start',
-        world: 'MAIN',
-    },
-    {
-        id: 'waniplus-home',
-        js: ['src/pages/pg-wk-home.js'],
-        matches: ['https://www.wanikani.com/'],
-        runAt: 'document_start',
-        world: 'MAIN',
-    },
-    {
-        id: 'waniplus-lessons',
-        js: ['src/utils/kanaVocab.js', 'src/pages/pg-wk-lessons.js'],
-        matches: ['https://www.wanikani.com/lesson/session'],
-        runAt: 'document_start',
-        world: 'MAIN',
-    },
-    {
-        id: 'waniplus-reviews',
-        js: ['src/utils/kanaVocab.js', 'src/pages/pg-wk-reviews.js'],
-        matches: ['https://www.wanikani.com/review/session'],
-        runAt: 'document_start',
-        world: 'MAIN',
-    }];
-
-    const ids = scripts.map(s => s.id);
-    await chrome.scripting.unregisterContentScripts({ ids }).catch(() => { });
-    await chrome.scripting.registerContentScripts(scripts).catch(() => { });
-    //chrome.scripting.getRegisteredContentScripts((r) => console.log(r));
-
-    sync();
-});
-
-
 const endpoint = 'https://waniplus.com'
 
 // use data returned from /api/me
 let isGuest = true;
 let session = {};
-let userData = {};
+let userData = {
+    data: {
+        decks: []
+    }
+};
 let level = 0;
-let loadOrder = 'random';
+let loadOrder = 'front';
 
 let headers = new Headers();
 headers.append('pragma', 'no-cache');
 headers.append('cache-control', 'no-cache');
+
+// quick load last state
+const quickLoadCache = chrome.storage.local.get(['wp_data', 'wp_guest', 'wp_level', 'wp_order']).then(({ wp_data, wp_guest, wp_level, wp_order }) => {
+    isGuest = false;
+    level = wp_level;
+    loadOrder = wp_order || 'front';
+
+    if (wp_data && wp_guest) {
+        if (wp_data.updatedAt > wp_guest.updatedAt) {
+            userData = wp_data;
+            session = userData.user;
+        } else {
+            userData = wp_guest;
+            isGuest = true;
+        }
+    } else {
+        userData = wp_data;
+        session = userData.user;
+    }
+});
+
+sync();
 
 async function sync() {
     let installedDecks = await getInstalledDecks();
@@ -65,7 +52,8 @@ async function sync() {
     if (Object.keys(session).length > 0) {
         isGuest = false;
         userData = {
-            data: me.data
+            data: me.data,
+            user: me.user
         };
         setUserData(userData);
     } else {
@@ -139,11 +127,11 @@ async function setUserData(data) {
 }
 
 async function getLoadOrder() {
-    return (await chrome.storage.local.get(['wp_order'])).wp_order || 'random';
+    return (await chrome.storage.local.get(['wp_order'])).wp_order || 'front';
 }
 
 async function setLoadOrder(val) {
-    let order = val || 'random';
+    let order = val || 'front';
     loadOrder = val;
     await chrome.storage.local.set({ 'wp_order': order });
 }
@@ -182,7 +170,6 @@ async function setLevel(level) {
     await chrome.storage.local.set({ 'wp_level': level });
 }
 
-
 async function fetchUserData(deckIDs) {
     try {
         const res = await fetch(endpoint + '/api/me', {
@@ -200,6 +187,8 @@ async function fetchUserData(deckIDs) {
 }
 
 async function getLessonData() {
+    await quickLoadCache;
+
     let decks = userData.data.decks;
 
     // congregate items from all enabled decks
@@ -223,6 +212,8 @@ async function getLessonData() {
 }
 
 async function getReviewData() {
+    await quickLoadCache;
+
     let decks = userData.data.decks;
 
     // congregate items from all enabled decks
@@ -251,6 +242,8 @@ async function getReviewData() {
 }
 
 async function itemSRSCompleted(completions) {
+    await quickLoadCache;
+
     //note: itemIDs are strings in the format wk-###
     if (!isGuest) {
         try {
@@ -289,7 +282,6 @@ async function itemSRSCompleted(completions) {
                     } else {
                         let curStage = deck.items[i].assignment[0].stage;
 
-                        // do we need to increment or decrement?
                         if (failed && curStage > 0) {
                             userData.data.decks[x].items[i].assignment[0].stage--;
                         } else if (!failed && curStage < 8) {
@@ -305,7 +297,6 @@ async function itemSRSCompleted(completions) {
         }
     }
 
-    // update local userData
     if (isGuest) {
         setGuestData(userData);
     } else {
@@ -336,6 +327,10 @@ function calcIfSrsReady(assignment) {
     };
 
     return (elapsed > times[stage] * 60000);
+}
+
+async function getState() {
+    return await quickLoadCache;
 }
 
 chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
@@ -384,63 +379,82 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
                 sendResponse(true);
                 break;
             case 'getState':
-                sendResponse({
-                    session: session,
-                    decks: userData.data.decks,
-                    loadOrder: loadOrder
-                })
+                getState().then(() => {
+                    sendResponse({
+                        session: session,
+                        decks: userData.data.decks,
+                        loadOrder: loadOrder
+                    });
+                });
                 break;
             default:
+                sendResponse({ msg: 'No action for event.' })
         }
     } else {
         sendResponse({ error: 'Access denied.' })
     }
+
+    return true;
 });
 
-chrome.runtime.onMessage.addListener(
-    function (msg, sender, sendResponse) {
-        const action = msg.action;
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+    const action = msg.action;
 
-        switch (action) {
-            case 'getState':
-                console.log('oek')
-                console.log(userData)
+    switch (action) {
+        case 'getState':
+            getState().then(() => {
                 sendResponse({
                     session: session,
                     decks: userData.data.decks,
                     loadOrder: loadOrder
-                })
-                break;
-            case 'setLoadOrder':
-                setLoadOrder(msg.order);
-                break;
-            default:
-        }
+                });
+            });
+            break;
+        case 'setLoadOrder':
+            setLoadOrder(msg.order);
+            sendResponse({});
+            break;
+        default:
+            sendResponse({ msg: 'No action for event.' })
     }
-);
 
-// quick load state until there is a sync
-chrome.storage.local.get(['wp_data', 'wp_guest', 'wp_level', 'wp_order'], ({ wp_data, wp_guest, wp_level, wp_order }) => {
-    isGuest = false;
-    level = wp_level;
-    loadOrder = wp_order || 'random';
-
-    if (wp_data && wp_guest) {
-        if (wp_data.updatedAt > wp_guest.updatedAt) {
-            userData = wp_data;
-        } else {
-            userData = wp_guest;
-            isGuest = true;
-        }
-    } else {
-        userData = wp_data;
-    }
-    console.log('quick loaded')
+    return true;
 });
 
-chrome.alarms.create({ delayInMinutes: 5, periodInMinutes: 5 });
-chrome.alarms.onAlarm.addListener(() => {
+chrome.runtime.onInstalled.addListener(async () => {
+    const scripts = [{
+        id: 'waniplus',
+        js: ['src/utils/context.js', 'src/utils/interceptor.js', 'src/utils/notify.js', 'src/utils/updateLevel.js'],
+        matches: ['https://www.wanikani.com/*'],
+        runAt: 'document_start',
+        world: 'MAIN',
+    },
+    {
+        id: 'waniplus-home',
+        js: ['src/pages/pg-wk-home.js'],
+        matches: ['https://www.wanikani.com/'],
+        runAt: 'document_start',
+        world: 'MAIN',
+    },
+    {
+        id: 'waniplus-lessons',
+        js: ['src/utils/kanaVocab.js', 'src/pages/pg-wk-lessons.js'],
+        matches: ['https://www.wanikani.com/lesson/session'],
+        runAt: 'document_start',
+        world: 'MAIN',
+    },
+    {
+        id: 'waniplus-reviews',
+        js: ['src/utils/kanaVocab.js', 'src/pages/pg-wk-reviews.js'],
+        matches: ['https://www.wanikani.com/review/session'],
+        runAt: 'document_start',
+        world: 'MAIN',
+    }];
+
+    const ids = scripts.map(s => s.id);
+    await chrome.scripting.unregisterContentScripts({ ids }).catch(() => { });
+    await chrome.scripting.registerContentScripts(scripts).catch(() => { });
+
+    // initial sync on install
     sync();
 });
-
-sync();

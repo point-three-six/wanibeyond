@@ -49,6 +49,8 @@ window.addEventListener('load', () => {
             let decks = state.decks || [];
             let order = state.loadOrder;
 
+            console.log(state)
+
             if ('username' in session) {
                 document.getElementById('username').innerText = session.username;
             }
