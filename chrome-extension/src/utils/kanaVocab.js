@@ -19,9 +19,17 @@ window.addEventListener('load', async function () {
                 let target = document.getElementById('supplement-rad');
                 obsv.observe(target, { attributes: true, childList: true, subtree: false });
             }, 15);
-        } else if (obsv) {
+        } else {
+            if (obsv) {
+                obsv.disconnect();
+            }
+
+            // fix glitch when going directly from kanavocab to radical
+            if (item.rad) {
+                changeBackground(true);
+            }
+
             updateItemCountColors(false);
-            obsv.disconnect();
         }
 
         changeButtonListBackgrounds();
@@ -92,12 +100,12 @@ window.addEventListener('load', async function () {
     }
 
     function changeQuizHTML() {
-        document.getElementById('question-type').innerText = 'Vocabulary <strong>Meaning</strong>';
+        document.getElementById('question-type').innerHTML = 'Vocabulary <strong>Meaning</strong>';
     }
 
-    function changeBackground() {
-        document.getElementById('main-info').classList.remove('radical');
-        document.getElementById('main-info').classList.add('kanavocab');
+    function changeBackground(reverse) {
+        document.getElementById('main-info').classList.remove((reverse) ? 'kanavocab' : 'radical');
+        document.getElementById('main-info').classList.add((reverse) ? 'radical' : 'kanavocab');
     }
 
     function updateItemCountColors(isKanaVocab) {

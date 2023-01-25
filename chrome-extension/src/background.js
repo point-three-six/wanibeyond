@@ -17,25 +17,27 @@ headers.append('cache-control', 'no-cache');
 
 // quick load last state
 const quickLoadCache = chrome.storage.local.get(['wp_data', 'wp_guest', 'wp_level', 'wp_order']).then(({ wp_data, wp_guest, wp_level, wp_order }) => {
-    isGuest = false;
-    level = wp_level;
+    level = wp_level || 0;
     loadOrder = wp_order || 'front';
+
+    if (!wp_data && !wp_guest) return;
 
     if (wp_data && wp_guest) {
         if (wp_data.updatedAt > wp_guest.updatedAt) {
             userData = wp_data;
             session = userData.user;
+            isGuest = false;
         } else {
             userData = wp_guest;
-            isGuest = true;
         }
-    } else {
+    } else if (wp_data) {
         userData = wp_data;
         session = userData.user;
+        isGuest = false;
+    } else if (wp_guest) {
+        userData = wp_guest;
     }
 });
-
-sync();
 
 async function sync() {
     let installedDecks = await getInstalledDecks();
@@ -60,17 +62,6 @@ async function sync() {
         isGuest = true;
 
         let guestData = await getGuestData();
-
-        if (Object.keys(guestData).length == 0) {
-            await chrome.storage.local.set({
-                'wp_guest': {
-                    data: {
-                        decks: [],
-                        srs: {}
-                    }
-                }
-            })
-        }
 
         guestData.data.decks = insertGuestSRSData(me.data.decks, guestData.data.srs);
 
@@ -109,7 +100,12 @@ async function getSession() {
 }
 
 async function getGuestData() {
-    return (await chrome.storage.local.get(['wp_guest'])).wp_guest || {};
+    return (await chrome.storage.local.get(['wp_guest'])).wp_guest || {
+        data: {
+            decks: [],
+            srs: {}
+        }
+    };
 }
 
 async function setGuestData(data) {
@@ -166,8 +162,9 @@ async function isDeckInstalled(id) {
     return decks.indexOf(id) != -1;
 }
 
-async function setLevel(level) {
-    await chrome.storage.local.set({ 'wp_level': level });
+async function setLevel(newLevel) {
+    level = newLevel;
+    await chrome.storage.local.set({ 'wp_level': newLevel });
 }
 
 async function fetchUserData(deckIDs) {
@@ -242,6 +239,8 @@ async function getReviewData() {
 }
 
 async function itemSRSCompleted(completions) {
+    stopSync = true;
+
     await quickLoadCache;
 
     //note: itemIDs are strings in the format wk-###
@@ -255,6 +254,7 @@ async function itemSRSCompleted(completions) {
             if (res.status != 200) return false;
         } catch (e) {
             // failed to fetch. we need to preserve SRS.
+            console.log('Failed to submit SRS:', e);
             return false;
         }
     }
@@ -275,7 +275,7 @@ async function itemSRSCompleted(completions) {
 
                 if (item.id == numId) {
                     if (item.assignment.length == 0) {
-                        deck.items[i].assignment[0] = {
+                        userData.data.decks[x].items[i].assignment[0] = {
                             stage: 0,
                             lastAdvance: new Date().toISOString()
                         };
@@ -298,10 +298,12 @@ async function itemSRSCompleted(completions) {
     }
 
     if (isGuest) {
-        setGuestData(userData);
+        await setGuestData(userData);
     } else {
-        setUserData(userData);
+        await setUserData(userData);
     }
+
+    stopSync = false;
 
     return true;
 }
@@ -338,6 +340,10 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
         const action = msg.action;
 
         switch (action) {
+            case 'sync':
+                sync();
+                sendResponse({});
+                break;
             case 'hasDeck':
                 isDeckInstalled(msg.data).then((isInstalled) => {
                     sendResponse(isInstalled);
@@ -376,14 +382,15 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
                 break;
             case 'setLevel':
                 setLevel(msg.level);
-                sendResponse(true);
+                sendResponse({});
                 break;
             case 'getState':
                 getState().then(() => {
                     sendResponse({
                         session: session,
                         decks: userData.data.decks,
-                        loadOrder: loadOrder
+                        loadOrder: loadOrder,
+                        level: level
                     });
                 });
                 break;
@@ -402,11 +409,13 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
     switch (action) {
         case 'getState':
+            sync();
             getState().then(() => {
                 sendResponse({
                     session: session,
                     decks: userData.data.decks,
-                    loadOrder: loadOrder
+                    loadOrder: loadOrder,
+                    level: level
                 });
             });
             break;

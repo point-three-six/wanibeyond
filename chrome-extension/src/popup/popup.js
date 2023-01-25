@@ -39,17 +39,13 @@ function esc(str) {
 }
 
 window.addEventListener('load', () => {
-    console.log('Ok!')
     document.getElementById('version').innerText = manifest.version;
 
-    console.log('Sending message!')
     chrome.runtime.sendMessage({ action: 'getState' }, (state) => {
         if (typeof state != 'undefined') {
             let session = state.session;
             let decks = state.decks || [];
             let order = state.loadOrder;
-
-            console.log(state)
 
             if ('username' in session) {
                 document.getElementById('username').innerText = session.username;
@@ -59,9 +55,6 @@ window.addEventListener('load', () => {
             loadOrder(order);
             hideLoading();
             showUser();
-        } else {
-            console.log('bad state')
-            console.log(state);
         }
     });
 
