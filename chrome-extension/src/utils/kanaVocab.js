@@ -10,6 +10,8 @@ window.addEventListener('load', async function () {
             setTimeout(function () {
                 document.getElementById('main-info').classList.remove('radical');
                 document.getElementById('main-info').classList.add('kanavocab');
+                console.log(document.querySelector('#supplement-rad-name div.col1 h2'))
+                document.querySelector('#supplement-rad-name div.col1 h2').innerText = 'Meaning Mnemonic';
             }, 5);
         }
     });
@@ -19,6 +21,7 @@ window.addEventListener('load', async function () {
             setTimeout(function () {
                 document.getElementById('main-info').classList.remove('radical');
                 document.getElementById('main-info').classList.add('kanavocab');
+                document.getElementById('question-type').innerText = 'Vocabulary <strong>Meaning</strong>';
             }, 5);
         }
     });

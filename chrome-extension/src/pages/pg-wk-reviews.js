@@ -8,7 +8,6 @@
     chrome.runtime.sendMessage(window.__wp__.eid, { action: 'getReviewData' }, (res) => {
         items = res.items;
         items.forEach(item => itemsIds.push(item.id));
-        updateItemCounts(items);
         loadOrder = res.order;
     });
 
