@@ -238,9 +238,16 @@ async function getReviewData() {
     return items;
 }
 
-async function itemSRSCompleted(completions) {
-    stopSync = true;
+async function getDashboard() {
+    await quickLoadCache;
 
+    let decks = userData.data.decks;
+    let items = [];
+
+    return items;
+}
+
+async function itemSRSCompleted(completions) {
     await quickLoadCache;
 
     //note: itemIDs are strings in the format wk-###
@@ -303,8 +310,6 @@ async function itemSRSCompleted(completions) {
         await setUserData(userData);
     }
 
-    stopSync = false;
-
     return true;
 }
 
@@ -332,7 +337,25 @@ function calcIfSrsReady(assignment) {
 }
 
 async function getState() {
-    return await quickLoadCache;
+    await quickLoadCache;
+}
+
+// when sending to other parts of the ext, like pg-wk-home
+// or the popup, we don't need to include ALL the item data. That's a lot
+function prepareDeckData(decks) {
+    let newDecks = JSON.parse(JSON.stringify(decks));
+    for (deck of newDecks) {
+        for (item of deck.items) {
+            item.unlocked = level >= item.level;
+            item.kanavocab = item.data.kanavocab;
+            item.category = item.data.category.toLowerCase();
+            item.isInLessonQueue = item.assignment.length == 0 ? true : false;
+            item.isReady = item.isInLessonQueue ? true : calcIfSrsReady(item.assignment);
+            delete item.data;
+            //delete item.assignment;
+        }
+    }
+    return newDecks;
 }
 
 chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
@@ -388,7 +411,7 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
                 getState().then(() => {
                     sendResponse({
                         session: session,
-                        decks: userData.data.decks,
+                        decks: prepareDeckData(userData.data.decks),
                         loadOrder: loadOrder,
                         level: level
                     });
@@ -413,7 +436,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
             getState().then(() => {
                 sendResponse({
                     session: session,
-                    decks: userData.data.decks,
+                    decks: prepareDeckData(userData.data.decks),
                     loadOrder: loadOrder,
                     level: level
                 });
@@ -440,8 +463,15 @@ chrome.runtime.onInstalled.addListener(async () => {
     },
     {
         id: 'waniplus-home',
-        js: ['src/pages/pg-wk-home.js'],
-        matches: ['https://www.wanikani.com/'],
+        js: ['src/pages/pg-wk-home.js', 'src/utils/fittext.js'],
+        matches: ['https://www.wanikani.com/', 'https://www.wanikani.com/dashboard'],
+        runAt: 'document_start',
+        world: 'MAIN',
+    },
+    {
+        id: 'waniplus-summary',
+        js: ['src/pages/pg-wk-summary.js'],
+        matches: ['https://www.wanikani.com/review', 'https://www.wanikani.com/lesson'],
         runAt: 'document_start',
         world: 'MAIN',
     },

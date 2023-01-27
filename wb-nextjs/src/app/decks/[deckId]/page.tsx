@@ -24,7 +24,15 @@ export default async function DeckPage({ params: { deckId } }) {
           data: true,
           level: true,
           type: true
-        }
+        },
+        orderBy: [
+          {
+            level: 'asc'
+          },
+          {
+            id: 'asc'
+          }
+        ]
       }
     }
   });

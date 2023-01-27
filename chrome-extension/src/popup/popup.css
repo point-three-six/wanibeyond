@@ -10,7 +10,7 @@ html {
     padding: 6px 0px;
     text-align: center;
     font-size: 1.5em;
-    font-weight: bold;
+    font-weight: 300;
     color: rgb(252, 252, 252);
     background-image: linear-gradient(90deg, #FF00AA 33.33%, #AA00FF 33.33%, #AA00FF 66.66%, #00AAFF 66.66%);
     background-size: 100% 100%;
@@ -42,9 +42,10 @@ html {
 }
 
 .deck {
+    border-radius: 5px;
     margin: 3px 0;
     padding: 5px;
-    font-weight: bold;
+    font-weight: 500;
     background-color: #f4f3f3;
 }
 

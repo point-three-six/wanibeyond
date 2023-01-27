@@ -11,10 +11,6 @@ export default function DeckDetails(props) {
                     <div>{props.deck.name}</div>
                 </div>
                 <div className='flex justify-between'>
-                    <div>Author</div>
-                    <div>{props.deck.user.username}</div>
-                </div>
-                <div className='flex justify-between'>
                     <div>Privacy</div>
                     <div>{props.deck.isPrivate ? 'Unlisted' : 'Listed'}</div>
                 </div>

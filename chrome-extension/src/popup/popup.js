@@ -17,7 +17,9 @@ function buildDecksEl(decks) {
             html += `<div class="deck"><a href="https://waniplus.com/decks/${deck.id}" target="_blank">${esc(deck.name)}</a></div>`;
         }
     } else {
-        html = 'No decks installed.<br/><br/><a href="https://waniplus.com/decks" target="_blank">Click here to browse decks!</a>';
+        html = `No decks installed.<br/><br/><a href="https://waniplus.com/decks" target="_blank">Click here to browse decks!</a>
+        <br/><br/>
+        Or <a href="https://waniplus.com/decks/create" target="_blank">create a new deck</a>!`;
     }
 
     document.getElementById('decks').innerHTML = html;

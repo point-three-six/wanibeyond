@@ -33,7 +33,15 @@ async function getUserDecks(userId, ids: number[]) {
                             lastAdvance: true
                         }
                     }
-                }
+                },
+                orderBy: [
+                    {
+                        level: 'asc'
+                    },
+                    {
+                        id: 'asc'
+                    }
+                ]
             }
         }
     });

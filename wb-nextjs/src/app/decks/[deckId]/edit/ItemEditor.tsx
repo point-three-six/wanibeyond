@@ -96,14 +96,17 @@ export default function ItemEditor(props) {
             <div className='editor-width'>
                 <div className='xs:flex justify-between'>
                     <div className='flex-initial'>
-                        <div className='font-medium text-gray-700 mb-2'>
+                        {/* <div className='font-medium text-gray-700 mb-2'>
                             Filter
                         </div>
-                        <input type='text' onChange={e => updateFilter(e.target.value)} />
-                        <div className='font-medium text-gray-700 mt-6 mb-2'>
+                        <input type='text' onChange={e => updateFilter(e.target.value)} /> */}
+                        {/* <div className='font-medium text-gray-700 mb-2'>
                             Details
                         </div>
-                        <DeckDetails deck={deck} />
+                        <DeckDetails deck={deck} /> */}
+                        <div className='font-medium text-gray-700 mb-2'>
+                            {deck.name}
+                        </div>
                     </div>
                     <div className='flex-initial'>
                         <InstallButton deckId={deck.id} />

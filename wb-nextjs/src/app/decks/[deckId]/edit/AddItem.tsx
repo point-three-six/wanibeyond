@@ -192,7 +192,7 @@ export default function AddItem(props) {
                 <div className='font-medium text-gray-700 underline'>
                     <a href="#" onClick={() => props.back()}>{`<< go back`}</a>
                 </div>
-                <div className='font-medium text-red-500 underline'>
+                <div className={`font-medium text-red-500 underline ${eitm ? 'hidden' : ''}}`}>
                     <a href="#" onClick={() => setShowDeleteModal(true)}>
                         delete item
                     </a>
@@ -405,7 +405,7 @@ export default function AddItem(props) {
                 <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
                         <label htmlFor='description' className='text-sm font-medium text-gray-700'>
-                            Meaning Mnemonic <span className='text-red-500'>*</span>
+                            Meaning Mnemonic
                         </label>
                         <div className='mt-1'>
                             <textarea
@@ -443,7 +443,7 @@ export default function AddItem(props) {
                 <div className={`flex items-center mb-3 ${['vocab', 'kanji'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
                         <label htmlFor='description' className='text-sm font-medium text-gray-700'>
-                            Reading Mnemonic <span className='text-red-500'>*</span>
+                            Reading Mnemonic
                         </label>
                         <div className='mt-1'>
                             <textarea

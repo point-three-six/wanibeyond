@@ -24,7 +24,15 @@ async function getDeckData(deckId, userId) {
                     data: true,
                     level: true,
                     type: true
-                }
+                },
+                orderBy: [
+                    {
+                        level: 'asc'
+                    },
+                    {
+                        id: 'asc'
+                    }
+                ]
             }
         }
     });
