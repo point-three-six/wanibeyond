@@ -33,6 +33,7 @@ model Deck {
   allowForks  Boolean  @default(true)
   isPrivate   Boolean  @default(false)
   threadUrl   String?
+  levelSystem String
   items       Item[]
 
   @@index([name, userId])

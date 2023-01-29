@@ -235,7 +235,8 @@ export default function AddItem(props) {
                 <div className={`flex items-center mb-3`}>
                     <div className='flex-grow'>
                         <label htmlFor='level' className='text-sm font-medium text-gray-700'>
-                            Level <span className='text-red-500'>*</span>
+                            Level <span className='text-red-500'>*</span><br />
+                            <span className='text-xs'><span className='font-bold'>note:</span> level 0 means the item is available at ALL levels</span>
                         </label>
                         <div className='mt-1'>
                             <input

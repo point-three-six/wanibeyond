@@ -9,6 +9,7 @@ export default function Header() {
       <div className='flex max-width space-x-4 p-4'>
         <Link href="/" className='px-2 py-1 text-white '>Home</Link>
         <Link href="/decks" className='px-2 py-1 text-white '>Decks</Link>
+        <Link href="/decks/create" className='px-2 py-1 text-white '>Create</Link>
         {/* <Link href="/about" className='px-2 py-1 text-white '>About</Link> */}
         <UserInfoBar />
       </div>

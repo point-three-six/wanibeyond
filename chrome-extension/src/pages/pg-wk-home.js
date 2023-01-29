@@ -59,6 +59,7 @@
 
             for (item of deck.items) {
                 let type = (item.kanavocab) ? 'kanavocab' : item.category;
+                let srsLevel = item.assignment.length > 0 ? item.assignment[0].stage : 0;
                 let itemClass = (type == 'kanji') ? 'kanji' : 'radical';
                 let itemColor1 = (type == 'kanavocab') ? 'orange' : '#a0f';
                 let itemColor2 = (type == 'kanavocab') ? 'rgb(233, 151, 0)' : 'rgb(146, 0, 219)';
@@ -66,9 +67,16 @@
                     (['kanavocab', 'vocabulary'].indexOf(type) != -1) ?
                         `background-color:${itemColor1};background-image: linear-gradient(to bottom, ${itemColor1}, ${itemColor2});background-repeat: repeat-x;`
                         : '';
-                let srsLevel = item.assignment.length > 0 ? item.assignment[0].stage + 1 : 0;
+                let itemTitle = 'Unlocked!' + (item.isReady ? ' Waiting for you!' : '');
 
-                itemHtml += `<div class="progress-entry relative rounded-tr rounded-tl">
+                // item is locked.
+                // overwrite icon bg to be gray.
+                if (!item.unlocked) {
+                    itemStyle = 'background-image:#ccc;linear-gradient(180deg, #ccc 0%, #BFBFBF 100%);background-repeat: repeat-x;';
+                    itemTitle = 'Locked! Your DECK LEVEL must be level ' + item.level + ' to unlock this item. Your deck level is currently ' + deck.level + '.';
+                }
+
+                itemHtml += `<div class="progress-entry relative rounded-tr rounded-tl" title="${itemTitle}">
                         <a href="https://waniplus.com/decks/${deck.id}/item/${item.id}" target="_blank" class="${itemClass}-icon ${!item.unlocked ? itemClass + '-icon--locked' : ''}" lang="ja" style="${itemStyle}">
                             <div class="fittext">${item.characters}</div>
                         </a>
@@ -119,7 +127,7 @@
 
         for (deck of decks) {
             for (item of deck.items) {
-                if (item.isReady) {
+                if (item.unlocked && item.isReady) {
                     if (item.isInLessonQueue) {
                         lessonCount++;
                     } else {

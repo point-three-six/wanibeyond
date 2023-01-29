@@ -11,7 +11,7 @@ async function getUserDecks(userId, ids: number[]) {
         select: {
             id: true,
             name: true,
-            threadUrl: true,
+            levelSystem: true,
             items: {
                 where: {
                     deleted: false

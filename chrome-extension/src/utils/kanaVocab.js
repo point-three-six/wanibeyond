@@ -8,13 +8,20 @@ window.addEventListener('load', async function () {
     let item;
     let obsv = new MutationObserver(changeLessonHTML);
 
+    // this is a temp fix for a bug.
+    // do not run updateLessonNav() more than once.
+    let navChangedIds = [];
+
     $.jStorage.listenKeyChange('l/currentLesson', function (key, action) {
         item = $.jStorage.get('l/currentLesson');
         if (item.kanavocab) {
             setTimeout(function () {
                 changeBackground();
                 updateItemCountColors(true);
-                updateLessonNav();
+                if (navChangedIds.indexOf(item.id) == -1) {
+                    navChangedIds.push(item.id);
+                    updateLessonNav();
+                }
                 changeLessonHTML();
                 let target = document.getElementById('supplement-rad');
                 obsv.observe(target, { attributes: true, childList: true, subtree: false });
@@ -104,8 +111,10 @@ window.addEventListener('load', async function () {
     }
 
     function changeBackground(reverse) {
-        document.getElementById('main-info').classList.remove((reverse) ? 'kanavocab' : 'radical');
-        document.getElementById('main-info').classList.add((reverse) ? 'radical' : 'kanavocab');
+        try {
+            document.getElementById('main-info').classList.remove((reverse) ? 'kanavocab' : 'radical');
+            document.getElementById('main-info').classList.add((reverse) ? 'radical' : 'kanavocab');
+        } catch (e) { }
     }
 
     function updateItemCountColors(isKanaVocab) {

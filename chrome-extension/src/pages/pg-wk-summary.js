@@ -25,7 +25,7 @@
 
         for (deck of decks) {
             for (item of deck.items) {
-                if (item.isReady) {
+                if (item.unlocked && item.isReady) {
                     if (item.isInLessonQueue) {
                         lessonCount++;
                     } else {

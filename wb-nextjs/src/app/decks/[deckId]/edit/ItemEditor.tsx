@@ -13,7 +13,7 @@ export default function ItemEditor(props) {
     const generateLevels = (items) => {
         let lvls = items.map(item => item.level)
             .filter((e, i, arr) => arr.indexOf(e) === i)
-            .sort()
+            .sort((a, b) => a - b)
         return (lvls.length > 0) ? lvls : [0];
     }
 

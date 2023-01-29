@@ -22,6 +22,9 @@ export default function CreateForm() {
     let [allowForking, setAllowForking] = useState(false);
     let [allowForkingValidated, setAllowForkingValidated] = useState(false);
 
+    let [levelSystem, setLevelSystem] = useState(false);
+    let [levelSystemValidated, setLevelSystemValidated] = useState(false);
+
     let [url, setUrl] = useState('');
     let [urlValidated, setUrlValidated] = useState(true);
 
@@ -79,6 +82,15 @@ export default function CreateForm() {
         }
     }
 
+    function validateLevelSystem(value: string) {
+        if (['wanikani', 'internal'].indexOf(value) != -1) {
+            setLevelSystem(value);
+            setLevelSystemValidated(true);
+        } else {
+            setLevelSystemValidated(false);
+        }
+    }
+
     async function sendRequest(url, arg) {
         return await fetch(url, {
             method: 'POST',
@@ -92,7 +104,8 @@ export default function CreateForm() {
             desc: desc,
             privacy: isPrivate,
             forking: allowForking,
-            threadUrl: url
+            threadUrl: url,
+            levelSystem: levelSystem
         }).then(async (res) => {
             let r = await res.json();
             if (res.status == 200 && 'id' in r) {
@@ -169,6 +182,28 @@ export default function CreateForm() {
                 </div>
             </div>
             <div className={`flex items-center mb-3 ${(nameValidated && isPrivateValidated && allowForkingValidated) ? '' : 'hidden'}`}>
+                <div className={`circle mr-6 ${(levelSystemValidated) ? 'checked' : ''}`}>
+                    <div className={`checkmark ${(levelSystemValidated) ? '' : 'hidden'}`}></div>
+                </div>
+                <div className='flex-grow'>
+                    <label htmlFor='levelSystem' className='text-sm font-medium text-gray-700'>Level System</label>
+                    <div className='mt-1'>
+                        <select
+                            name='levelSystem'
+                            className='border border-gray-300 w-full'
+                            defaultValue={'value'}
+                            onChange={e => {
+                                validateLevelSystem(e.target.value)
+                            }}
+                        >
+                            <option value=''></option>
+                            <option value='wanikani'>WaniKani: The user's WaniKani level is used.</option>
+                            <option value='internal'>Internal: The user's internal deck level is used.</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            {/* <div className={`flex items-center mb-3 ${(nameValidated && isPrivateValidated && allowForkingValidated) ? '' : 'hidden'}`}>
                 <div className={`circle mr-6 ${(urlValidated) ? 'checked' : ''}`}>
                     <div className={`checkmark ${(urlValidated) ? '' : 'hidden'}`}></div>
                 </div>
@@ -187,8 +222,8 @@ export default function CreateForm() {
                         />
                     </div>
                 </div>
-            </div>
-            <div className={`flex items-center mb-3 ${(nameValidated && isPrivateValidated && allowForkingValidated && urlValidated) ? '' : 'hidden'}`}>
+            </div> */}
+            <div className={`flex items-center mb-3 ${(nameValidated && isPrivateValidated && allowForkingValidated && urlValidated && levelSystemValidated) ? '' : 'hidden'}`}>
                 <div className={`circle mr-6 ${(descValidated) ? 'checked' : ''}`}>
                     <div className={`checkmark ${(descValidated) ? '' : 'hidden'}`}></div>
                 </div>
@@ -199,6 +234,7 @@ export default function CreateForm() {
                             name='description'
                             className='border border-gray-300 w-full'
                             maxLength={descMaxLength}
+                            placeholder='An optional descripton . . .'
                             onChange={e => {
                                 validateDesc(e.target.value)
                             }}
@@ -207,7 +243,7 @@ export default function CreateForm() {
                     </div>
                 </div>
             </div>
-            <div className={`text-center mt-8 ${(nameValidated && isPrivateValidated && allowForkingValidated && descValidated) ? '' : 'hidden'}`}>
+            <div className={`text-center mt-8 ${(nameValidated && isPrivateValidated && allowForkingValidated && levelSystemValidated && descValidated) ? '' : 'hidden'}`}>
                 <button
                     type="button"
                     className="text-white bg-blue-500 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2"

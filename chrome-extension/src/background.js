@@ -1,4 +1,5 @@
-const endpoint = 'https://waniplus.com'
+//const endpoint = 'https://waniplus.com';
+const endpoint = 'http://localhost:3000';
 
 // use data returned from /api/me
 let isGuest = true;
@@ -8,7 +9,7 @@ let userData = {
         decks: []
     }
 };
-let level = 0;
+let myLevel = 0;
 let loadOrder = 'front';
 
 let headers = new Headers();
@@ -17,7 +18,7 @@ headers.append('cache-control', 'no-cache');
 
 // quick load last state
 const quickLoadCache = chrome.storage.local.get(['wp_data', 'wp_guest', 'wp_level', 'wp_order']).then(({ wp_data, wp_guest, wp_level, wp_order }) => {
-    level = wp_level || 0;
+    myLevel = wp_level || 0;
     loadOrder = wp_order || 'front';
 
     if (!wp_data && !wp_guest) return;
@@ -163,7 +164,7 @@ async function isDeckInstalled(id) {
 }
 
 async function setLevel(newLevel) {
-    level = newLevel;
+    myLevel = newLevel;
     await chrome.storage.local.set({ 'wp_level': newLevel });
 }
 
@@ -198,7 +199,7 @@ async function getLessonData() {
 
             // here we need to verify if the item is in the lesson stage.
             // an item is in the lesson stage if it has no generated assignment.
-            if (item.assignment.length == 0 && level >= item.level) {
+            if (item.assignment.length == 0 && myLevel >= item.level) {
                 //deck.items[i].data.__wp__ = true;
                 items.unshift(deck.items[i].data)
             }
@@ -223,7 +224,7 @@ async function getReviewData() {
 
             // here we need to verify if the item is in the lesson stage.
             // an item is in the lesson stage if it has no generated assignment.
-            if (item.assignment.length > 0 && level >= item.level) {
+            if (item.assignment.length > 0 && myLevel >= item.level) {
                 // inject assignment stage to item data
                 item.data.srs = item.assignment[0].stage;
 
@@ -333,7 +334,30 @@ function calcIfSrsReady(assignment) {
         8: 30 * 4 * 24 * 60
     };
 
+    return true;
     return (elapsed > times[stage] * 60000);
+}
+
+function calculateDeckLevel(deck) {
+    let curLevel = 0;
+    let levels = deck.items.map(item => item.level)
+        .filter((e, i, arr) => arr.indexOf(e) === i)
+        .sort((a, b) => a - b);
+
+    for (level of levels) {
+        curLevel = level;
+
+        // check all items in this level.
+        let items = deck.items.filter(item => item.level == level);
+
+        for (item of items) {
+            if (item.assignment.length == 0 || item.assignment[0].stage < 4) {
+                return curLevel;
+            }
+        }
+    }
+
+    return curLevel;
 }
 
 async function getState() {
@@ -345,8 +369,12 @@ async function getState() {
 function prepareDeckData(decks) {
     let newDecks = JSON.parse(JSON.stringify(decks));
     for (deck of newDecks) {
+        let curLevel = (!'levelSystem' in deck || deck.levelSystem == 'wanikani') ? myLevel : calculateDeckLevel(deck);
+
+        deck.level = curLevel;
+
         for (item of deck.items) {
-            item.unlocked = level >= item.level;
+            item.unlocked = curLevel >= item.level;
             item.kanavocab = item.data.kanavocab;
             item.category = item.data.category.toLowerCase();
             item.isInLessonQueue = item.assignment.length == 0 ? true : false;
@@ -413,7 +441,7 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
                         session: session,
                         decks: prepareDeckData(userData.data.decks),
                         loadOrder: loadOrder,
-                        level: level
+                        level: myLevel
                     });
                 });
                 break;
@@ -438,7 +466,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
                     session: session,
                     decks: prepareDeckData(userData.data.decks),
                     loadOrder: loadOrder,
-                    level: level
+                    level: myLevel
                 });
             });
             break;
