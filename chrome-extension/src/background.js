@@ -315,6 +315,7 @@ async function itemSRSCompleted(completions) {
 }
 
 function calcIfSrsReady(assignment) {
+    return true;
     let stage = assignment[0].stage;
 
     let now = Date.now();

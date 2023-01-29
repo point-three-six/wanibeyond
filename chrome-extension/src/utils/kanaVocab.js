@@ -7,59 +7,76 @@ window.addEventListener('load', async function () {
 
     let item;
     let obsv = new MutationObserver(changeLessonHTML);
+    let isLessonPage = (window.location.href.indexOf('lesson') !== -1) ? true : false;
 
     // this is a temp fix for a bug.
     // do not run updateLessonNav() more than once.
     let navChangedIds = [];
 
-    $.jStorage.listenKeyChange('l/currentLesson', function (key, action) {
-        item = $.jStorage.get('l/currentLesson');
-        if (item.kanavocab) {
-            setTimeout(function () {
-                changeBackground();
-                updateItemCountColors(true);
-                if (navChangedIds.indexOf(item.id) == -1) {
-                    navChangedIds.push(item.id);
-                    updateLessonNav();
+    if (isLessonPage) {
+        $.jStorage.listenKeyChange('l/currentLesson', function (key, action) {
+            item = $.jStorage.get('l/currentLesson');
+            if (item.kanavocab) {
+                setTimeout(function () {
+                    changeBackground();
+                    updateItemCountColors(true);
+                    if (navChangedIds.indexOf(item.id) == -1) {
+                        navChangedIds.push(item.id);
+                        updateLessonNav();
+                    }
+                    changeLessonHTML();
+                    let target = document.getElementById('supplement-rad');
+                    obsv.observe(target, { attributes: true, childList: true, subtree: false });
+                }, 15);
+            } else {
+                if (obsv) {
+                    obsv.disconnect();
                 }
-                changeLessonHTML();
-                let target = document.getElementById('supplement-rad');
-                obsv.observe(target, { attributes: true, childList: true, subtree: false });
-            }, 15);
-        } else {
-            if (obsv) {
-                obsv.disconnect();
+
+                // fix glitch when going directly from kanavocab to radical
+                if (item.category.toLowerCase() == 'radical') {
+                    changeBackground(true);
+                }
+
+                updateItemCountColors(false);
             }
 
-            // fix glitch when going directly from kanavocab to radical
-            if (item.category.toLowerCase() == 'radical') {
-                console.log(item.category.toLowerCase(), '==', 'radical')
-                changeBackground(true);
+            changeButtonListBackgrounds();
+        });
+
+        $.jStorage.listenKeyChange('l/currentQuizItem', function (key, action) {
+            item = $.jStorage.get('l/currentQuizItem');
+
+            if (item.kanavocab) {
+                setTimeout(function () {
+                    changeBackground();
+                    updateItemCountColors(true);
+                    changeQuizHTML();
+                }, 15);
+            } else {
+                setTimeout(function () {
+                    changeBackground(true);
+                }, 15);
+
+                updateItemCountColors(false);
             }
+        });
+    } else {
+        // REVIEWS PAGE
+        $.jStorage.listenKeyChange('currentItem', function (key, action) {
+            item = $.jStorage.get('currentItem');
 
-            updateItemCountColors(false);
-        }
-
-        changeButtonListBackgrounds();
-    });
-
-    $.jStorage.listenKeyChange('l/currentQuizItem', function (key, action) {
-        item = $.jStorage.get('l/currentQuizItem');
-        console.log(item)
-        if (item.kanavocab) {
-            setTimeout(function () {
-                changeBackground();
-                updateItemCountColors(true);
-                changeQuizHTML();
-            }, 15);
-        } else {
-            setTimeout(function () {
-                changeBackground(true);
-            }, 15);
-
-            updateItemCountColors(false);
-        }
-    });
+            if (item.kanavocab) {
+                setTimeout(function () {
+                    changeBackgroundReview();
+                }, 15);
+            } else {
+                setTimeout(function () {
+                    changeBackgroundReview(true);
+                }, 15);
+            }
+        });
+    }
 
     async function updateLessonNav() {
         let el = document.getElementById('supplement-nav').getElementsByTagName('ul')[0];
@@ -121,6 +138,13 @@ window.addEventListener('load', async function () {
         } catch (e) { }
     }
 
+    function changeBackgroundReview(reverse) {
+        try {
+            document.getElementById('character').classList.remove((reverse) ? 'kanavocab' : 'radical');
+            document.getElementById('character').classList.add((reverse) ? 'radical' : 'kanavocab');
+        } catch (e) { }
+    }
+
     function updateItemCountColors(isKanaVocab) {
         let spans = document.getElementById('stats').getElementsByTagName('span');
         spans.forEach(span => {
@@ -136,15 +160,10 @@ window.addEventListener('load', async function () {
         let el = document.getElementById('lesson').lastElementChild;
         let bttns = el.getElementsByTagName('button');
         let items = $.jStorage.get('l/activeQueue');
-        let map = {};
-        items.forEach(item => map[item.characters.toLowerCase()] = item.kanavocab);
 
-        console.log(map)
-
-        bttns.forEach(btn => {
-            let chars = btn.innerText.toLowerCase();
-            // is kanavocab?
-            if (map[chars]) {
+        bttns.forEach((btn, i) => {
+            if (i == 5) return;
+            if (items[i].kanavocab) {
                 btn.classList.remove('radical');
                 btn.classList.add('kanavocab');
             }
