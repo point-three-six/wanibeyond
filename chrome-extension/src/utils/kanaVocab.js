@@ -31,8 +31,12 @@ window.addEventListener('load', async function () {
                 obsv.disconnect();
             }
 
+            console.log(item)
+
             // fix glitch when going directly from kanavocab to radical
-            if (item.rad) {
+            console.log(item.category.toLowerCase())
+            if (item.category.toLowerCase() == 'radical') {
+                console.log(item.category.toLowerCase(), '==', 'radical')
                 changeBackground(true);
             }
 
@@ -51,10 +55,12 @@ window.addEventListener('load', async function () {
                 changeQuizHTML();
             }, 15);
         } else {
+            setTimeout(function () {
+                changeBackground(true);
+            }, 15);
+
             updateItemCountColors(false);
         }
-
-        changeButtonListBackgrounds();
     });
 
     async function updateLessonNav() {
@@ -134,6 +140,8 @@ window.addEventListener('load', async function () {
         let items = $.jStorage.get('l/activeQueue');
         let map = {};
         items.forEach(item => map[item.characters.toLowerCase()] = item.kanavocab);
+
+        console.log(map)
 
         bttns.forEach(btn => {
             let chars = btn.innerText.toLowerCase();
