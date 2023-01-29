@@ -52,7 +52,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 let curStage = assignment.stage;
                 let newStage = curStage;
 
-                if (failed && curStage > 0) {
+                if (failed && curStage > 1) {
                     newStage--;
                 } else if (!failed && curStage < 8) {
                     newStage++;

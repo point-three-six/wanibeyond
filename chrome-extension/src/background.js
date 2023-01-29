@@ -284,13 +284,13 @@ async function itemSRSCompleted(completions) {
                 if (item.id == numId) {
                     if (item.assignment.length == 0) {
                         userData.data.decks[x].items[i].assignment[0] = {
-                            stage: 0,
+                            stage: 1,
                             lastAdvance: new Date().toISOString()
                         };
                     } else {
                         let curStage = deck.items[i].assignment[0].stage;
 
-                        if (failed && curStage > 0) {
+                        if (failed && curStage > 1) {
                             userData.data.decks[x].items[i].assignment[0].stage--;
                         } else if (!failed && curStage < 8) {
                             userData.data.decks[x].items[i].assignment[0].stage++;
@@ -351,7 +351,7 @@ function calculateDeckLevel(deck) {
         let items = deck.items.filter(item => item.level == level);
 
         for (item of items) {
-            if (item.assignment.length == 0 || item.assignment[0].stage < 4) {
+            if (item.assignment.length == 0 || item.assignment[0].stage < 5) {
                 return curLevel;
             }
         }

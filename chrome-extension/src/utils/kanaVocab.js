@@ -31,10 +31,7 @@ window.addEventListener('load', async function () {
                 obsv.disconnect();
             }
 
-            console.log(item)
-
             // fix glitch when going directly from kanavocab to radical
-            console.log(item.category.toLowerCase())
             if (item.category.toLowerCase() == 'radical') {
                 console.log(item.category.toLowerCase(), '==', 'radical')
                 changeBackground(true);
@@ -48,6 +45,7 @@ window.addEventListener('load', async function () {
 
     $.jStorage.listenKeyChange('l/currentQuizItem', function (key, action) {
         item = $.jStorage.get('l/currentQuizItem');
+        console.log(item)
         if (item.kanavocab) {
             setTimeout(function () {
                 changeBackground();

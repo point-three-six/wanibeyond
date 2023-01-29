@@ -60,7 +60,7 @@ model Assignment {
   item        Item     @relation(fields: [itemId], references: [id])
   userId      Int
   itemId      Int
-  stage       Int      @default(0)
+  stage       Int      @default(1)
   lastAdvance DateTime @default(now())
 
   @@index([userId, itemId])
