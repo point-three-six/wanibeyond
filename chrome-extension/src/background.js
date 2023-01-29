@@ -1,5 +1,5 @@
-//const endpoint = 'https://waniplus.com';
-const endpoint = 'http://localhost:3000';
+const endpoint = 'https://waniplus.com';
+//const endpoint = 'http://localhost:3000';
 
 // use data returned from /api/me
 let isGuest = true;
@@ -194,12 +194,16 @@ async function getLessonData() {
 
     for (let i in decks) {
         let deck = decks[i];
+        let curLevel = (!'levelSystem' in deck || deck.levelSystem == 'wanikani') ? myLevel : calculateDeckLevel(deck);
+
+        deck.level = curLevel;
+
         for (let i in deck.items) {
             let item = deck.items[i];
 
             // here we need to verify if the item is in the lesson stage.
             // an item is in the lesson stage if it has no generated assignment.
-            if (item.assignment.length == 0 && myLevel >= item.level) {
+            if (item.assignment.length == 0 && curLevel >= item.level) {
                 //deck.items[i].data.__wp__ = true;
                 items.unshift(deck.items[i].data)
             }
@@ -219,12 +223,16 @@ async function getReviewData() {
 
     for (let i in decks) {
         let deck = decks[i];
+        let curLevel = (!'levelSystem' in deck || deck.levelSystem == 'wanikani') ? myLevel : calculateDeckLevel(deck);
+
+        deck.level = curLevel;
+
         for (let i in deck.items) {
             let item = deck.items[i];
 
             // here we need to verify if the item is in the lesson stage.
             // an item is in the lesson stage if it has no generated assignment.
-            if (item.assignment.length > 0 && myLevel >= item.level) {
+            if (item.assignment.length > 0 && curLevel >= item.level) {
                 // inject assignment stage to item data
                 item.data.srs = item.assignment[0].stage;
 
@@ -315,7 +323,6 @@ async function itemSRSCompleted(completions) {
 }
 
 function calcIfSrsReady(assignment) {
-    return true;
     let stage = assignment[0].stage;
 
     let now = Date.now();
@@ -343,13 +350,13 @@ function calculateDeckLevel(deck) {
         .filter((e, i, arr) => arr.indexOf(e) === i)
         .sort((a, b) => a - b);
 
-    for (level of levels) {
+    for (let level of levels) {
         curLevel = level;
 
         // check all items in this level.
         let items = deck.items.filter(item => item.level == level);
 
-        for (item of items) {
+        for (let item of items) {
             if (item.assignment.length == 0 || item.assignment[0].stage < 5) {
                 return curLevel;
             }

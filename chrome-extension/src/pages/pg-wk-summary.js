@@ -24,7 +24,7 @@
         decks = res.decks;
 
         for (deck of decks) {
-            for (item of deck.items) {
+            for (let item of deck.items) {
                 if (item.unlocked && item.isReady) {
                     if (item.isInLessonQueue) {
                         lessonCount++;
