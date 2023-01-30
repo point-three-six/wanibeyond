@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react'
+import React from 'react';
+import sendExtMsg from '../../../../lib/wpExtension';
 
 export default function LevelList(props) {
     let dragItem: object;
@@ -39,6 +40,7 @@ export default function LevelList(props) {
         })
 
         if (res.status == 200) {
+            sendExtMsg('sync', true, () => { });
             props.onItemLevelChange(item, newLevel);
         }
     }

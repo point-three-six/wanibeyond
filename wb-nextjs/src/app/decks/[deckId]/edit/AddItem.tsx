@@ -3,9 +3,9 @@
 import React, { useState } from 'react'
 import MultiInput from './MultiInput';
 import ItemSearch from './ItemSearch';
-import '../../../../styles/checkmark.css'
-import { faCropSimple } from '@fortawesome/free-solid-svg-icons';
 import DeleteModal from './DeleteModal';
+import sendExtMsg from '../../../../lib/wpExtension';
+import '../../../../styles/checkmark.css';
 
 function getTypeDisplayText(value: string) {
     if (value == '') return 'Characters';
@@ -152,6 +152,9 @@ export default function AddItem(props) {
             let r = await res.json();
 
             if (res.status == 200 && 'item' in r) {
+                sendExtMsg('sync', true, () => { });
+
+
                 if (eitm) {
                     props.onItemEdited(r.item);
                 } else {

@@ -197,8 +197,8 @@ export default function CreateForm() {
                             }}
                         >
                             <option value=''></option>
-                            <option value='wanikani'>WaniKani: The user's WaniKani level is used.</option>
                             <option value='internal'>Internal: The user's internal deck level is used.</option>
+                            <option value='wanikani'>WaniKani: The user's WaniKani level is used.</option>
                         </select>
                     </div>
                 </div>

@@ -53,13 +53,17 @@ window.addEventListener('load', async function () {
                     updateItemCountColors(true);
                     changeQuizHTML();
                 }, 15);
-            } else {
+            } else if (item.category.toLowerCase() == 'radical') {
                 setTimeout(function () {
                     changeBackground(true);
                 }, 15);
-
-                updateItemCountColors(false);
+            } else {
+                setTimeout(function () {
+                    restoreBackground();
+                }, 15);
             }
+
+            updateItemCountColors(false);
         });
     } else {
         // REVIEWS PAGE
@@ -70,9 +74,13 @@ window.addEventListener('load', async function () {
                 setTimeout(function () {
                     changeBackgroundReview();
                 }, 15);
-            } else {
+            } else if (item.category.toLowerCase() == 'radical') {
                 setTimeout(function () {
                     changeBackgroundReview(true);
+                }, 15);
+            } else {
+                setTimeout(function () {
+                    restoreBackground();
                 }, 15);
             }
         });
@@ -138,10 +146,19 @@ window.addEventListener('load', async function () {
         } catch (e) { }
     }
 
+    function restoreBackground() {
+        try {
+            let el = document.getElementById('character');
+            el.classList.remove('kanavocab');
+            el.classList.remove('radical');
+        } catch (e) { }
+    }
+
     function changeBackgroundReview(reverse) {
         try {
-            document.getElementById('character').classList.remove((reverse) ? 'kanavocab' : 'radical');
-            document.getElementById('character').classList.add((reverse) ? 'radical' : 'kanavocab');
+            let el = document.getElementById('character');
+            el.classList.remove((reverse) ? 'kanavocab' : 'radical');
+            el.classList.add((reverse) ? 'radical' : 'kanavocab');
         } catch (e) { }
     }
 

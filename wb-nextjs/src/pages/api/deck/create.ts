@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from '../../../lib/sessionApiFallback'
 import prisma from '../../../lib/prisma'
-import { connect } from 'http2';
 
 async function createDeck(userId, { name, desc, privacy, forking, url, levelSystem }) {
     return await prisma.deck.create({
