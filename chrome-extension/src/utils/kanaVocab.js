@@ -179,7 +179,7 @@ window.addEventListener('load', async function () {
         let items = $.jStorage.get('l/activeQueue');
 
         bttns.forEach((btn, i) => {
-            if (i == 5) return;
+            if (i > items.length - 1) return; // stop @ quiz bttn
             if (items[i].kanavocab) {
                 btn.classList.remove('radical');
                 btn.classList.add('kanavocab');

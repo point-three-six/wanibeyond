@@ -32,7 +32,9 @@
                 1: 0,
                 2: .3,
                 3: .4,
-                4: .5
+                4: .5,
+                5: .6,
+                6: .7
             };
             if (len > 1) {
                 window.fitText(el, compressorMap[len] || .9);
