@@ -1,7 +1,7 @@
 import ItemList from './ItemList';
 import prisma from '../../../lib/prisma';
 import InstallButton from '../../components/InstallButton';
-import { getSession } from '../../../lib/session'
+import { getSession } from '../../../lib/session';
 
 export default async function DeckPage({ params: { deckId } }) {
   let id = parseInt(deckId);
@@ -67,7 +67,8 @@ export default async function DeckPage({ params: { deckId } }) {
             </div>
           </div>
           <ItemList deckId={deck.id} items={deck.items} />
-        </div> :
+        </div>
+        :
         <div className='max-width'>
           <div className='text-center'>
             This deck does not exist or is private.

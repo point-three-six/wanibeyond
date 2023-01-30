@@ -19,6 +19,9 @@ export default async function UserInfoBar() {
                                 <div className='entry p-2 text-left text-slate-800 hover:bg-slate-100'>
                                     <Link href='/decks/create' className='px-2 py-1'>Create Deck</Link>
                                 </div>
+                                <div className='entry p-2 text-left text-slate-800 hover:bg-slate-100'>
+                                    <Link href='/signout' className='px-2 py-1'>Sign Out</Link>
+                                </div>
                             </div>
                         </> :
                         <Link href='/signin' className='px-2 py-1 text-white '>Sign In</Link>

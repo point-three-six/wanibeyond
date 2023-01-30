@@ -178,6 +178,7 @@ export default function AddItem(props) {
         })
 
         if (res.status == 200) {
+            sendExtMsg('sync', true, () => { });
             setShowDeleteModal(false);
             props.onItemDeleted(props.item);
             props.back();

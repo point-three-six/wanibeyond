@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
 import { setCookie } from 'cookies-next';
 import Link from 'next/link';
 import sendExtMsg from '../../lib/wpExtension';
@@ -31,7 +31,7 @@ export default function page() {
                 setCookie('wp_session', token, {
                     path: '/',
                     maxAge: 3600 * 24 * 7 * 30, // Expires after 1hr
-                    sameSite: true
+                    sameSite: 'lax'
                 });
 
                 // if they have the extension installed

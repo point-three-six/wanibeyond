@@ -1,4 +1,5 @@
 import prisma from '../../../../../lib/prisma';
+import { getSession } from '../../../../../lib/session';
 import injectItemData from '../../../../../lib/itemInjector';
 import '../../../../../styles/editor.css';
 
@@ -6,10 +7,21 @@ export default async function ItemPage({ params }) {
     let itemId = parseInt(params.itemId);
     let deckId = parseInt(params.deckId);
 
+    let sessionData = await getSession();
+    let userId = (typeof sessionData.id == 'undefined') ? -1 : sessionData.id;
+
     const deck = await prisma.deck.findFirst({
         where: {
             id: deckId,
-            isPrivate: false
+            OR: [
+                {
+                    isPrivate: false
+                },
+                {
+                    isPrivate: true,
+                    userId: userId
+                }
+            ]
         },
         include: {
             items: {
@@ -20,16 +32,21 @@ export default async function ItemPage({ params }) {
             }
         }
     });
-    const item = deck.items[0] || null;
 
-    let injected = await injectItemData(item.data);
-    item.data = injected;
+    let item = null;
+    if (deck) {
+        item = deck.items[0] || null;
+
+        let injected = await injectItemData(item.data);
+        item.data = injected;
+    }
+
 
     return (
         <>
             <div className='max-width'>
                 {
-                    item ?
+                    deck && item ?
                         <>
                             <div className='text-center'>
                                 <div className={`item ${item.type} super w-full`}>
@@ -148,7 +165,9 @@ export default async function ItemPage({ params }) {
                             }
                         </>
                         :
-                        'not found'
+                        <div className='text-center'>
+                            This item does not exist or is private.
+                        </div>
                 }
             </div>
         </>
