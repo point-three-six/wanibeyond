@@ -30,7 +30,7 @@ export default function page() {
 
                 setCookie('wp_session', token, {
                     path: '/',
-                    maxAge: 3600 * 24 * 7 * 30, // Expires after 1hr
+                    maxAge: 3600 * 24 * 7 * 30,
                     sameSite: 'lax'
                 });
 

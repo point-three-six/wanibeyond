@@ -93,26 +93,16 @@ export default function ItemEditor(props) {
                 src="/wanakana.js"
                 strategy="lazyOnload"
             />
-            <div className='editor-width'>
-                <div className='xs:flex justify-between'>
+            <div className='flex max-width'>
+                <div className='flex-initial'>
                     <div className='flex-initial'>
-                        {/* <div className='font-medium text-gray-700 mb-2'>
-                            Filter
-                        </div>
-                        <input type='text' onChange={e => updateFilter(e.target.value)} /> */}
-                        {/* <div className='font-medium text-gray-700 mb-2'>
-                            Details
-                        </div>
-                        <DeckDetails deck={deck} /> */}
-                        <div className='font-medium text-gray-700 mb-2'>
-                            {deck.name}
-                        </div>
+                        <DeckDetails deck={deck} />
                     </div>
                     <div className='flex-initial'>
                         <InstallButton deckId={deck.id} />
                     </div>
                 </div>
-                <div className='mt-6'>
+                <div className='flex-grow mt-6'>
                     {
                         isAddingItem > -1 ?
                             <AddItem

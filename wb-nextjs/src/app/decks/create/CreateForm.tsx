@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import '../../../styles/checkmark.css'
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import '../../../styles/checkmark.css';
 
 export default function CreateForm() {
     const router = useRouter()
