@@ -1,6 +1,8 @@
 'use client';
 
+import Link from 'next/link';
 import React from 'react'
+
 
 export default function DeckDetails(props) {
     return (
@@ -20,6 +22,9 @@ export default function DeckDetails(props) {
                 <div className='flex justify-between'>
                     <div>Level System</div>
                     <div>{props.deck.levelSystem}</div>
+                </div>
+                <div>
+                    <Link href={`/decks/${props.deck.id}`} className='text-orange-500'>View preview</Link>
                 </div>
             </div >
         </>

@@ -10,6 +10,13 @@ export default async function DeckListPage() {
     myDecks = await prisma.deck.findMany({
       where: {
         userId: sessionData.id
+      },
+      include: {
+        _count: {
+          select: {
+            items: true,
+          },
+        },
       }
     });
   }

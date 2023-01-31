@@ -47,8 +47,8 @@ export default function AddItem(props) {
     let [mmne, setMmne] = useState(eitm ? eitm.data.mmne : '');
     let [readingHint, setReadingHint] = useState(eitm && eitm.data.rhnt ? eitm.data.rhnt : '');
     let [rmne, setRmne] = useState(eitm ? eitm.data.rmne : '');
-    let [onyomi, setOnyomi] = useState(eitm && eitm.data.onyomi ? eitm.data.onyomi : []);
-    let [kunyomi, setKunyomi] = useState(eitm && eitm.data.kunyomi ? eitm.data.kunyomi : []);
+    let [onyomi, setOnyomi] = useState(eitm && eitm.data.on ? eitm.data.on : []);
+    let [kunyomi, setKunyomi] = useState(eitm && eitm.data.kun ? eitm.data.kun : []);
 
     let [collocations, setCollocations] = useState(eitm && eitm.data.collocations ? eitm.data.collocations : []);
 
@@ -202,7 +202,7 @@ export default function AddItem(props) {
                     </a>
                 </div>
             </div>
-            <div className='text-center'>
+            <div className='text-center mb-3'>
                 <div className={`item ${itemType ? itemType : 'add'} large`}>
                     <div>
                         {characters ? characters : 'example'}
@@ -213,135 +213,311 @@ export default function AddItem(props) {
                 </div>
             </div>
             <div>
-                {/* item type */}
-                <div className={`flex items-center mb-3 ${eitm ? 'hidden' : ''}`}>
-                    <div className='flex-grow'>
-                        <label htmlFor='itemType' className='text-sm font-medium text-gray-700'>
-                            Item Type <span className='text-red-500'>*</span>
-                        </label>
-                        <div className='mt-1'>
-                            <select
-                                name='privacy'
-                                className='border border-gray-300 w-full'
-                                defaultValue={itemType}
-                                onChange={e => setItemType(e.target.value)}
-                            >
-                                <option value=''></option>
-                                <option value='kanji'>Kanji</option>
-                                <option value='vocab'>Vocab</option>
-                                <option value='radical'>Radical</option>
-                                <option value='kanavocab'>Kana-only Vocab</option>
-                            </select>
+                <fieldset className='border p-3'>
+                    <legend>Required Fields <span className='text-red-500'>*</span></legend>
+                    {/* item type */}
+                    <div className={`flex items-center mb-3 ${eitm ? 'hidden' : ''}`}>
+                        <div className='flex-grow'>
+                            <label htmlFor='itemType' className='text-sm font-medium text-gray-700'>
+                                Item Type <span className='text-red-500'>*</span>
+                            </label>
+                            <div className='mt-1'>
+                                <select
+                                    name='privacy'
+                                    className='border border-gray-300 w-full'
+                                    defaultValue={itemType}
+                                    onChange={e => setItemType(e.target.value)}
+                                >
+                                    <option value=''></option>
+                                    <option value='kanji'>Kanji</option>
+                                    <option value='vocab'>Vocab</option>
+                                    <option value='radical'>Radical</option>
+                                    <option value='kanavocab'>Kana-only Vocab</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                </div>
-                {/* item type */}
-                <div className={`flex items-center mb-3`}>
-                    <div className='flex-grow'>
-                        <label htmlFor='level' className='text-sm font-medium text-gray-700'>
-                            Level <span className='text-red-500'>*</span><br />
-                            <span className='text-xs'><span className='font-bold'>note:</span> level 0 means the item is available at ALL levels</span>
-                        </label>
-                        <div className='mt-1'>
-                            <input
-                                name='level'
-                                type='number'
-                                className='border border-gray-300 w-full'
-                                placeholder=''
-                                value={level}
-                                min={0}
-                                max={99}
-                                onChange={(e) => {
-                                    setLevel(parseInt(e.target.value))
-                                }}
-                            />
+                    {/* level */}
+                    <div className={`flex items-center mb-3`}>
+                        <div className='flex-grow'>
+                            <label htmlFor='level' className='text-sm font-medium text-gray-700'>
+                                Level <span className='text-red-500'>*</span><br />
+                                <span className='text-xs'><span className='font-bold'>note:</span> level 0 means the item is available at ALL levels</span>
+                            </label>
+                            <div className='mt-1'>
+                                <input
+                                    name='level'
+                                    type='number'
+                                    className='border border-gray-300 w-full'
+                                    placeholder=''
+                                    value={level}
+                                    min={0}
+                                    max={99}
+                                    onChange={(e) => {
+                                        setLevel(parseInt(e.target.value))
+                                    }}
+                                />
+                            </div>
                         </div>
                     </div>
-                </div>
-                {/* characters */}
-                <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
-                    <div className='flex-grow'>
-                        <label htmlFor='characters' className='text-sm font-medium text-gray-700'>
-                            {getTypeDisplayText(itemType)} <span className='text-red-500'>*</span>
-                        </label>
-                        <div className='mt-1'>
-                            <input
-                                name='characters'
-                                type='text'
-                                className='border border-gray-300 w-full'
-                                placeholder=''
-                                value={characters}
-                                onChange={(e) => {
-                                    if (['vocab', 'kanavocab'].indexOf(itemType) != -1) {
-                                        setCharacters(wanakana.toKana(e.target.value))
-                                    } else {
-                                        setCharacters(e.target.value)
-                                    }
-                                }}
-                            />
+                    {/* characters */}
+                    <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
+                        <div className='flex-grow'>
+                            <label htmlFor='characters' className='text-sm font-medium text-gray-700'>
+                                {getTypeDisplayText(itemType)} <span className='text-red-500'>*</span>
+                            </label>
+                            <div className='mt-1'>
+                                <input
+                                    name='characters'
+                                    type='text'
+                                    className='border border-gray-300 w-full'
+                                    placeholder=''
+                                    value={characters}
+                                    onChange={(e) => {
+                                        if (['vocab', 'kanavocab'].indexOf(itemType) != -1) {
+                                            setCharacters(wanakana.toKana(e.target.value))
+                                        } else {
+                                            setCharacters(e.target.value)
+                                        }
+                                    }}
+                                />
+                            </div>
                         </div>
                     </div>
-                </div>
-                {/* meaning */}
-                <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
-                    <div className='flex-grow'>
-                        <label htmlFor='meanings' className='text-sm font-medium text-gray-700'>
-                            Meanings (first is primary) <span className='text-red-500'>*</span>
-                        </label>
-                        <div className='mt-1'>
-                            <MultiInput value={meanings} onChange={setMeanings} />
+                    {/* meaning */}
+                    <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
+                        <div className='flex-grow'>
+                            <label htmlFor='meanings' className='text-sm font-medium text-gray-700'>
+                                Meanings (first is primary) <span className='text-red-500'>*</span>
+                            </label>
+                            <div className='mt-1'>
+                                <MultiInput value={meanings} onChange={setMeanings} />
+                            </div>
                         </div>
                     </div>
-                </div>
-                {/* kana - vocab */}
-                <div className={`flex items-center mb-3 ${itemType == 'vocab' ? '' : 'hidden'}`}>
-                    <div className='flex-grow'>
-                        <label htmlFor='kana' className='text-sm font-medium text-gray-700'>
-                            Reading
-                        </label>
-                        <div className='mt-1'>
-                            <MultiInput value={kana} onChange={setKana} kana={true} />
+                    {/* kana - vocab */}
+                    <div className={`flex items-center mb-3 ${itemType == 'vocab' ? '' : 'hidden'}`}>
+                        <div className='flex-grow'>
+                            <label htmlFor='kana' className='text-sm font-medium text-gray-700'>
+                                Reading <span className='text-red-500'>*</span>
+                            </label>
+                            <div className='mt-1'>
+                                <MultiInput value={kana} onChange={setKana} kana={true} />
+                            </div>
                         </div>
                     </div>
-                </div>
-                {/* parts of speech - vocab */}
-                <div className={`flex items-center mb-3 ${itemType == 'vocab' ? '' : 'hidden'}`}>
-                    <div className='flex-grow'>
-                        <label htmlFor='kana' className='text-sm font-medium text-gray-700'>
-                            Parts of Speech
-                        </label>
-                        <div className='mt-1'>
-                            <div className='flex justify-center'>
-                                <div>
-                                    <div className='form-check'>
-                                        <input checked={isNoun} onChange={() => setIsNoun(!isNoun)} type='checkbox' value='' id='posNoun' className='form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer' />
-                                        <label className='form-check-label inline-block text-gray-800' htmlFor='posNoun'>
-                                            Noun
-                                        </label>
-                                    </div>
-                                    <div className='form-check'>
-                                        <input checked={isVerb} onChange={() => setIsVerb(!isVerb)} type='checkbox' value='' id='posNoun' className='form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer' />
-                                        <label className='form-check-label inline-block text-gray-800' htmlFor='posNoun'>
-                                            Verb
-                                        </label>
-                                    </div>
-                                    <div className='form-check'>
-                                        <input checked={isAdverb} onChange={() => setIsAdverb(!isAdverb)} type='checkbox' value='' id='posNoun' className='form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer' />
-                                        <label className='form-check-label inline-block text-gray-800' htmlFor='posNoun'>
-                                            Adverb
-                                        </label>
-                                    </div>
-                                    <div className='form-check'>
-                                        <input checked={isNumeral} onChange={() => setIsNumeral(!isNumeral)} type='checkbox' value='' id='posNoun' className='form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer' />
-                                        <label className='form-check-label inline-block text-gray-800' htmlFor='posNoun'>
-                                            Numeral
-                                        </label>
+                    {/* parts of speech - vocab */}
+                    <div className={`flex items-center mb-3 ${itemType == 'vocab' ? '' : 'hidden'}`}>
+                        <div className='flex-grow'>
+                            <label htmlFor='kana' className='text-sm font-medium text-gray-700'>
+                                Parts of Speech
+                            </label>
+                            <div className='mt-1'>
+                                <div className='flex'>
+                                    <div>
+                                        <div className='form-check'>
+                                            <input checked={isNoun} onChange={() => setIsNoun(!isNoun)} type='checkbox' value='' id='posNoun' className='form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer' />
+                                            <label className='form-check-label inline-block text-gray-800' htmlFor='posNoun'>
+                                                Noun
+                                            </label>
+                                        </div>
+                                        <div className='form-check'>
+                                            <input checked={isVerb} onChange={() => setIsVerb(!isVerb)} type='checkbox' value='' id='posNoun' className='form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer' />
+                                            <label className='form-check-label inline-block text-gray-800' htmlFor='posNoun'>
+                                                Verb
+                                            </label>
+                                        </div>
+                                        <div className='form-check'>
+                                            <input checked={isAdverb} onChange={() => setIsAdverb(!isAdverb)} type='checkbox' value='' id='posNoun' className='form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer' />
+                                            <label className='form-check-label inline-block text-gray-800' htmlFor='posNoun'>
+                                                Adverb
+                                            </label>
+                                        </div>
+                                        <div className='form-check'>
+                                            <input checked={isNumeral} onChange={() => setIsNumeral(!isNumeral)} type='checkbox' value='' id='posNoun' className='form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer' />
+                                            <label className='form-check-label inline-block text-gray-800' htmlFor='posNoun'>
+                                                Numeral
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                    {/* onyomi */}
+                    <div className={`flex items-center mb-3 ${itemType == 'kanji' ? '' : 'hidden'}`}>
+                        <div className='flex-grow'>
+                            <label htmlFor='onyomi' className='text-sm font-medium text-gray-700'>On'yomi</label>
+                            <div className='mt-1'>
+                                <MultiInput value={onyomi} onChange={setOnyomi} kana={true} />
+                            </div>
+                        </div>
+                    </div>
+                    {/* kunyomi */}
+                    <div className={`flex items-center mb-3 ${itemType == 'kanji' ? '' : 'hidden'}`}>
+                        <div className='flex-grow'>
+                            <label htmlFor='kunyomi' className='text-sm font-medium text-gray-700'>Kun'yomi</label>
+                            <div className='mt-1'>
+                                <MultiInput value={kunyomi} onChange={setKunyomi} kana={true} />
+                            </div>
+                        </div>
+                    </div>
+                    {/* emphasis */}
+                    <div className={`flex items-center mb-3 ${itemType == 'kanji' ? '' : 'hidden'}`}>
+                        <div className='flex-grow'>
+                            <label htmlFor='emphasis' className='text-sm font-medium text-gray-700'>Emphasis</label>
+                            <div className='mt-1'>
+                                <fieldset>
+                                    <div>
+                                        <input type='radio' id='emphasis-onyomi' name='emphasis' value='onyomi'
+                                            checked />
+                                        <label htmlFor='emphasis-onyomi' className='p-2'>On'yomi</label>
+                                    </div>
+
+                                    <div>
+                                        <input type='radio' id='emphasis-kunyomi' name='emphasis' value='kunyomi' />
+                                        <label htmlFor='emphasis-kunyomi' className='p-2'>Kun'yomi</label>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                {(itemType !== '' ? <div className='mb-6 h-px'></div> : '')}
+                <fieldset className={`border p-3 mb-3 ${itemType ? '' : 'hidden'}`}>
+                    <legend>Related Items</legend>
+                    {/* kanji -- vocab,  */}
+                    <div className={`flex items-center mb-3 ${['vocab', 'radical', 'kanavocab'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
+                        <div className='flex-grow'>
+                            <label htmlFor='description' className='text-sm font-medium text-gray-700'>Kanji</label>
+                            <div className='mt-1'>
+                                <ItemSearch value={kanji} deckId={props.deckId} type='kanji' onChange={setKanji} />
+                            </div>
+                        </div>
+                    </div>
+                    {/* radicals -- kanji,  */}
+                    <div className={`flex items-center mb-3 ${itemType == 'kanji' ? '' : 'hidden'}`}>
+                        <div className='flex-grow'>
+                            <label htmlFor='radicals' className='text-sm font-medium text-gray-700'>Radicals</label>
+                            <div className='mt-1'>
+                                <ItemSearch value={radicals} deckId={props.deckId} type='radical' onChange={setRadicals} />
+                            </div>
+                        </div>
+                    </div>
+                    {/* vocabulary -- kanji,  */}
+                    <div className={`flex items-center mb-3 ${itemType == 'kanji' ? '' : 'hidden'}`}>
+                        <div className='flex-grow'>
+                            <label htmlFor='vocabulary' className='text-sm font-medium text-gray-700'>Vocabulary (search w/ english or hiragana)</label>
+                            <div className='mt-1'>
+                                <ItemSearch value={vocabulary} deckId={props.deckId} type='vocab' onChange={setVocabulary} />
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                {/* meaning mnemonic kanji,*/}
+                <fieldset className={`border p-3 mb-3 ${itemType ? '' : 'hidden'}`}>
+                    <legend>Mnemonics</legend>
+                    <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
+                        <div className='flex-grow'>
+                            <label htmlFor='description' className='text-sm font-medium text-gray-700'>
+                                Meaning Mnemonic
+                            </label>
+                            <div className='mt-1'>
+                                <textarea
+                                    name='description'
+                                    className='border border-gray-300 w-full'
+                                    maxLength={500}
+                                    value={mmne}
+                                    onChange={e => {
+                                        setMmne(e.target.value)
+                                    }}
+                                >
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>
+                    {/* hint kanji,  */}
+                    <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
+                        <div className='flex-grow'>
+                            <label htmlFor='description' className='text-sm font-medium text-gray-700'>Mnemonic Hint</label>
+                            <div className='mt-1'>
+                                <textarea
+                                    name='description'
+                                    className='border border-gray-300 w-full'
+                                    maxLength={500}
+                                    value={meaningHint}
+                                    onChange={e => {
+                                        setMeaningHint(e.target.value)
+                                    }}
+                                >
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>
+                    {/* reading mnemonic -- kanji,*/}
+                    <div className={`flex items-center mb-3 ${['vocab', 'kanji'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
+                        <div className='flex-grow'>
+                            <label htmlFor='description' className='text-sm font-medium text-gray-700'>
+                                Reading Mnemonic
+                            </label>
+                            <div className='mt-1'>
+                                <textarea
+                                    name='description'
+                                    className='border border-gray-300 w-full'
+                                    maxLength={500}
+                                    value={rmne}
+                                    onChange={e => {
+                                        setRmne(e.target.value)
+                                    }}
+                                >
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>
+                    {/* reading hint -- kanji,  */}
+                    <div className={`flex items-center mb-3 ${['vocab', 'kanji'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
+                        <div className='flex-grow'>
+                            <label htmlFor='description' className='text-sm font-medium text-gray-700'>Reading Hint</label>
+                            <div className='mt-1'>
+                                <textarea
+                                    name='description'
+                                    className='border border-gray-300 w-full'
+                                    maxLength={500}
+                                    value={readingHint}
+                                    onChange={e => {
+                                        setReadingHint(e.target.value)
+                                    }}
+                                >
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset className={`border p-3 mb-3 ${itemType ? '' : 'hidden'}`}>
+                    <legend>Auxiliary</legend>
+                    {/* auxilary meanings - vocab,kanji */}
+                    <div className={`flex items-center mb-3`}>
+                        <div className='flex-grow'>
+                            <label htmlFor='kana' className='text-sm font-medium text-gray-700'>
+                                Auxiliary Meanings (whitelist)
+                            </label>
+                            <div className='mt-1'>
+                                <MultiInput value={(auxMeanings || []).map((aux) => aux.meaning || aux.reading)} onChange={setAuxMeanings} />
+                            </div>
+                        </div>
+                    </div>
+                    {/* auxilary readings - vocab,kanji */}
+                    <div className={`flex items-center mb-3 ${['vocab', 'kanji'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
+                        <div className='flex-grow'>
+                            <label htmlFor='kana' className='text-sm font-medium text-gray-700'>
+                                Auxiliary Readings (whitelist)
+                            </label>
+                            <div className='mt-1'>
+                                <MultiInput value={(auxReadings || []).map((aux) => aux.meaning || aux.reading)} onChange={setAuxReadings} kana={true} />
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
                 {/* audio files - vocab */}
                 <div className={`flex items-center mb-3 ${itemType == 'vocab' ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
@@ -358,149 +534,6 @@ export default function AddItem(props) {
                                     setAud(e.target.value)
                                 }}
                             />
-                        </div>
-                    </div>
-                </div>
-                {/* kanji -- vocab,  */}
-                <div className={`flex items-center mb-3 ${['vocab', 'radical', 'kanavocab'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
-                    <div className='flex-grow'>
-                        <label htmlFor='description' className='text-sm font-medium text-gray-700'>Kanji</label>
-                        <div className='mt-1'>
-                            <ItemSearch value={kanji} deckId={props.deckId} type='kanji' onChange={setKanji} />
-                        </div>
-                    </div>
-                </div>
-                {/* radicals -- kanji,  */}
-                <div className={`flex items-center mb-3 ${itemType == 'kanji' ? '' : 'hidden'}`}>
-                    <div className='flex-grow'>
-                        <label htmlFor='description' className='text-sm font-medium text-gray-700'>Radicals</label>
-                        <div className='mt-1'>
-                            <ItemSearch value={radicals} deckId={props.deckId} type='radical' onChange={setRadicals} />
-                        </div>
-                    </div>
-                </div>
-                {/* vocabulary -- kanji,  */}
-                <div className={`flex items-center mb-3 ${itemType == 'kanji' ? '' : 'hidden'}`}>
-                    <div className='flex-grow'>
-                        <label htmlFor='description' className='text-sm font-medium text-gray-700'>Vocabulary (search w/ english or hiragana)</label>
-                        <div className='mt-1'>
-                            <ItemSearch value={vocabulary} deckId={props.deckId} type='vocab' onChange={setVocabulary} />
-                        </div>
-                    </div>
-                </div>
-                {/* onyomi */}
-                <div className={`flex items-center mb-3 ${itemType == 'kanji' ? '' : 'hidden'}`}>
-                    <div className='flex-grow'>
-                        <label htmlFor='privacy' className='text-sm font-medium text-gray-700'>On'yomi</label>
-                        <div className='mt-1'>
-                            <MultiInput value={onyomi} onChange={setOnyomi} kana={true} />
-                        </div>
-                    </div>
-                </div>
-                {/* kunyomi */}
-                <div className={`flex items-center mb-3 ${itemType == 'kanji' ? '' : 'hidden'}`}>
-                    <div className='flex-grow'>
-                        <label htmlFor='privacy' className='text-sm font-medium text-gray-700'>Kun'yomi</label>
-                        <div className='mt-1'>
-                            <MultiInput value={kunyomi} onChange={setKunyomi} kana={true} />
-                        </div>
-                    </div>
-                </div>
-                {/* meaning mnemonic kanji,*/}
-                <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
-                    <div className='flex-grow'>
-                        <label htmlFor='description' className='text-sm font-medium text-gray-700'>
-                            Meaning Mnemonic
-                        </label>
-                        <div className='mt-1'>
-                            <textarea
-                                name='description'
-                                className='border border-gray-300 w-full'
-                                maxLength={500}
-                                value={mmne}
-                                onChange={e => {
-                                    setMmne(e.target.value)
-                                }}
-                            >
-                            </textarea>
-                        </div>
-                    </div>
-                </div>
-                {/* hint kanji,  */}
-                <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
-                    <div className='flex-grow'>
-                        <label htmlFor='description' className='text-sm font-medium text-gray-700'>Mnemonic Hint</label>
-                        <div className='mt-1'>
-                            <textarea
-                                name='description'
-                                className='border border-gray-300 w-full'
-                                maxLength={500}
-                                value={meaningHint}
-                                onChange={e => {
-                                    setMeaningHint(e.target.value)
-                                }}
-                            >
-                            </textarea>
-                        </div>
-                    </div>
-                </div>
-                {/* reading mnemonic -- kanji,*/}
-                <div className={`flex items-center mb-3 ${['vocab', 'kanji'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
-                    <div className='flex-grow'>
-                        <label htmlFor='description' className='text-sm font-medium text-gray-700'>
-                            Reading Mnemonic
-                        </label>
-                        <div className='mt-1'>
-                            <textarea
-                                name='description'
-                                className='border border-gray-300 w-full'
-                                maxLength={500}
-                                value={rmne}
-                                onChange={e => {
-                                    setRmne(e.target.value)
-                                }}
-                            >
-                            </textarea>
-                        </div>
-                    </div>
-                </div>
-                {/* reading hint -- kanji,  */}
-                <div className={`flex items-center mb-3 ${['vocab', 'kanji'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
-                    <div className='flex-grow'>
-                        <label htmlFor='description' className='text-sm font-medium text-gray-700'>Reading Hint</label>
-                        <div className='mt-1'>
-                            <textarea
-                                name='description'
-                                className='border border-gray-300 w-full'
-                                maxLength={500}
-                                value={readingHint}
-                                onChange={e => {
-                                    setReadingHint(e.target.value)
-                                }}
-                            >
-                            </textarea>
-                        </div>
-                    </div>
-                </div>
-                {/* auxilary meanings - vocab,kanji */}
-                <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
-                    <div className='flex-grow'>
-                        <label htmlFor='kana' className='text-sm font-medium text-gray-700'>
-                            Auxiliary Meanings (whitelist)
-                        </label>
-                        <div className='mt-1'>
-                            <MultiInput value={(auxMeanings || []).map((aux) => aux.meaning || aux.reading)} onChange={setAuxMeanings} />
-                        </div>
-                    </div>
-                </div>
-                {/* auxilary readings - vocab,kanji */}
-                <div className={`flex items-center mb-3 ${['vocab', 'kanji'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
-                    <div className='flex-grow'>
-                        <label htmlFor='kana' className='text-sm font-medium text-gray-700'>
-                            Auxiliary Readings (whitelist)
-                        </label>
-                        <div className='mt-1'>
-                            <MultiInput value={(auxReadings || []).map((aux) => aux.meaning || aux.reading)} onChange={setAuxReadings} kana={true} />
                         </div>
                     </div>
                 </div>
@@ -598,7 +631,7 @@ export default function AddItem(props) {
                         {eitm ? 'save' : 'create'} {itemType}
                     </button>
                 </div >
-            </div>
-        </div>
+            </div >
+        </div >
     )
 }

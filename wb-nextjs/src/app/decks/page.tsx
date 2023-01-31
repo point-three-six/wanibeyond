@@ -27,7 +27,19 @@ export default async function DeckListPage() {
       {
         dateCreated: 'desc'
       }
-    ]
+    ],
+    include: {
+      user: {
+        select: {
+          username: true
+        }
+      },
+      _count: {
+        select: {
+          items: true,
+        },
+      },
+    }
   });
 
   return (

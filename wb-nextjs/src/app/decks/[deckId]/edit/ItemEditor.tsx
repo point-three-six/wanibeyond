@@ -93,16 +93,11 @@ export default function ItemEditor(props) {
                 src="/wanakana.js"
                 strategy="lazyOnload"
             />
-            <div className='flex max-width'>
-                <div className='flex-initial'>
-                    <div className='flex-initial'>
-                        <DeckDetails deck={deck} />
-                    </div>
-                    <div className='flex-initial'>
-                        <InstallButton deckId={deck.id} />
-                    </div>
+            <div className='md:flex max-width'>
+                <div className='mr-5 mb-4 w-64'>
+                    <DeckDetails deck={deck} />
                 </div>
-                <div className='flex-grow mt-6'>
+                <div className='flex-grow'>
                     {
                         isAddingItem > -1 ?
                             <AddItem
