@@ -10,7 +10,7 @@ export default async function Deck(props) {
             {
                 <div key={props.deck.id} className='flex justify-between flex-col bg-gray-200 rounded text-black border-bottom shadow-md'>
                     <div className='flex-1 m-4'>
-                        <Link href={`/decks/${props.deck.id}`}>
+                        <Link href={`/decks/${props.deck.id}/edit`}>
                             <div className='font-bold text-xl'>
                                 {props.deck.name}
                             </div>
@@ -18,7 +18,7 @@ export default async function Deck(props) {
                         {props.deck.description}
                     </div>
                     <div className='bg-gray-300 rounded-b text-sm text-center p-2'>
-                        <span><FontAwesomeIcon icon={faHashtag} /> {props.deck._count.items}</span>
+                        <span title='Number of items'><FontAwesomeIcon icon={faHashtag} /> {props.deck._count.items}</span>
                     </div>
                 </div>
             }

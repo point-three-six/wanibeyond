@@ -18,8 +18,8 @@ export default async function Deck(props) {
                         {props.deck.description}
                     </div>
                     <div className='bg-gray-300 rounded-b text-sm text-center p-2'>
-                        <span className='display-inline mr-3'><FontAwesomeIcon icon={faCircleUser} /> {props.deck.user.username} </span>
-                        <span><FontAwesomeIcon icon={faHashtag} /> {props.deck._count.items}</span>
+                        <span className='display-inline mr-3' title='Deck author'><FontAwesomeIcon icon={faCircleUser} /> {props.deck.user.username}</span>
+                        <span title='Number of items'><FontAwesomeIcon icon={faHashtag} /> {props.deck._count.items}</span>
                     </div>
                 </div>
             }

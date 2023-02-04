@@ -49,6 +49,7 @@ export default function AddItem(props) {
     let [rmne, setRmne] = useState(eitm ? eitm.data.rmne : '');
     let [onyomi, setOnyomi] = useState(eitm && eitm.data.on ? eitm.data.on : []);
     let [kunyomi, setKunyomi] = useState(eitm && eitm.data.kun ? eitm.data.kun : []);
+    let [emphasis, setEmphasis] = useState(eitm && eitm.data.emph ? eitm.data.emph : 'onyomi');
 
     let [collocations, setCollocations] = useState(eitm && eitm.data.collocations ? eitm.data.collocations : []);
 
@@ -98,6 +99,7 @@ export default function AddItem(props) {
                 rmne: rmne.trim(),
                 onyomi: onyomi,
                 kunyomi: kunyomi,
+                emph: emphasis,
                 auxiliary_meanings: formatAuxiliary('meaning', auxMeanings),
                 auxiliary_readings: formatAuxiliary('reading', auxReadings)
             };
@@ -310,7 +312,7 @@ export default function AddItem(props) {
                     <div className={`flex items-center mb-3 ${itemType == 'vocab' ? '' : 'hidden'}`}>
                         <div className='flex-grow'>
                             <label htmlFor='kana' className='text-sm font-medium text-gray-700'>
-                                Parts of Speech
+                                Parts of Speech <span className='text-red-500'>*</span>
                             </label>
                             <div className='mt-1'>
                                 <div className='flex'>
@@ -370,12 +372,17 @@ export default function AddItem(props) {
                                 <fieldset>
                                     <div>
                                         <input type='radio' id='emphasis-onyomi' name='emphasis' value='onyomi'
-                                            checked />
+                                            checked={(emphasis == 'onyomi') ? true : false}
+                                            onChange={(e) => setEmphasis(e.target.value)}
+                                        />
                                         <label htmlFor='emphasis-onyomi' className='p-2'>On'yomi</label>
                                     </div>
 
                                     <div>
-                                        <input type='radio' id='emphasis-kunyomi' name='emphasis' value='kunyomi' />
+                                        <input type='radio' id='emphasis-kunyomi' name='emphasis' value='kunyomi'
+                                            checked={(emphasis == 'kunyomi') ? true : false}
+                                            onChange={(e) => setEmphasis(e.target.value)}
+                                        />
                                         <label htmlFor='emphasis-kunyomi' className='p-2'>Kun'yomi</label>
                                     </div>
                                 </fieldset>

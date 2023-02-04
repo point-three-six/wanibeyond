@@ -79,7 +79,7 @@ function createKanjiDataObject(kanji: Kanji) {
         'on': kanji.onyomi,
         'kan': kanji.characters,
         'kun': kanji.kunyomi,
-        'emph': 'onyomi',
+        'emph': kanji.emph,
         'mhnt': kanji.meaningHint,
         'mmne': kanji.mmne,
         'rhnt': kanji.readingHint,

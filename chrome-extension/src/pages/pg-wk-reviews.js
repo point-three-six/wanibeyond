@@ -104,4 +104,3 @@
         return Number.MAX_SAFE_INTEGER - newId;
     }
 })();
-

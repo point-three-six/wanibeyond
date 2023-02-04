@@ -11,6 +11,7 @@ export interface Kanji {
     readingHint: string,
     rmne: string,
     onyomi: Array,
+    emph: String,
     kunyomi: Array
     nanori: Array,
     auxiliary_meanings: Array,
