@@ -12,17 +12,17 @@ export default async function UserInfoBar() {
                     Object.keys(sessionData).length > 0 ?
                         <>
                             {sessionData.username}
-                            <div className='nav-dropdown-content bg-white font-bold'>
-                                <div className='entry p-2 text-left text-slate-800 hover:bg-slate-100'>
+                            <div className='nav-dropdown-content bg-white dark:bg-neutral-900 font-bold'>
+                                <div className='entry p-2 text-left text-slate-800 dark:text-inherit hover:bg-slate-100 dark:hover:bg-neutral-700'>
                                     <Link href='/decks/me' className='px-2 py-1'>My Decks</Link>
                                 </div>
                                 {/* <div className='entry p-2 text-left text-slate-800 hover:bg-slate-100'>
                                     <Link href='/decks/create' className='px-2 py-1'>Create Deck</Link>
                                 </div> */}
-                                <div className='entry p-2 text-left text-slate-800 hover:bg-slate-100'>
+                                {/* <div className='entry p-2 text-left text-slate-800 dark:text-inherit hover:bg-slate-100 dark:hover:bg-neutral-700'>
                                     <Link href='/decks/import' className='px-2 py-1'>Import</Link>
-                                </div>
-                                <div className='entry p-2 text-left text-slate-800 hover:bg-slate-100'>
+                                </div> */}
+                                <div className='entry p-2 text-left text-slate-800 dark:text-inherit hover:bg-slate-100 dark:hover:bg-neutral-700'>
                                     <Link href='/signout' className='px-2 py-1'>Sign Out</Link>
                                 </div>
                             </div>

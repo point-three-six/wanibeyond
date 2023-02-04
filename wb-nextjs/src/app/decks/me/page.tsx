@@ -23,7 +23,7 @@ export default async function DeckListPage() {
 
   return (
     <div className='max-width'>
-      <h1 className="text-4xl font-extrabold text-slate-700 mb-2">My Decks</h1>
+      <h1 className="text-4xl font-extrabold text-slate-700 dark:text-inherit mb-4">My Decks</h1>
       {/* @ts-ignore */}
       <MyDeckList decks={myDecks} ghost={true} onClickGhost={() => { }} />
     </div >

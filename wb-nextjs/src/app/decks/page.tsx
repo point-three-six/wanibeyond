@@ -44,13 +44,13 @@ export default async function DeckListPage() {
 
   return (
     <div className='max-width'>
-      <h1 className="text-4xl font-extrabold text-slate-700 mb-2">Decks</h1>
+      <h1 className="text-4xl font-extrabold text-slate-700 dark:text-inherit mb-2">Decks</h1>
       {/* <div className='font-medium text-gray-700 mb-2'>
         Popular Now
       </div> */}
       {/* @ts-ignore */}
       {/* <DeckList url='/decks/' decks={decksByPopularity} /> */}
-      <div className='font-medium text-gray-700 mb-2'>
+      <div className='font-medium text-gray-700 dark:text-inherit mb-2'>
         Recently Created
       </div>
       {/* @ts-ignore */}

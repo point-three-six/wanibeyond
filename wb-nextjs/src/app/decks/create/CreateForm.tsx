@@ -122,12 +122,12 @@ export default function CreateForm() {
                     <div className={`checkmark ${(nameValidated) ? '' : 'hidden'}`}></div>
                 </div>
                 <div className='flex-grow'>
-                    <label htmlFor='deckName' className='text-sm font-medium text-gray-700'>Name</label>
+                    <label htmlFor='deckName' className='text-sm font-medium text-gray-700 dark:text-inherit'>Name</label>
                     <div className='mt-1'>
                         <input
                             name='deckName'
                             type='text'
-                            className='border border-gray-300 w-full'
+                            className='border border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 focus:border-slate-500 focus:outline-none focus:ring-slate-500 w-full'
                             maxLength={nameMaxLength}
                             placeholder='My deck name'
                             onChange={e => {
@@ -142,11 +142,11 @@ export default function CreateForm() {
                     <div className={`checkmark ${(isPrivateValidated) ? '' : 'hidden'}`}></div>
                 </div>
                 <div className='flex-grow'>
-                    <label htmlFor='privacy' className='text-sm font-medium text-gray-700'>Privacy</label>
+                    <label htmlFor='privacy' className='text-sm font-medium text-gray-700 dark:text-inherit'>Privacy</label>
                     <div className='mt-1'>
                         <select
                             name='privacy'
-                            className='border border-gray-300 w-full'
+                            className='border border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 focus:border-slate-500 focus:outline-none focus:ring-slate-500 w-full'
                             defaultValue={''}
                             onChange={e => {
                                 validatePrivacy(e.target.value)
@@ -164,11 +164,11 @@ export default function CreateForm() {
                     <div className={`checkmark ${(allowForkingValidated) ? '' : 'hidden'}`}></div>
                 </div>
                 <div className='flex-grow'>
-                    <label htmlFor='allowForking' className='text-sm font-medium text-gray-700'>Allow Forking</label>
+                    <label htmlFor='allowForking' className='text-sm font-medium text-gray-700 dark:text-inherit'>Allow Forking</label>
                     <div className='mt-1'>
                         <select
                             name='allowForking'
-                            className='border border-gray-300 w-full'
+                            className='border border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 focus:border-slate-500 focus:outline-none focus:ring-slate-500 w-full'
                             defaultValue={'value'}
                             onChange={e => {
                                 validateForking(e.target.value)
@@ -186,11 +186,11 @@ export default function CreateForm() {
                     <div className={`checkmark ${(levelSystemValidated) ? '' : 'hidden'}`}></div>
                 </div>
                 <div className='flex-grow'>
-                    <label htmlFor='levelSystem' className='text-sm font-medium text-gray-700'>Level System</label>
+                    <label htmlFor='levelSystem' className='text-sm font-medium text-gray-700 dark:text-inherit'>Level System</label>
                     <div className='mt-1'>
                         <select
                             name='levelSystem'
-                            className='border border-gray-300 w-full'
+                            className='border border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 focus:border-slate-500 focus:outline-none focus:ring-slate-500 w-full'
                             defaultValue={'value'}
                             onChange={e => {
                                 validateLevelSystem(e.target.value)
@@ -228,11 +228,11 @@ export default function CreateForm() {
                     <div className={`checkmark ${(descValidated) ? '' : 'hidden'}`}></div>
                 </div>
                 <div className='flex-grow'>
-                    <label htmlFor='description' className='text-sm font-medium text-gray-700'>Short Description</label>
+                    <label htmlFor='description' className='text-sm font-medium text-gray-700 dark:text-inherit'>Short Description</label>
                     <div className='mt-1'>
                         <textarea
                             name='description'
-                            className='border border-gray-300 w-full'
+                            className='border border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 dark:focus:border-slate-500 dark:focus:outline-none dark:focus:ring-slate-500 w-full'
                             maxLength={descMaxLength}
                             placeholder='An optional descripton . . .'
                             onChange={e => {

@@ -90,6 +90,11 @@ export default (props) => {
                     outline: '0px !important'
                 })
             }}
+            classNames={{
+                control: (state) =>
+                    'dark:bg-neutral-800 dark:border-neutral-700',
+                input: () => 'dark:text-inherit'
+            }}
         />
     );
 };

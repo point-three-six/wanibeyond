@@ -57,7 +57,7 @@ export default async function DeckPage({ params: { deckId } }) {
         <div className='max-width'>
           <div className='flex justify-between mb-5'>
             <div>
-              <div className='font-bold text-xl text-slate-700'>
+              <div className='font-bold text-xl text-slate-700 dark:text-inherit'>
                 {deck.name}
               </div>
               Created by {deck.user.username}

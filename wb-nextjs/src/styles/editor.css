@@ -62,23 +62,23 @@
 }
 
 .item.kanji {
-    border-color: rgb(245, 153, 168);
-    background-color: pink;
+    border-color: rgb(214, 89, 110);
+    background-color: rgb(250, 122, 143);
 }
 
 .item.radical {
-    border-color: rgb(107, 191, 230);
-    background-color: rgb(143, 205, 234);
+    border-color: rgb(15, 135, 192);
+    background-color: rgb(40, 164, 221);
 }
 
 .item.vocab {
-    border-color: rgb(201, 107, 219);
-    background-color: rgb(219, 148, 233);
+    border-color: rgb(168, 58, 190);
+    background-color: rgb(196, 91, 217);
 }
 
 .item.kanavocab {
-    border-color: rgb(234, 166, 77);
-    background-color: rgb(240, 186, 114);
+    border-color: rgb(206, 132, 36);
+    background-color: rgb(245, 161, 52);
 }
 
 .level-grid-item {

@@ -52,7 +52,7 @@ export default function page() {
             <div className="flex page-width min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
                 <div className="w-full space-y-8">
                     <div>
-                        <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+                        <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900 dark:text-inherit">
                             Sign In
                         </h2>
                     </div>
@@ -67,7 +67,7 @@ export default function page() {
                                     type="email"
                                     autoComplete="email"
                                     required
-                                    className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                                    className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 dark:bg-neutral-800 dark:border-neutral-700 dark:text-inherit placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                                     placeholder="Email address"
                                     onChange={e => {
                                         setEmail(e.target.value)
@@ -84,7 +84,7 @@ export default function page() {
                                     min={3}
                                     autoComplete="current-password"
                                     required
-                                    className="relative block w-full appearance-none rounded-none rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                                    className="relative block w-full appearance-none rounded-none rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 dark:bg-neutral-800 dark:border-neutral-700 dark:text-inherit placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                                     placeholder="Password"
                                     onChange={e => {
                                         setPassword(e.target.value)

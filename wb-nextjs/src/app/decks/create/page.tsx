@@ -11,8 +11,7 @@ export default async function DeckListPage() {
             <RefreshPage />
             <div className='w-screen max-width flex justify-center gap-7'>
                 <div className='w-3/4'>
-                    <h3 className='text-2xl font-bold text-slate-700'>Create a Deck</h3>
-                    <hr className='mb-3 mt-3' />
+                    <h3 className='text-2xl font-bold text-slate-700 pb-3 mb-3 border-b border-solid border-neutral-400 dark:border-neutral-700 dark:text-inherit'>Create a Deck</h3>
                     {
                         sessionData ? <CreateForm></CreateForm> :
                             <>

@@ -54,7 +54,7 @@ export default function LevelList(props) {
                         onDragEnd={drop}>
                         <div className='flex items-center'>
                             <div className='flex-grow h-px bg-gray-400'></div>
-                            <span className='flex-shrink text-lg text-slate-500 px-4 font-light'>
+                            <span className='flex-shrink text-lg text-slate-500 dark:text-inherit px-4 font-light'>
                                 {level == 0 ? 'Any level' : `Level ${level}`}
                             </span>
                             <div className='flex-grow h-px bg-gray-400'></div>

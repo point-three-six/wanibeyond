@@ -196,7 +196,7 @@ export default function AddItem(props) {
             />
             <div className='flex justify-between mb-4'>
                 <div className='font-medium text-gray-700 underline'>
-                    <a href="#" onClick={() => props.back()}>{`<< go back`}</a>
+                    <a href="#" onClick={() => props.back()} className='dark:text-orange-500'>{`<< go back`}</a>
                 </div>
                 <div className={`font-medium text-red-500 underline ${eitm ? 'hidden' : ''}}`}>
                     <a href="#" onClick={() => setShowDeleteModal(true)}>
@@ -220,13 +220,13 @@ export default function AddItem(props) {
                     {/* item type */}
                     <div className={`flex items-center mb-3 ${eitm ? 'hidden' : ''}`}>
                         <div className='flex-grow'>
-                            <label htmlFor='itemType' className='text-sm font-medium text-gray-700'>
+                            <label htmlFor='itemType' className='text-sm font-medium text-gray-700 dark:text-inherit'>
                                 Item Type <span className='text-red-500'>*</span>
                             </label>
                             <div className='mt-1'>
                                 <select
                                     name='privacy'
-                                    className='border border-gray-300 w-full'
+                                    className='border border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 dark:focus:border-slate-500 dark:focus:outline-none dark:focus:ring-slate-500 w-full'
                                     defaultValue={itemType}
                                     onChange={e => setItemType(e.target.value)}
                                 >
@@ -242,7 +242,7 @@ export default function AddItem(props) {
                     {/* level */}
                     <div className={`flex items-center mb-3`}>
                         <div className='flex-grow'>
-                            <label htmlFor='level' className='text-sm font-medium text-gray-700'>
+                            <label htmlFor='level' className='text-sm font-medium text-gray-700 dark:text-inherit'>
                                 Level <span className='text-red-500'>*</span><br />
                                 <span className='text-xs'><span className='font-bold'>note:</span> level 0 means the item is available at ALL levels</span>
                             </label>
@@ -250,7 +250,7 @@ export default function AddItem(props) {
                                 <input
                                     name='level'
                                     type='number'
-                                    className='border border-gray-300 w-full'
+                                    className='border border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 dark:focus:border-slate-500 dark:focus:outline-none dark:focus:ring-slate-500 w-full'
                                     placeholder=''
                                     value={level}
                                     min={0}
@@ -265,14 +265,14 @@ export default function AddItem(props) {
                     {/* characters */}
                     <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
                         <div className='flex-grow'>
-                            <label htmlFor='characters' className='text-sm font-medium text-gray-700'>
+                            <label htmlFor='characters' className='text-sm font-medium text-gray-700 dark:text-inherit'>
                                 {getTypeDisplayText(itemType)} <span className='text-red-500'>*</span>
                             </label>
                             <div className='mt-1'>
                                 <input
                                     name='characters'
                                     type='text'
-                                    className='border border-gray-300 w-full'
+                                    className='border border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 dark:focus:border-slate-500 dark:focus:outline-none dark:focus:ring-slate-500 w-full'
                                     placeholder=''
                                     value={characters}
                                     onChange={(e) => {
@@ -289,10 +289,10 @@ export default function AddItem(props) {
                     {/* meaning */}
                     <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
                         <div className='flex-grow'>
-                            <label htmlFor='meanings' className='text-sm font-medium text-gray-700'>
+                            <label htmlFor='meanings' className='text-sm font-medium text-gray-700 dark:text-inherit'>
                                 Meanings (first is primary) <span className='text-red-500'>*</span>
                             </label>
-                            <div className='mt-1'>
+                            <div className='mt-1 '>
                                 <MultiInput value={meanings} onChange={setMeanings} />
                             </div>
                         </div>
@@ -300,7 +300,7 @@ export default function AddItem(props) {
                     {/* kana - vocab */}
                     <div className={`flex items-center mb-3 ${itemType == 'vocab' ? '' : 'hidden'}`}>
                         <div className='flex-grow'>
-                            <label htmlFor='kana' className='text-sm font-medium text-gray-700'>
+                            <label htmlFor='kana' className='text-sm font-medium text-gray-700 dark:text-inherit'>
                                 Reading <span className='text-red-500'>*</span>
                             </label>
                             <div className='mt-1'>
@@ -311,33 +311,33 @@ export default function AddItem(props) {
                     {/* parts of speech - vocab */}
                     <div className={`flex items-center mb-3 ${itemType == 'vocab' ? '' : 'hidden'}`}>
                         <div className='flex-grow'>
-                            <label htmlFor='kana' className='text-sm font-medium text-gray-700'>
+                            <label htmlFor='kana' className='text-sm font-medium text-gray-700 dark:text-inherit'>
                                 Parts of Speech <span className='text-red-500'>*</span>
                             </label>
                             <div className='mt-1'>
                                 <div className='flex'>
                                     <div>
                                         <div className='form-check'>
-                                            <input checked={isNoun} onChange={() => setIsNoun(!isNoun)} type='checkbox' value='' id='posNoun' className='form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer' />
-                                            <label className='form-check-label inline-block text-gray-800' htmlFor='posNoun'>
+                                            <input checked={isNoun} onChange={() => setIsNoun(!isNoun)} type='checkbox' value='' id='posNoun' className='form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer dark:bg-neutral-800 dark:border-neutral-700 dark:focus:border-slate-500 dark:focus:outline-none dark:focus:ring-slate-500' />
+                                            <label className='form-check-label inline-block text-gray-800 dark:text-inherit' htmlFor='posNoun'>
                                                 Noun
                                             </label>
                                         </div>
                                         <div className='form-check'>
-                                            <input checked={isVerb} onChange={() => setIsVerb(!isVerb)} type='checkbox' value='' id='posNoun' className='form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer' />
-                                            <label className='form-check-label inline-block text-gray-800' htmlFor='posNoun'>
+                                            <input checked={isVerb} onChange={() => setIsVerb(!isVerb)} type='checkbox' value='' id='posNoun' className='form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer dark:bg-neutral-800 dark:border-neutral-700 dark:focus:border-slate-500 dark:focus:outline-none dark:focus:ring-slate-500' />
+                                            <label className='form-check-label inline-block text-gray-800 dark:text-inherit' htmlFor='posNoun'>
                                                 Verb
                                             </label>
                                         </div>
                                         <div className='form-check'>
-                                            <input checked={isAdverb} onChange={() => setIsAdverb(!isAdverb)} type='checkbox' value='' id='posNoun' className='form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer' />
-                                            <label className='form-check-label inline-block text-gray-800' htmlFor='posNoun'>
+                                            <input checked={isAdverb} onChange={() => setIsAdverb(!isAdverb)} type='checkbox' value='' id='posNoun' className='form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer dark:bg-neutral-800 dark:border-neutral-700 dark:focus:border-slate-500 dark:focus:outline-none dark:focus:ring-slate-500' />
+                                            <label className='form-check-label inline-block text-gray-800 dark:text-inherit' htmlFor='posNoun'>
                                                 Adverb
                                             </label>
                                         </div>
                                         <div className='form-check'>
-                                            <input checked={isNumeral} onChange={() => setIsNumeral(!isNumeral)} type='checkbox' value='' id='posNoun' className='form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer' />
-                                            <label className='form-check-label inline-block text-gray-800' htmlFor='posNoun'>
+                                            <input checked={isNumeral} onChange={() => setIsNumeral(!isNumeral)} type='checkbox' value='' id='posNoun' className='form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer dark:bg-neutral-800 dark:border-neutral-700 dark:focus:border-slate-500 dark:focus:outline-none dark:focus:ring-slate-500' />
+                                            <label className='form-check-label inline-block text-gray-800 dark:text-inherit' htmlFor='posNoun'>
                                                 Numeral
                                             </label>
                                         </div>
@@ -349,7 +349,7 @@ export default function AddItem(props) {
                     {/* onyomi */}
                     <div className={`flex items-center mb-3 ${itemType == 'kanji' ? '' : 'hidden'}`}>
                         <div className='flex-grow'>
-                            <label htmlFor='onyomi' className='text-sm font-medium text-gray-700'>On'yomi</label>
+                            <label htmlFor='onyomi' className='text-sm font-medium text-gray-700 dark:text-inherit'>On'yomi</label>
                             <div className='mt-1'>
                                 <MultiInput value={onyomi} onChange={setOnyomi} kana={true} />
                             </div>
@@ -358,7 +358,7 @@ export default function AddItem(props) {
                     {/* kunyomi */}
                     <div className={`flex items-center mb-3 ${itemType == 'kanji' ? '' : 'hidden'}`}>
                         <div className='flex-grow'>
-                            <label htmlFor='kunyomi' className='text-sm font-medium text-gray-700'>Kun'yomi</label>
+                            <label htmlFor='kunyomi' className='text-sm font-medium text-gray-700 dark:text-inherit'>Kun'yomi</label>
                             <div className='mt-1'>
                                 <MultiInput value={kunyomi} onChange={setKunyomi} kana={true} />
                             </div>
@@ -367,23 +367,25 @@ export default function AddItem(props) {
                     {/* emphasis */}
                     <div className={`flex items-center mb-3 ${itemType == 'kanji' ? '' : 'hidden'}`}>
                         <div className='flex-grow'>
-                            <label htmlFor='emphasis' className='text-sm font-medium text-gray-700'>Emphasis</label>
+                            <label htmlFor='emphasis' className='text-sm font-medium text-gray-700 dark:text-inherit'>Emphasis</label>
                             <div className='mt-1'>
                                 <fieldset>
                                     <div>
                                         <input type='radio' id='emphasis-onyomi' name='emphasis' value='onyomi'
                                             checked={(emphasis == 'onyomi') ? true : false}
                                             onChange={(e) => setEmphasis(e.target.value)}
+                                            className='dark:bg-neutral-800 dark:border-neutral-700 dark:focus:border-slate-500 dark:focus:outline-none dark:focus:ring-slate-500'
                                         />
-                                        <label htmlFor='emphasis-onyomi' className='p-2'>On'yomi</label>
+                                        <label htmlFor='emphasis-onyomi' className='p-2 dark:text-inherit'>On'yomi</label>
                                     </div>
 
                                     <div>
                                         <input type='radio' id='emphasis-kunyomi' name='emphasis' value='kunyomi'
                                             checked={(emphasis == 'kunyomi') ? true : false}
                                             onChange={(e) => setEmphasis(e.target.value)}
+                                            className='dark:bg-neutral-800 dark:border-neutral-700 dark:focus:border-slate-500 dark:focus:outline-none dark:focus:ring-slate-500'
                                         />
-                                        <label htmlFor='emphasis-kunyomi' className='p-2'>Kun'yomi</label>
+                                        <label htmlFor='emphasis-kunyomi' className='p-2 dark:text-inherit'>Kun'yomi</label>
                                     </div>
                                 </fieldset>
                             </div>
@@ -396,7 +398,7 @@ export default function AddItem(props) {
                     {/* kanji -- vocab,  */}
                     <div className={`flex items-center mb-3 ${['vocab', 'radical', 'kanavocab'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
                         <div className='flex-grow'>
-                            <label htmlFor='description' className='text-sm font-medium text-gray-700'>Kanji</label>
+                            <label htmlFor='description' className='text-sm font-medium text-gray-700 dark:text-inherit'>Kanji</label>
                             <div className='mt-1'>
                                 <ItemSearch value={kanji} deckId={props.deckId} type='kanji' onChange={setKanji} />
                             </div>
@@ -405,7 +407,7 @@ export default function AddItem(props) {
                     {/* radicals -- kanji,  */}
                     <div className={`flex items-center mb-3 ${itemType == 'kanji' ? '' : 'hidden'}`}>
                         <div className='flex-grow'>
-                            <label htmlFor='radicals' className='text-sm font-medium text-gray-700'>Radicals</label>
+                            <label htmlFor='radicals' className='text-sm font-medium text-gray-700 dark:text-inherit'>Radicals</label>
                             <div className='mt-1'>
                                 <ItemSearch value={radicals} deckId={props.deckId} type='radical' onChange={setRadicals} />
                             </div>
@@ -414,7 +416,7 @@ export default function AddItem(props) {
                     {/* vocabulary -- kanji,  */}
                     <div className={`flex items-center mb-3 ${itemType == 'kanji' ? '' : 'hidden'}`}>
                         <div className='flex-grow'>
-                            <label htmlFor='vocabulary' className='text-sm font-medium text-gray-700'>Vocabulary (search w/ english or hiragana)</label>
+                            <label htmlFor='vocabulary' className='text-sm font-medium text-gray-700 dark:text-inherit'>Vocabulary (search w/ english or hiragana)</label>
                             <div className='mt-1'>
                                 <ItemSearch value={vocabulary} deckId={props.deckId} type='vocab' onChange={setVocabulary} />
                             </div>
@@ -423,16 +425,16 @@ export default function AddItem(props) {
                 </fieldset>
                 {/* meaning mnemonic kanji,*/}
                 <fieldset className={`border p-3 mb-3 ${itemType ? '' : 'hidden'}`}>
-                    <legend>Mnemonics</legend>
+                    <legend>Explanations</legend>
                     <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
                         <div className='flex-grow'>
-                            <label htmlFor='description' className='text-sm font-medium text-gray-700'>
-                                Meaning Mnemonic
+                            <label htmlFor='description' className='text-sm font-medium text-gray-700 dark:text-inherit'>
+                                Meaning Explanation
                             </label>
                             <div className='mt-1'>
                                 <textarea
                                     name='description'
-                                    className='border border-gray-300 w-full'
+                                    className='border border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 dark:focus:border-slate-500 dark:focus:outline-none dark:focus:ring-slate-500 w-full'
                                     maxLength={500}
                                     value={mmne}
                                     onChange={e => {
@@ -446,11 +448,11 @@ export default function AddItem(props) {
                     {/* hint kanji,  */}
                     <div className={`flex items-center mb-3 ${itemType ? '' : 'hidden'}`}>
                         <div className='flex-grow'>
-                            <label htmlFor='description' className='text-sm font-medium text-gray-700'>Mnemonic Hint</label>
+                            <label htmlFor='description' className='text-sm font-medium text-gray-700 dark:text-inherit'>Meaning Hint</label>
                             <div className='mt-1'>
                                 <textarea
                                     name='description'
-                                    className='border border-gray-300 w-full'
+                                    className='border border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 dark:focus:border-slate-500 dark:focus:outline-none dark:focus:ring-slate-500 w-full'
                                     maxLength={500}
                                     value={meaningHint}
                                     onChange={e => {
@@ -464,13 +466,13 @@ export default function AddItem(props) {
                     {/* reading mnemonic -- kanji,*/}
                     <div className={`flex items-center mb-3 ${['vocab', 'kanji'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
                         <div className='flex-grow'>
-                            <label htmlFor='description' className='text-sm font-medium text-gray-700'>
-                                Reading Mnemonic
+                            <label htmlFor='description' className='text-sm font-medium text-gray-700 dark:text-inherit'>
+                                Reading Explanation
                             </label>
                             <div className='mt-1'>
                                 <textarea
                                     name='description'
-                                    className='border border-gray-300 w-full'
+                                    className='border border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 dark:focus:border-slate-500 dark:focus:outline-none dark:focus:ring-slate-500 w-full'
                                     maxLength={500}
                                     value={rmne}
                                     onChange={e => {
@@ -484,11 +486,11 @@ export default function AddItem(props) {
                     {/* reading hint -- kanji,  */}
                     <div className={`flex items-center mb-3 ${['vocab', 'kanji'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
                         <div className='flex-grow'>
-                            <label htmlFor='description' className='text-sm font-medium text-gray-700'>Reading Hint</label>
+                            <label htmlFor='description' className='text-sm font-medium text-gray-700 dark:text-inherit'>Reading Hint</label>
                             <div className='mt-1'>
                                 <textarea
                                     name='description'
-                                    className='border border-gray-300 w-full'
+                                    className='border border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 dark:focus:border-slate-500 dark:focus:outline-none dark:focus:ring-slate-500 w-full'
                                     maxLength={500}
                                     value={readingHint}
                                     onChange={e => {
@@ -505,7 +507,7 @@ export default function AddItem(props) {
                     {/* auxilary meanings - vocab,kanji */}
                     <div className={`flex items-center mb-3`}>
                         <div className='flex-grow'>
-                            <label htmlFor='kana' className='text-sm font-medium text-gray-700'>
+                            <label htmlFor='kana' className='text-sm font-medium text-gray-700 dark:text-inherit'>
                                 Auxiliary Meanings (whitelist)
                             </label>
                             <div className='mt-1'>
@@ -516,7 +518,7 @@ export default function AddItem(props) {
                     {/* auxilary readings - vocab,kanji */}
                     <div className={`flex items-center mb-3 ${['vocab', 'kanji'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
                         <div className='flex-grow'>
-                            <label htmlFor='kana' className='text-sm font-medium text-gray-700'>
+                            <label htmlFor='kana' className='text-sm font-medium text-gray-700 dark:text-inherit'>
                                 Auxiliary Readings (whitelist)
                             </label>
                             <div className='mt-1'>
@@ -528,14 +530,14 @@ export default function AddItem(props) {
                 {/* audio files - vocab */}
                 <div className={`flex items-center mb-3 ${itemType == 'vocab' ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
-                        <label htmlFor='aud' className='text-sm font-medium text-gray-700'>
+                        <label htmlFor='aud' className='text-sm font-medium text-gray-700 dark:text-inherit'>
                             Audio File (url)
                         </label>
                         <div className='mt-1'>
                             <input
                                 name='aud'
                                 type='text'
-                                className='border border-gray-300 w-full'
+                                className='border border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 dark:focus:border-slate-500 dark:focus:outline-none dark:focus:ring-slate-500 w-full'
                                 placeholder=''
                                 onChange={(e) => {
                                     setAud(e.target.value)
@@ -547,14 +549,14 @@ export default function AddItem(props) {
                 {/* ctx1 - vocab */}
                 <div className={`flex items-center mb-3 ${['vocab'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
-                        <label htmlFor='ctx1jap' className='text-sm font-medium text-gray-700'>
+                        <label htmlFor='ctx1jap' className='text-sm font-medium text-gray-700 dark:text-inherit'>
                             Context Sentence #1 (日本語)
                         </label>
                         <div className='mt-1'>
                             <input
                                 name='ctx1jap'
                                 type='text'
-                                className='border border-gray-300 w-full'
+                                className='border border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 dark:focus:border-slate-500 dark:focus:outline-none dark:focus:ring-slate-500 w-full'
                                 placeholder=''
                                 onChange={(e) => {
                                     setCtx1jap(e.target.value)
@@ -566,14 +568,14 @@ export default function AddItem(props) {
                 {/* ctx1 - vocab */}
                 <div className={`flex items-center mb-3 ${['vocab'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
-                        <label htmlFor='ctx1' className='text-sm font-medium text-gray-700'>
+                        <label htmlFor='ctx1' className='text-sm font-medium text-gray-700 dark:text-inherit'>
                             Context Sentence #1 (English)
                         </label>
                         <div className='mt-1'>
                             <input
                                 name='ctx1'
                                 type='text'
-                                className='border border-gray-300 w-full'
+                                className='border border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 dark:focus:border-slate-500 dark:focus:outline-none dark:focus:ring-slate-500 w-full'
                                 placeholder=''
                                 onChange={(e) => {
                                     setCtx1(e.target.value)
@@ -585,14 +587,14 @@ export default function AddItem(props) {
                 {/* ctx1 - vocab */}
                 <div className={`flex items-center mb-3 ${['vocab'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
-                        <label htmlFor='ctx2jap' className='text-sm font-medium text-gray-700'>
+                        <label htmlFor='ctx2jap' className='text-sm font-medium text-gray-700 dark:text-inherit'>
                             Context Sentence #2 (日本語)
                         </label>
                         <div className='mt-1'>
                             <input
                                 name='ctx2jap'
                                 type='text'
-                                className='border border-gray-300 w-full'
+                                className='border border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 dark:focus:border-slate-500 dark:focus:outline-none dark:focus:ring-slate-500 w-full'
                                 placeholder=''
                                 onChange={(e) => {
                                     setCtx2jap(e.target.value)
@@ -604,14 +606,14 @@ export default function AddItem(props) {
                 {/* ctx2 - vocab */}
                 <div className={`flex items-center mb-3 ${['vocab'].indexOf(itemType) != -1 ? '' : 'hidden'}`}>
                     <div className='flex-grow'>
-                        <label htmlFor='ctx2' className='text-sm font-medium text-gray-700'>
+                        <label htmlFor='ctx2' className='text-sm font-medium text-gray-700 dark:text-inherit'>
                             Context Sentence #2 (English)
                         </label>
                         <div className='mt-1'>
                             <input
                                 name='ctx2'
                                 type='text'
-                                className='border border-gray-300 w-full'
+                                className='border border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 dark:focus:border-slate-500 dark:focus:outline-none dark:focus:ring-slate-500 w-full'
                                 placeholder=''
                                 onChange={(e) => {
                                     setCtx2(e.target.value)

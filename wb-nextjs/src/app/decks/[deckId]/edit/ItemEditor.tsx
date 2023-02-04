@@ -6,7 +6,7 @@ import DeckDetails from './DeckDetails';
 import '../../../../styles/editor.css';
 import AddItem from './AddItem';
 import LevelList from './LevelList';
-import Script from 'next/script'
+import Script from 'next/script';
 import InstallButton from '../../../components/InstallButton';
 
 export default function ItemEditor(props) {

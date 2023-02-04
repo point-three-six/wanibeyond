@@ -26,7 +26,7 @@ export default function ItemList(props) {
                     <div id={`level-${level}`} key={level}>
                         <div className='flex items-center'>
                             <div className='flex-grow h-px bg-gray-400'></div>
-                            <span className='flex-shrink text-lg text-slate-500 px-4 font-light'>
+                            <span className='flex-shrink text-lg text-slate-500 px-4 font-light dark:text-inherit'>
                                 {level == 0 ? 'Any level' : `Level ${level}`}
                             </span>
                             <div className='flex-grow h-px bg-gray-400'></div>

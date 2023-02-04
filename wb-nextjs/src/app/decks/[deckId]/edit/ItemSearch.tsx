@@ -63,14 +63,34 @@ export default function ItemSearch(props) {
                     ...baseStyles,
                     outline: '0px !important'
                 }),
+                option: (baseStyles, state) => ({
+                    ...baseStyles,
+                    backgroundColor: '',
+                }),
+                multiValue: (baseStyles, state) => ({
+                    ...baseStyles,
+                    backgroundColor: 'transparent'
+                }),
                 multiValueLabel: (baseStyles, state) => ({
                     ...baseStyles,
-                    backgroundColor: getColor()
+                    backgroundColor: getColor(),
+                    borderRadius: 0
                 }),
                 multiValueRemove: (baseStyles, state) => ({
                     ...baseStyles,
-                    backgroundColor: getColor()
+                    borderRadius: 0,
+                    backgroundColor: getColor(),
+                    color: 'black'
                 })
+            }}
+            classNames={{
+                control: (state) =>
+                    'dark:bg-neutral-800 dark:border-neutral-700',
+                input: () => 'dark:text-inherit',
+                menu: () => 'dark:bg-neutral-800 dark:text-inherit',
+                option: () => 'hover:bg-sky-100 dark:hover:bg-neutral-700 dark:active:bg-neutral-700 dark:focus:bg-neutral-700',
+                multiValueLabel: () => 'rounded-sm rounded-r-none',
+                multiValueRemove: () => 'rounded-sm rounded-l-none'
             }}
         />
     );
