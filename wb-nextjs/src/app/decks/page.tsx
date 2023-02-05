@@ -3,17 +3,6 @@ import prisma from '../../lib/prisma'
 import { getSession } from '../../lib/session'
 
 export default async function DeckListPage() {
-  // let sessionData = await getSession();
-
-  // let myDecks;
-  // if (Object.keys(sessionData).length > 0) {
-  //   myDecks = await prisma.deck.findMany({
-  //     where: {
-  //       userId: sessionData.id
-  //     }
-  //   });
-  // }
-
   let decksByPopularity = await prisma.deck.findMany({
     where: {
       isPrivate: false
@@ -36,7 +25,11 @@ export default async function DeckListPage() {
       },
       _count: {
         select: {
-          items: true,
+          items: {
+            where: {
+              deleted: false
+            }
+          }
         },
       },
     }

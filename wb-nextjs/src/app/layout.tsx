@@ -1,20 +1,21 @@
 import '../styles/globals.css'
-import Header from './Header'
+import Header from './Header';
+import { cookies } from 'next/headers';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { config } from '@fortawesome/fontawesome-svg-core';
 config.autoAddCss = false;
-import Script from 'next/script';
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const nextCookies = cookies();
+  let theme = nextCookies.get('wp_theme')?.value || '';
+
   return (
-    <html>
-      <head>
-        <Script src='/darkMode.js' strategy='beforeInteractive' />
-      </head>
+    <html className={`${theme == 'dark' ? 'dark' : ''}`}>
+      <head />
 
       <body className='bg:white dark:bg-neutral-900 dark:text-neutral-300'>
         <Header />
