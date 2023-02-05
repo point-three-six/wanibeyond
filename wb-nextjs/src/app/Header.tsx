@@ -1,6 +1,5 @@
 import Link from 'next/link'
-import UserInfoBar from './components/UserInfoBar'
-import ThemeButton from './components/ThemeButton';
+import UserInfoBar from './components/UserInfoBar';
 
 export default function Header() {
   return (
@@ -9,7 +8,6 @@ export default function Header() {
         <Link href="/" className='px-2 py-1 text-white '>Home</Link>
         <Link href="/decks" className='px-2 py-1 text-white '>Decks</Link>
         <Link href="/decks/create" className='px-2 py-1 text-white'>Create</Link>
-        <ThemeButton />
         {/* <Link href="/about" className='px-2 py-1 text-white '>About</Link> */}
         <UserInfoBar />
       </div>
