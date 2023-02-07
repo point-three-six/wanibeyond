@@ -27,7 +27,7 @@ function buildDecksEl(decks) {
 
 function loadOrder(order) {
     let html = '';
-    let values = ['random', 'front', 'back'];
+    let values = ['front', 'back', 'random'];
 
     values.forEach(val => {
         html += `<option value="${val}" ${val == order ? 'selected' : ''}>${val.toUpperCase()}</option>`;

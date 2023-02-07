@@ -1,13 +1,15 @@
 //const endpoint = 'https://waniplus.com';
 const endpoint = 'http://localhost:3000';
 
-// use data returned from /api/me
 let isGuest = true;
-let session = {};
 let userData = {
     data: {
-        decks: []
-    }
+        decks: [],
+        srs: {}
+    },
+    user: {},
+    lastGuestSession: null,
+    lastUserSession: null
 };
 let myLevel = 0;
 let loadOrder = 'front';
@@ -17,26 +19,16 @@ headers.append('pragma', 'no-cache');
 headers.append('cache-control', 'no-cache');
 
 // quick load last state
-const quickLoadCache = chrome.storage.local.get(['wp_data', 'wp_guest', 'wp_level', 'wp_order']).then(({ wp_data, wp_guest, wp_level, wp_order }) => {
+const quickLoadCache = chrome.storage.local.get(['wp_data', 'wp_level', 'wp_order']).then(({ wp_data, wp_level, wp_order }) => {
     myLevel = wp_level || 0;
     loadOrder = wp_order || 'front';
 
-    if (!wp_data && !wp_guest) return;
+    if (!wp_data) return;
 
-    if (wp_data && wp_guest) {
-        if (wp_data.updatedAt > wp_guest.updatedAt) {
-            userData = wp_data;
-            session = userData.user;
-            isGuest = false;
-        } else {
-            userData = wp_guest;
-        }
-    } else if (wp_data) {
+    if (wp_data) {
         userData = wp_data;
-        session = userData.user;
-        isGuest = false;
-    } else if (wp_guest) {
-        userData = wp_guest;
+
+        isGuest = wp_data.lastGuestSession >= wp_data.lastUserSession;
     }
 });
 
@@ -44,45 +36,123 @@ async function sync() {
     await quickLoadCache;
 
     let installedDecks = await getInstalledDecks();
+    let alreadyDownloaded = userData.data.decks.map(deck => deck.id);
+    let initialDownloads = installedDecks.filter(id => alreadyDownloaded.indexOf(id) == -1);
+    let updatedAfter = new Date(userData.lastSync || 0).toISOString();
 
-    let me = await fetchUserData(installedDecks, userData.updatedAt);
+    let me = await fetchUserData(installedDecks, initialDownloads, updatedAfter);
 
-    console.log('- - fetchUserData - -');
-    console.log(me);
+    // console.log(' - - sync() - -')
+    // console.log('installedDecks', installedDecks)
+    // console.log('alreadyDownloaded', alreadyDownloaded)
+    // console.log('initialDownloads', initialDownloads)
+    // console.log('updatedAfter', updatedAfter);
 
     if (!me) {
-        console.log('Failed to sync, no connection to WaniPlus endpoint.');
+        console.log('Failed to sync.');
         return false;
     }
 
-    session = me.user;
+    // add new items
+    for (let deck of me.data.decks) {
+        if (initialDownloads.indexOf(deck.id) !== -1) {
+            userData.data.decks.push(deck);
+            continue;
+        }
 
-    if ('username' in session) {
-        isGuest = false;
-        userData = {
-            data: me.data,
-            user: me.user
-        };
-        setUserData(userData);
-    } else {
-        isGuest = true;
+        // items to add
+        let items = deck.items;
+        let itemsIDs = deck.items.map(item => item.id);
 
-        let guestData = await getGuestData();
+        // now loop through each cached deck and either
+        // insert or update
+        for (let cachedDeck of userData.data.decks) {
+            if (cachedDeck.id == deck.id) {
+                cachedDeck.items = cachedDeck.items.map(item => {
+                    let idx = itemsIDs.indexOf(item.id);
+                    if (idx !== -1) {
+                        // this item needs to be updated.
+                        for (let newItem of items) {
+                            if (item.id == newItem.id) {
+                                itemsIDs.splice(idx, 1);
+                                return newItem;
+                            }
+                        }
+                    }
 
-        guestData.data.decks = insertGuestSRSData(me.data.decks, guestData.data.srs);
+                    return item;
+                });
 
-        userData = guestData;
-        setGuestData(userData);
+                // the remaining items in itemsIDs are NEW items
+                let newItems = items.filter(item => itemsIDs.indexOf(item.id) !== -1);
+                if (newItems.length > 0) {
+                    cachedDeck.items = cachedDeck.items.concat(newItems);
+                }
+            }
+        }
     }
 
+    for (let deck of userData.data.decks) {
+        deck.items.sort((a, b) => a.level - b.level || a.id - b.id);
+    }
+
+    //remove cached deleted items
+    for (let id of me.data.deleted) {
+        console.log('removing', id);
+
+        for (let deck of userData.data.decks) {
+            deck.items = deck.items.filter(item => id != item.id);
+        }
+    }
+
+    isGuest = !('username' in me.user);
+
+    let dt = new Date().getTime();
+    if (isGuest) {
+        userData.lastGuestSession = dt;
+        insertGuestSRSData(userData.data.decks, userData.data.srs);
+    } else {
+        userData.lastUserSession = dt;
+    }
+
+    userData.user = me.user;
+    userData.lastSync = dt;
+
+    console.log('\n\n')
+    console.log('after')
+    console.log(userData)
+
+    // write newest userData obj
+    setUserData(userData);
+
     return true;
+}
+
+async function fetchUserData(deckIDs, initialDownloads, updatedAfter) {
+    try {
+        const res = await fetch(endpoint + '/api/me', {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({
+                decks: (deckIDs) ? deckIDs : [],
+                initialDownloads: initialDownloads,
+                updatedAfter: updatedAfter || false
+            })
+        });
+        const data = await res.json();
+        return data;
+    } catch (e) {
+        return false;
+    }
 }
 
 function insertGuestSRSData(decks, srs) {
     decks.map(deck => {
         deck.items.map(item => {
+            if (!('assignmentGuest' in item)) item.assignmentGuest = [];
+
             if (item.id in srs) {
-                item.assignment = [{
+                item.assignmentGuest = [{
                     stage: srs[item.id].stage,
                     lastAdvance: srs[item.id].lastAdvance
                 }];
@@ -91,8 +161,6 @@ function insertGuestSRSData(decks, srs) {
             return item;
         });
     });
-
-    return decks;
 }
 
 async function getState() {
@@ -107,24 +175,6 @@ async function getSession() {
     } catch (e) {
         return false;
     }
-}
-
-async function getGuestData() {
-    return (await chrome.storage.local.get(['wp_guest'])).wp_guest || {
-        data: {
-            decks: [],
-            srs: {}
-        }
-    };
-}
-
-async function setGuestData(data) {
-    data.updatedAt = new Date().getTime();
-    await chrome.storage.local.set({ 'wp_guest': data });
-}
-
-async function getUserData() {
-    return (await chrome.storage.local.get(['wp_data'])).wp_data;
 }
 
 async function setUserData(data) {
@@ -161,7 +211,6 @@ async function uninstallDeck(deckId) {
     let decks = await getInstalledDecks();
     if (decks.indexOf(deckId) !== -1) {
         await chrome.storage.local.set({ 'wp_installed': decks.filter(id => id != deckId) });
-        await sync();
         return true;
     }
     return false;
@@ -175,23 +224,6 @@ async function isDeckInstalled(id) {
 async function setLevel(newLevel) {
     myLevel = newLevel;
     await chrome.storage.local.set({ 'wp_level': newLevel });
-}
-
-async function fetchUserData(deckIDs, updatedAfter) {
-    try {
-        const res = await fetch(endpoint + '/api/me', {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify({
-                decks: (deckIDs) ? deckIDs : [],
-                updatedAfter: updatedAfter || false
-            })
-        });
-        const data = await res.json();
-        return data;
-    } catch (e) {
-        return false;
-    }
 }
 
 async function getLessonData() {
@@ -210,10 +242,11 @@ async function getLessonData() {
 
         for (let i in deck.items) {
             let item = deck.items[i];
+            let assignment = (isGuest) ? item.assignmentGuest : item.assignment;
 
             // here we need to verify if the item is in the lesson stage.
             // an item is in the lesson stage if it has no generated assignment.
-            if (item.assignment.length == 0 && curLevel >= item.level) {
+            if (assignment.length == 0 && curLevel >= item.level) {
                 //deck.items[i].data.__wp__ = true;
                 items.unshift(deck.items[i].data)
             }
@@ -239,14 +272,15 @@ async function getReviewData() {
 
         for (let i in deck.items) {
             let item = deck.items[i];
+            let assignment = (isGuest) ? item.assignmentGuest : item.assignment;
 
             // here we need to verify if the item is in the lesson stage.
             // an item is in the lesson stage if it has no generated assignment.
-            if (item.assignment.length > 0 && curLevel >= item.level) {
+            if (assignment.length > 0 && curLevel >= item.level) {
                 // inject assignment stage to item data
-                item.data.srs = item.assignment[0].stage;
+                item.data.srs = assignment[0].stage;
 
-                if (calcIfSrsReady(item.assignment)) {
+                if (calcIfSrsReady(assignment)) {
                     //deck.items[i].data.__wp__ = true;
                     items.unshift(item.data)
                 }
@@ -257,17 +291,11 @@ async function getReviewData() {
     return items;
 }
 
-async function getDashboard() {
-    await quickLoadCache;
-
-    let decks = userData.data.decks;
-    let items = [];
-
-    return items;
-}
-
 async function itemSRSCompleted(completions) {
     await quickLoadCache;
+
+    console.log('- - itemSRSCompleted - -')
+    console.log('isGuest', isGuest)
 
     //note: itemIDs are strings in the format wk-###
     if (!isGuest) {
@@ -300,34 +328,32 @@ async function itemSRSCompleted(completions) {
                 let item = deck.items[i];
 
                 if (item.id == numId) {
-                    if (item.assignment.length == 0) {
-                        userData.data.decks[x].items[i].assignment[0] = {
+                    let assignment = (isGuest) ? item.assignmentGuest : item.assignment;
+
+                    if (assignment.length == 0) {
+                        assignment[0] = {
                             stage: 1,
                             lastAdvance: new Date().toISOString()
                         };
                     } else {
-                        let curStage = deck.items[i].assignment[0].stage;
+                        let curStage = assignment[0].stage;
 
                         if (failed && curStage > 1) {
-                            userData.data.decks[x].items[i].assignment[0].stage--;
+                            assignment[0].stage--;
                         } else if (!failed && curStage < 8) {
-                            userData.data.decks[x].items[i].assignment[0].stage++;
+                            assignment[0].stage++;
                         }
                     }
 
                     if (isGuest) {
-                        userData.data.srs[item.id] = userData.data.decks[x].items[i].assignment[0];
+                        userData.data.srs[item.id] = assignment[0];
                     }
                 }
             }
         }
     }
 
-    if (isGuest) {
-        await setGuestData(userData);
-    } else {
-        await setUserData(userData);
-    }
+    setUserData(userData);
 
     return true;
 }
@@ -367,7 +393,8 @@ function calculateDeckLevel(deck) {
         let items = deck.items.filter(item => item.level == level);
 
         for (let item of items) {
-            if (item.assignment.length == 0 || item.assignment[0].stage < 5) {
+            let assignment = (isGuest) ? item.assignmentGuest : item.assignment;
+            if (assignment.length == 0 || assignment[0].stage < 5) {
                 return curLevel;
             }
         }
@@ -380,40 +407,23 @@ function calculateDeckLevel(deck) {
 // or the popup, we don't need to include ALL the item data. That's a lot
 function prepareDeckData(decks) {
     let newDecks = JSON.parse(JSON.stringify(decks));
-    for (deck of newDecks) {
+    for (let deck of newDecks) {
         let curLevel = (!'levelSystem' in deck || deck.levelSystem == 'wanikani') ? myLevel : calculateDeckLevel(deck);
 
         deck.level = curLevel;
 
-        for (item of deck.items) {
+        for (let item of deck.items) {
+            let assignment = (isGuest) ? item.assignmentGuest : item.assignment;
             item.unlocked = curLevel >= item.level;
             item.kanavocab = item.data.kanavocab;
             item.category = item.data.category.toLowerCase();
-            item.isInLessonQueue = item.assignment.length == 0 ? true : false;
-            item.isReady = item.isInLessonQueue ? true : calcIfSrsReady(item.assignment);
+            item.isInLessonQueue = assignment.length == 0 ? true : false;
+            item.isReady = item.isInLessonQueue ? true : calcIfSrsReady(assignment);
+            item.wpSrs = assignment.length == 0 ? 0 : assignment[0].stage;
             delete item.data;
-            //delete item.assignment;
         }
     }
     return newDecks;
-}
-
-// for a given deck, we will simulate a WK API Subject item
-function buildSubjectsFromDeck(deck) {
-
-    // Number.MAX_SAFE_INTEGER - newId
-
-    let subjects = [];
-    for (item of deck) {
-
-    }
-    return subjects;
-}
-
-function buildSubject(item) {
-    let subject = {
-        id: Number.MAX_SAFE_INTEGER - item.id
-    };
 }
 
 chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
@@ -468,7 +478,7 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
             case 'getState':
                 getState().then(() => {
                     sendResponse({
-                        session: session,
+                        session: userData.user,
                         decks: prepareDeckData(userData.data.decks),
                         loadOrder: loadOrder,
                         level: myLevel
@@ -493,7 +503,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
             sync();
             getState().then(() => {
                 sendResponse({
-                    session: session,
+                    session: userData.user,
                     decks: prepareDeckData(userData.data.decks),
                     loadOrder: loadOrder,
                     level: myLevel

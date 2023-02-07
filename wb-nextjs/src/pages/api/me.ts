@@ -3,7 +3,11 @@ import { getSession } from '../../lib/sessionApiFallback'
 import prisma from '../../lib/prisma';
 import injectItemData from '../../lib/itemInjector';
 
-async function getUserDecks(userId, ids: number[]) {
+async function getUserDecks(userId: number, ids: number[], initialDownloads: number[], updatedAfter: string) {
+    let updatedAfterDate = new Date(updatedAfter);
+
+    // get each deck and the relevant items
+    // based on updatedAfter
     let decks = await prisma.deck.findMany({
         where: {
             id: { in: ids },
@@ -14,7 +18,30 @@ async function getUserDecks(userId, ids: number[]) {
             levelSystem: true,
             items: {
                 where: {
-                    deleted: false
+                    OR: [
+                        {
+                            AND: [
+                                {
+                                    deckId: { in: initialDownloads }
+                                },
+                                {
+                                    deleted: false
+                                }
+                            ]
+                        },
+                        {
+                            AND: [
+                                {
+                                    deleted: false
+                                },
+                                {
+                                    updatedAt: {
+                                        gte: updatedAfter
+                                    }
+                                }
+                            ]
+                        }
+                    ]
                 },
                 select: {
                     id: true,
@@ -22,6 +49,7 @@ async function getUserDecks(userId, ids: number[]) {
                     en: true,
                     level: true,
                     characters: true,
+                    updatedAt: true,
                     assignment: {
                         where: {
                             user: {
@@ -46,6 +74,33 @@ async function getUserDecks(userId, ids: number[]) {
         }
     });
 
+
+    // get the deleted items separately for the deck
+    let deleted = [];
+    if (updatedAfterDate.getTime() > 0) {
+        deleted = await prisma.item.findMany({
+            where: {
+                AND: [
+                    {
+                        deckId: { in: ids }
+                    },
+                    {
+                        deleted: true
+                    },
+                    {
+                        updatedAt: {
+                            gte: updatedAfter
+                        }
+                    }
+                ]
+            },
+            select: {
+                id: true,
+            }
+        });
+    }
+
+    // inject item references
     for (let i = 0; i < decks.length; i++) {
         for (let x = 0; x < decks[i].items.length; x++) {
             let injected = await injectItemData(decks[i].items[x].data);
@@ -53,35 +108,31 @@ async function getUserDecks(userId, ids: number[]) {
         }
     }
 
-
-    return decks;
+    return {
+        decks: decks,
+        deleted: deleted
+    };
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-
     let body = JSON.parse(req.body);
 
     const session = await getSession(req.cookies);
 
+    let result = await getUserDecks((session) ? session.id : -1, body.decks, body.initialDownloads, body.updatedAfter);
+
+    let response = {
+        user: {},
+        data: {
+            decks: result.decks,
+            deleted: result.deleted
+        }
+    };
+
     if (session) {
-        let myDecks = await getUserDecks(session.id, body.decks);
-
-        res.status(200).json({
-            user: {
-                id: session.id,
-                username: session.username
-            }, data: {
-                decks: myDecks
-            }
-        });
-    } else {
-        let guestDecks = await getUserDecks(-1, body.decks);
-
-        res.status(200).json({
-            user: {},
-            data: {
-                decks: guestDecks
-            }
-        });
+        response.user.id = session.id;
+        response.user.username = session.username;
     }
+
+    res.status(200).json(response);
 }

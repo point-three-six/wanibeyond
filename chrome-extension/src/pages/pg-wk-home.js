@@ -56,12 +56,12 @@
         let deckHtml = '';
 
         if (decks.length == 0) deckHtml = '<div class="rounded bg-white p-3 -mx-3 mt-3">No decks installed. <a href="https://waniplus.com/decks" target="_blank" style="color:#dd0093;text-decoration:none;">Get started with a custom deck!</a></div>';
-        for (deck of decks) {
+        for (let deck of decks) {
             let itemHtml = '';
 
             for (item of deck.items) {
                 let type = (item.kanavocab) ? 'kanavocab' : item.category;
-                let srsLevel = item.assignment.length > 0 ? item.assignment[0].stage : 0;
+                let srsLevel = item.wpSrs;
                 let itemClass = (type == 'kanji') ? 'kanji' : 'radical';
                 let itemColor1 = (type == 'kanavocab') ? 'orange' : '#a0f';
                 let itemColor2 = (type == 'kanavocab') ? 'rgb(233, 151, 0)' : 'rgb(146, 0, 219)';
