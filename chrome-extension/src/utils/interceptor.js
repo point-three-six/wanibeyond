@@ -1,6 +1,3 @@
-window.__wp__ = window.__wp__ || {};
-window.__wp__.eid = 'kjchkccopfleoicagpoopmkodahnfaom';
-
 (() => {
     function Interceptor() {
         this.hooksIn = {};
@@ -51,7 +48,12 @@ window.__wp__.eid = 'kjchkccopfleoicagpoopmkodahnfaom';
 
     XMLHttpRequest.prototype._open = XMLHttpRequest.prototype.open;
     XMLHttpRequest.prototype.open = function (method, url) {
-        let shortUrl = url.replace(/\?.*/, '');
+        let shortUrl;
+        if (url.startsWith('http')) {
+            shortUrl = new URL(url).pathname;
+        } else {
+            shortUrl = url.replace(/\?.*/, '');
+        }
 
         this.__wp__ = {
             method: method,

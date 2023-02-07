@@ -176,7 +176,7 @@ export default function CreateForm() {
                         >
                             <option value=''></option>
                             <option value='yes'>Yes: Anyone can clone a copy of my deck.</option>
-                            <option value='no'>No: Nobody can clonse a copy of my deck.</option>
+                            <option value='no'>No: Nobody can clone a copy of my deck.</option>
                         </select>
                     </div>
                 </div>
@@ -197,7 +197,7 @@ export default function CreateForm() {
                             }}
                         >
                             <option value=''></option>
-                            <option value='internal'>Internal: The user's internal deck level is used.</option>
+                            <option value='internal'>Internal: The user's deck level is used.</option>
                             <option value='wanikani'>WaniKani: The user's WaniKani level is used.</option>
                         </select>
                     </div>

@@ -1,5 +1,5 @@
-const endpoint = 'https://waniplus.com';
-//const endpoint = 'http://localhost:3000';
+//const endpoint = 'https://waniplus.com';
+const endpoint = 'http://localhost:3000';
 
 // use data returned from /api/me
 let isGuest = true;
@@ -41,9 +41,14 @@ const quickLoadCache = chrome.storage.local.get(['wp_data', 'wp_guest', 'wp_leve
 });
 
 async function sync() {
+    await quickLoadCache;
+
     let installedDecks = await getInstalledDecks();
 
-    let me = await fetchUserData(installedDecks);
+    let me = await fetchUserData(installedDecks, userData.updatedAt);
+
+    console.log('- - fetchUserData - -');
+    console.log(me);
 
     if (!me) {
         console.log('Failed to sync, no connection to WaniPlus endpoint.');
@@ -52,7 +57,7 @@ async function sync() {
 
     session = me.user;
 
-    if (Object.keys(session).length > 0) {
+    if ('username' in session) {
         isGuest = false;
         userData = {
             data: me.data,
@@ -88,6 +93,10 @@ function insertGuestSRSData(decks, srs) {
     });
 
     return decks;
+}
+
+async function getState() {
+    await quickLoadCache;
 }
 
 async function getSession() {
@@ -168,13 +177,14 @@ async function setLevel(newLevel) {
     await chrome.storage.local.set({ 'wp_level': newLevel });
 }
 
-async function fetchUserData(deckIDs) {
+async function fetchUserData(deckIDs, updatedAfter) {
     try {
         const res = await fetch(endpoint + '/api/me', {
             method: 'POST',
             headers: headers,
             body: JSON.stringify({
-                decks: (deckIDs) ? deckIDs : []
+                decks: (deckIDs) ? deckIDs : [],
+                updatedAfter: updatedAfter || false
             })
         });
         const data = await res.json();
@@ -366,10 +376,6 @@ function calculateDeckLevel(deck) {
     return curLevel;
 }
 
-async function getState() {
-    await quickLoadCache;
-}
-
 // when sending to other parts of the ext, like pg-wk-home
 // or the popup, we don't need to include ALL the item data. That's a lot
 function prepareDeckData(decks) {
@@ -390,6 +396,24 @@ function prepareDeckData(decks) {
         }
     }
     return newDecks;
+}
+
+// for a given deck, we will simulate a WK API Subject item
+function buildSubjectsFromDeck(deck) {
+
+    // Number.MAX_SAFE_INTEGER - newId
+
+    let subjects = [];
+    for (item of deck) {
+
+    }
+    return subjects;
+}
+
+function buildSubject(item) {
+    let subject = {
+        id: Number.MAX_SAFE_INTEGER - item.id
+    };
 }
 
 chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
@@ -490,6 +514,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 chrome.runtime.onInstalled.addListener(async () => {
     const scripts = [{
         id: 'waniplus',
+        //js: ['src/utils/context.js', 'src/utils/interceptor.js', 'src/utils/notify.js', 'src/utils/updateLevel.js', 'src/utils/idb.js', 'src/utils/wkofSync.js'],
         js: ['src/utils/context.js', 'src/utils/interceptor.js', 'src/utils/notify.js', 'src/utils/updateLevel.js'],
         matches: ['https://www.wanikani.com/*'],
         runAt: 'document_start',

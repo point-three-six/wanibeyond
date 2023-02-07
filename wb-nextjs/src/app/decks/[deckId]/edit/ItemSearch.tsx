@@ -65,7 +65,8 @@ export default function ItemSearch(props) {
                 }),
                 option: (baseStyles, state) => ({
                     ...baseStyles,
-                    backgroundColor: '',
+                    color: state.isFocused ? 'black' : 'inherit',
+                    backgroundColor: state.isFocused ? '#83bfee' : ''
                 }),
                 multiValue: (baseStyles, state) => ({
                     ...baseStyles,
@@ -88,7 +89,7 @@ export default function ItemSearch(props) {
                     'dark:bg-neutral-800 dark:border-neutral-700',
                 input: () => 'dark:text-inherit',
                 menu: () => 'dark:bg-neutral-800 dark:text-inherit',
-                option: () => 'hover:bg-sky-100 dark:hover:bg-neutral-700 dark:active:bg-neutral-700 dark:focus:bg-neutral-700',
+                //option: () => 'hover:bg-sky-100 dark:hover:bg-neutral-700 dark:active:bg-neutral-700 dark:focus:bg-neutral-700',
                 multiValueLabel: () => 'rounded-sm rounded-r-none',
                 multiValueRemove: () => 'rounded-sm rounded-l-none'
             }}

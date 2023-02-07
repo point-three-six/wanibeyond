@@ -34,13 +34,12 @@ export default async function ItemPage({ params }) {
     });
 
     let item = null;
-    if (deck) {
+    if (deck && deck.items.length > 0) {
         item = deck.items[0] || null;
 
         let injected = await injectItemData(item.data);
         item.data = injected;
     }
-
 
     return (
         <>
@@ -59,21 +58,21 @@ export default async function ItemPage({ params }) {
                                 </div>
                             </div>
                             <div>
-                                <div className='font-medium text-gray-700 mt-6 mb-2'>
+                                <div className='font-medium text-gray-700 mt-6 mb-2 dark:text-inherit'>
                                     Meanings
                                 </div>
                                 {(item.data.en.map(item => item.toUpperCase())).join(',')}
                             </div>
                             <div>
-                                <div className='font-medium text-gray-700 mt-6 mb-2'>
-                                    Meaning Mnemonic
+                                <div className='font-medium text-gray-700 mt-6 mb-2 dark:text-inherit'>
+                                    Meaning Explanation
                                 </div>
                                 {item.data.mmne}
                             </div>
                             {
                                 item.data.mhnt ?
                                     <div>
-                                        <div className='font-medium text-gray-700 mt-6 mb-2'>
+                                        <div className='font-medium text-gray-700 mt-6 mb-2 dark:text-inherit'>
                                             Meaning Hint
                                         </div>
                                         {item.data.mhnt}
@@ -83,8 +82,8 @@ export default async function ItemPage({ params }) {
                             {
                                 item.data.rmne ?
                                     <div>
-                                        <div className='font-medium text-gray-700 mt-6 mb-2'>
-                                            Reading Mnemonic
+                                        <div className='font-medium text-gray-700 mt-6 mb-2 dark:text-inherit'>
+                                            Reading Explanation
                                         </div>
                                         {item.data.rmne}
                                     </div>
@@ -93,7 +92,7 @@ export default async function ItemPage({ params }) {
                             {
                                 item.data.rhnt ?
                                     <div>
-                                        <div className='font-medium text-gray-700 mt-6 mb-2'>
+                                        <div className='font-medium text-gray-700 mt-6 mb-2 dark:text-inherit'>
                                             Reading Hint
                                         </div>
                                         {item.data.rhnt}
@@ -103,7 +102,7 @@ export default async function ItemPage({ params }) {
                             {
                                 item.data.radicals ?
                                     <div>
-                                        <div className='font-medium text-gray-700 mt-6 mb-2'>
+                                        <div className='font-medium text-gray-700 mt-6 mb-2 dark:text-inherit'>
                                             Related Radicals
                                         </div>
                                         <div className='items flex gap-2'>
@@ -124,7 +123,7 @@ export default async function ItemPage({ params }) {
                             {
                                 item.data.kanji ?
                                     <div>
-                                        <div className='font-medium text-gray-700 mt-6 mb-2'>
+                                        <div className='font-medium text-gray-700 mt-6 mb-2 dark:text-inherit'>
                                             Related Kanji
                                         </div>
                                         <div className='items flex gap-2'>
@@ -145,7 +144,7 @@ export default async function ItemPage({ params }) {
                             {
                                 item.data.vocabulary ?
                                     <div>
-                                        <div className='font-medium text-gray-700 mt-6 mb-2'>
+                                        <div className='font-medium text-gray-700 mt-6 mb-2 dark:text-inherit'>
                                             Related Vocabulary
                                         </div>
                                         <div className='items flex gap-2'>

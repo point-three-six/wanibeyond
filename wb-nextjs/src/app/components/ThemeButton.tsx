@@ -7,7 +7,6 @@ export default function ThemeButton(props) {
     let [theme, setTheme] = useState('');
 
     useEffect(() => {
-        console.log(getCookie('wp_theme'))
         let userTheme = getCookie('wp_theme') || 'light';
         setTheme(userTheme);
     });
