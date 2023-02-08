@@ -1,6 +1,13 @@
 //const endpoint = 'https://waniplus.com';
 const endpoint = 'http://localhost:3000';
+const _urls = [
+    'http://localhost:3000', 'https://www.wanikani.com',
+    'https://wanikani.com', 'https://www.waniplus.com',
+    'https://waniplus.com'
+];
 
+let myLevel = 0;
+let loadOrder = 'front';
 let isGuest = true;
 let userData = {
     data: {
@@ -9,10 +16,9 @@ let userData = {
     },
     user: {},
     lastGuestSession: null,
-    lastUserSession: null
+    lastUserSession: null,
+    lastWkofSync: null
 };
-let myLevel = 0;
-let loadOrder = 'front';
 
 let headers = new Headers();
 headers.append('pragma', 'no-cache');
@@ -375,6 +381,7 @@ function calcIfSrsReady(assignment) {
         8: 30 * 4 * 24 * 60
     };
 
+    return true;
     return (elapsed > times[stage] * 60000);
 }
 
@@ -425,7 +432,7 @@ function prepareDeckData(decks) {
 }
 
 chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
-    if (['http://localhost:3000', 'https://www.wanikani.com', 'https://wanikani.com', 'https://www.waniplus.com', 'https://waniplus.com'].indexOf(sender.origin) != -1) {
+    if (_urls.indexOf(sender.origin) != -1) {
         const action = msg.action;
 
         switch (action) {
@@ -483,6 +490,14 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
                     });
                 });
                 break;
+            case 'getDataForWkof':
+                getState().then(() => {
+                    sendResponse({
+                        decks: userData.data.decks,
+                        lastSync: userData.lastWkofSync
+                    });
+                });
+                break;
             default:
                 sendResponse({ msg: 'No action for event.' })
         }
@@ -522,8 +537,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 chrome.runtime.onInstalled.addListener(async () => {
     const scripts = [{
         id: 'waniplus',
-        //js: ['src/utils/context.js', 'src/utils/interceptor.js', 'src/utils/notify.js', 'src/utils/updateLevel.js', 'src/utils/idb.js', 'src/utils/wkofSync.js'],
-        js: ['src/utils/context.js', 'src/utils/interceptor.js', 'src/utils/notify.js', 'src/utils/updateLevel.js'],
+        js: ['src/utils/context.js', 'src/utils/interceptor.js', 'src/utils/notify.js', 'src/utils/updateLevel.js', 'src/utils/idb.js', 'src/utils/wkofSync.js'],
+        //js: ['src/utils/context.js', 'src/utils/interceptor.js', 'src/utils/notify.js', 'src/utils/updateLevel.js'],
         matches: ['https://www.wanikani.com/*'],
         runAt: 'document_start',
         world: 'MAIN',

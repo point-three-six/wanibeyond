@@ -1,0 +1,145 @@
+{
+    "id": 419,
+    "object": "radical",
+    "url": "https://api.wanikani.com/v2/subjects/419",
+    "data_updated_at": "2022-12-30T16:38:44.913238Z",
+    "data": {
+        "created_at": "2015-06-26T22:23:03.011604Z",
+        "level": 7,
+        "slug": "top-hat",
+        "hidden_at": null,
+        "document_url": "https://www.wanikani.com/radicals/top-hat",
+        "characters": "且",
+        "character_images": [
+            {
+                "url": "https://files.wanikani.com/963f6cpb4vw6g61uy1t9lbvsxkjh",
+                "metadata": {
+                    "color": "#000000",
+                    "dimensions": "1024x1024",
+                    "style_name": "original"
+                },
+                "content_type": "image/png"
+            },
+            {
+                "url": "https://files.wanikani.com/w3i2v0yj2m55hs19ws2guxyfvwz1",
+                "metadata": {
+                    "color": "#000000",
+                    "dimensions": "1024x1024",
+                    "style_name": "1024px"
+                },
+                "content_type": "image/png"
+            },
+            {
+                "url": "https://files.wanikani.com/i4o1vpcmbhe8iis18w3172ynzosu",
+                "metadata": {
+                    "color": "#000000",
+                    "dimensions": "512x512",
+                    "style_name": "512px"
+                },
+                "content_type": "image/png"
+            },
+            {
+                "url": "https://files.wanikani.com/4o7r20058ih92brm1rvushrnywni",
+                "metadata": {
+                    "color": "#000000",
+                    "dimensions": "256x256",
+                    "style_name": "256px"
+                },
+                "content_type": "image/png"
+            },
+            {
+                "url": "https://files.wanikani.com/rd4e7wav50cfepmfz9f4in3yv74n",
+                "metadata": {
+                    "color": "#000000",
+                    "dimensions": "128x128",
+                    "style_name": "128px"
+                },
+                "content_type": "image/png"
+            },
+            {
+                "url": "https://files.wanikani.com/72ykqgmd5y1o8u0ppwc2l11k1za5",
+                "metadata": {
+                    "color": "#000000",
+                    "dimensions": "64x64",
+                    "style_name": "64px"
+                },
+                "content_type": "image/png"
+            },
+            {
+                "url": "https://files.wanikani.com/d9x64302horc7110njahtg2ateyj",
+                "metadata": {
+                    "color": "#000000",
+                    "dimensions": "32x32",
+                    "style_name": "32px"
+                },
+                "content_type": "image/png"
+            },
+            {
+                "url": "https://files.wanikani.com/aq4g8iktggapetlpe0lxy1du0vdq",
+                "metadata": {
+                    "inline_styles": true
+                },
+                "content_type": "image/svg+xml"
+            },
+            {
+                "url": "https://files.wanikani.com/7i9unwmdtu8g0fdl6eatn9bzgz4l",
+                "metadata": {
+                    "inline_styles": false
+                },
+                "content_type": "image/svg+xml"
+            }
+        ],
+        "meanings": [
+            {
+                "meaning": "Top Hat",
+                "primary": true,
+                "accepted_answer": true
+            }
+        ],
+        "auxiliary_meanings": [],
+        "amalgamation_subject_ids": [
+            670,
+            680,
+            1130,
+            1489,
+            1673,
+            1677,
+            1960,
+            1972,
+            2006,
+            2249,
+            2281
+        ],
+        "meaning_mnemonic": "This radical looks just like a top hat. That's why it's <radical>top hat</radical>!",
+        "lesson_position": 16,
+        "spaced_repetition_system_id": 1
+    },
+    "assignments": {
+        "created_at": "2022-11-19T11:24:28.297839Z",
+        "subject_id": 419,
+        "subject_type": "radical",
+        "srs_stage": 6,
+        "unlocked_at": "2022-11-19T11:24:28.293873Z",
+        "started_at": "2022-11-26T08:53:25.862657Z",
+        "passed_at": "2022-11-30T10:23:15.660946Z",
+        "burned_at": null,
+        "available_at": "2022-12-22T09:00:00.000000Z",
+        "resurrected_at": null,
+        "hidden": false
+    },
+    "review_statistics": {
+        "created_at": "2022-11-26T08:53:25.887904Z",
+        "subject_id": 419,
+        "subject_type": "radical",
+        "meaning_correct": 5,
+        "meaning_incorrect": 0,
+        "meaning_max_streak": 5,
+        "meaning_current_streak": 5,
+        "reading_correct": 5,
+        "reading_incorrect": 0,
+        "reading_max_streak": 5,
+        "reading_current_streak": 5,
+        "percentage_correct": 100,
+        "hidden": false
+    }
+}

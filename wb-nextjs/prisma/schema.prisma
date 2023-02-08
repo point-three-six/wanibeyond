@@ -64,7 +64,8 @@ model Assignment {
   userId      Int
   itemId      Int
   stage       Int      @default(1)
-  lastAdvance DateTime @default(now())
+  wasCorrect  Boolean
+  completedAt DateTime @default(now())
 
   @@index([userId, itemId])
 }

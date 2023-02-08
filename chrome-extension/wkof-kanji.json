@@ -1,0 +1,106 @@
+{
+    "id": 644,
+    "object": "kanji",
+    "url": "https://api.wanikani.com/v2/subjects/644",
+    "data_updated_at": "2022-11-24T09:21:35.844392Z",
+    "data": {
+        "created_at": "2012-03-09T00:00:25.000000Z",
+        "level": 6,
+        "slug": "食",
+        "hidden_at": null,
+        "document_url": "https://www.wanikani.com/kanji/%E9%A3%9F",
+        "characters": "食",
+        "meanings": [
+            {
+                "meaning": "Eat",
+                "primary": true,
+                "accepted_answer": true
+            },
+            {
+                "meaning": "Meal",
+                "primary": false,
+                "accepted_answer": true
+            }
+        ],
+        "auxiliary_meanings": [],
+        "readings": [
+            {
+                "type": "onyomi",
+                "primary": true,
+                "reading": "しょく",
+                "accepted_answer": true
+            },
+            {
+                "type": "kunyomi",
+                "primary": false,
+                "reading": "た",
+                "accepted_answer": false
+            },
+            {
+                "type": "kunyomi",
+                "primary": false,
+                "reading": "く",
+                "accepted_answer": false
+            }
+        ],
+        "component_subject_ids": [
+            139
+        ],
+        "amalgamation_subject_ids": [
+            2923,
+            3087,
+            3094,
+            3295,
+            3535,
+            3771,
+            3896,
+            3970,
+            4150,
+            5478,
+            5592,
+            5830,
+            6905,
+            7308,
+            7489,
+            7866,
+            7914,
+            8340,
+            8671
+        ],
+        "visually_similar_subject_ids": [],
+        "meaning_mnemonic": "The radical for <radical>eat</radical> and the kanji for <kanji>eat</kanji> are the same! Lucky you.",
+        "meaning_hint": "If you know the radical, you basically know the meaning(s) of this kanji. There is a second meaning added to it, though, and that is <kanji>meal</kanji>. Just think about the things you eat? What are they? In the simplest form, they are just meals. So, if you know \"eat\" you should be able to remember \"meal\" as well.",
+        "reading_mnemonic": "Thank goodness, you finally get to <kanji>eat</kanji> your <kanji>meal</kanji>. You're so hungry. Someone has been starving you and now they've finally given you food. Unfortunately, though, every time you take a bite, you get a <reading>shock</reading> (<ja>しょく</ja>) from somewhere.",
+        "reading_hint": "So, do you keep eating and keep getting shocked? Or do you not eat and continue to starve? What is worse? Obviously you're in one of the Saw movies, or something, too, so feel the fear. What will you choose? Life with shocks or death from hunger?",
+        "lesson_position": 0,
+        "spaced_repetition_system_id": 1
+    },
+    "assignments": {
+        "created_at": "2022-11-04T12:07:27.995022Z",
+        "subject_id": 644,
+        "subject_type": "kanji",
+        "srs_stage": 6,
+        "unlocked_at": "2022-11-04T12:07:27.988075Z",
+        "started_at": "2022-11-14T13:07:35.658022Z",
+        "passed_at": "2022-11-19T11:24:27.659907Z",
+        "burned_at": null,
+        "available_at": "2023-01-07T11:00:00.000000Z",
+        "resurrected_at": null,
+        "hidden": false
+    },
+    "review_statistics": {
+        "created_at": "2022-11-14T13:07:35.683908Z",
+        "subject_id": 644,
+        "subject_type": "kanji",
+        "meaning_correct": 8,
+        "meaning_incorrect": 0,
+        "meaning_max_streak": 8,
+        "meaning_current_streak": 8,
+        "reading_correct": 8,
+        "reading_incorrect": 1,
+        "reading_max_streak": 5,
+        "reading_current_streak": 3,
+        "percentage_correct": 94,
+        "hidden": false
+    }
+}

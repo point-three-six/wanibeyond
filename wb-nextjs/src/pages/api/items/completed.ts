@@ -7,7 +7,12 @@ async function getAssignment(userId, itemId) {
         where: {
             itemId: itemId,
             userId: userId
-        }
+        },
+        orderBy: [
+            {
+                completedAt: 'desc'
+            }
+        ]
     });
 }
 
@@ -30,45 +35,38 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         for (let completion of completions) {
             let id = completion[0];
             let failed = completion[1];
-            let assignment = await getAssignment(session.id, id);
+            let lastAssignment = await getAssignment(session.id, id);
 
-            if (!assignment) {
-                let newAssignment = await prisma.assignment.create({
-                    data: {
-                        user: {
-                            connect: {
-                                id: session.id
-                            }
-                        },
-                        item: {
-                            connect: {
-                                id: id
-                            }
-                        },
-                        lastAdvance: new Date().toISOString()
-                    }
-                });
-            } else {
-                let curStage = assignment.stage;
-                let newStage = curStage;
+            let curStage = 1;
 
-                if (failed && curStage > 1) {
-                    newStage--;
-                } else if (!failed && curStage < 8) {
-                    newStage++;
+            if (lastAssignment) {
+                let lastStage = lastAssignment.stage;
+                curStage = lastStage;
+
+                if (failed && lastStage > 1) {
+                    curStage--;
+                } else if (!failed && lastStage < 8) {
+                    curStage++;
                 }
-
-                let updatedAssignment = await prisma.assignment.updateMany({
-                    where: {
-                        itemId: id,
-                        userId: session.id
-                    },
-                    data: {
-                        stage: newStage,
-                        lastAdvance: new Date().toISOString(),
-                    }
-                });
             }
+
+            // create new assignment record
+            await prisma.assignment.create({
+                data: {
+                    user: {
+                        connect: {
+                            id: session.id
+                        }
+                    },
+                    item: {
+                        connect: {
+                            id: id
+                        }
+                    },
+                    wasCorrect: !failed,
+                    stage: curStage
+                }
+            });
         };
 
         res.status(200).send({});

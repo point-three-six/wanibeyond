@@ -58,8 +58,14 @@ async function getUserDecks(userId: number, ids: number[], initialDownloads: num
                         },
                         select: {
                             stage: true,
-                            lastAdvance: true
-                        }
+                            completedAt: true
+                        },
+                        orderBy: [
+                            {
+                                completedAt: 'desc'
+                            }
+                        ],
+                        take: 1
                     }
                 },
                 orderBy: [
