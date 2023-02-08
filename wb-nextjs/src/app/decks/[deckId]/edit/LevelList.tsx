@@ -2,6 +2,7 @@
 
 import React from 'react';
 import sendExtMsg from '../../../../lib/wpExtension';
+import Script from 'next/script';
 
 export default function LevelList(props) {
     let dragItem: object;

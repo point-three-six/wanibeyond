@@ -46,7 +46,7 @@ export default (props) => {
 
                 // this is updating the value of props.value/value
                 props.onChange((prev) => [...prev, inputValue]);
-                setMyValue((myValue) => [...myValue, createOption(inputValue)]);
+                setMyValue([...myValue, createOption(inputValue)]);
                 setInputValue('');
                 event.preventDefault();
         }
@@ -60,7 +60,10 @@ export default (props) => {
             isMulti
             menuIsOpen={false}
             onChange={(newValue) => {
-                setMyValue(newValue)
+                console.log('newValues')
+                console.log(newValue)
+                props.onChange(newValue);
+                setMyValue(newValue);
             }}
             onInputChange={(newValue) => {
                 if (props.kana) newValue = wanakana.toKana(newValue);

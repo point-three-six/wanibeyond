@@ -1,11 +1,15 @@
 .editor-width {
-    width: 825px;
+    max-width: 825px;
+}
+
+.items {
+    flex-wrap: wrap;
+    align-items: center;
 }
 
 .item {
+    flex: 1;
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
     flex-direction: column;
     min-width: 80px;
     max-width: 80px;

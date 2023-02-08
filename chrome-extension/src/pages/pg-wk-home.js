@@ -97,7 +97,7 @@
                                 class="border-gray-100 border-solid border-0 border-b text-sm text-black text-left leading-none tracking-normal font-bold mt-0 pb-2 mb-2">
                                 ${deck.name}
                             </h2>
-                            <div class="progress-entries" style="grid-template-columns:repeat(auto-fill, minmax(45px, auto));">
+                            <div class="progress-entries" style="grid-template-columns:repeat(auto-fill, minmax(50px, auto));">
                                 ${itemHtml}
                             </div>
                         </div>`;

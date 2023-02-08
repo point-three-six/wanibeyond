@@ -97,7 +97,7 @@ export default function ItemEditor(props) {
                 <div className='mr-5 mb-4 w-64'>
                     <DeckDetails deck={deck} />
                 </div>
-                <div className='flex-grow'>
+                <div className='flex-grow editor-width'>
                     {
                         isAddingItem > -1 ?
                             <AddItem

@@ -38,19 +38,25 @@ async function sync() {
     let installedDecks = await getInstalledDecks();
     let alreadyDownloaded = userData.data.decks.map(deck => deck.id);
     let initialDownloads = installedDecks.filter(id => alreadyDownloaded.indexOf(id) == -1);
+    let uninstalledDecks = alreadyDownloaded.filter(id => installedDecks.indexOf(id) == -1);
     let updatedAfter = new Date(userData.lastSync || 0).toISOString();
 
     let me = await fetchUserData(installedDecks, initialDownloads, updatedAfter);
 
-    // console.log(' - - sync() - -')
-    // console.log('installedDecks', installedDecks)
-    // console.log('alreadyDownloaded', alreadyDownloaded)
-    // console.log('initialDownloads', initialDownloads)
-    // console.log('updatedAfter', updatedAfter);
-
     if (!me) {
         console.log('Failed to sync.');
         return false;
+    }
+
+    isGuest = !('username' in me.user);
+
+    // delete uninstalled decks
+    for (let i = userData.data.decks.length - 1; i >= 0; i--) {
+        let deck = userData.data.decks[i];
+
+        if (uninstalledDecks.indexOf(deck.id) !== -1) {
+            userData.data.decks.splice(i, 1);
+        }
     }
 
     // add new items
@@ -97,15 +103,13 @@ async function sync() {
     }
 
     //remove cached deleted items
-    for (let id of me.data.deleted) {
-        console.log('removing', id);
+    for (let deleted of me.data.deleted) {
+        let id = deleted.id;
 
         for (let deck of userData.data.decks) {
             deck.items = deck.items.filter(item => id != item.id);
         }
     }
-
-    isGuest = !('username' in me.user);
 
     let dt = new Date().getTime();
     if (isGuest) {
@@ -117,10 +121,6 @@ async function sync() {
 
     userData.user = me.user;
     userData.lastSync = dt;
-
-    console.log('\n\n')
-    console.log('after')
-    console.log(userData)
 
     // write newest userData obj
     setUserData(userData);
@@ -211,6 +211,7 @@ async function uninstallDeck(deckId) {
     let decks = await getInstalledDecks();
     if (decks.indexOf(deckId) !== -1) {
         await chrome.storage.local.set({ 'wp_installed': decks.filter(id => id != deckId) });
+        await sync();
         return true;
     }
     return false;
@@ -293,9 +294,6 @@ async function getReviewData() {
 
 async function itemSRSCompleted(completions) {
     await quickLoadCache;
-
-    console.log('- - itemSRSCompleted - -')
-    console.log('isGuest', isGuest)
 
     //note: itemIDs are strings in the format wk-###
     if (!isGuest) {
