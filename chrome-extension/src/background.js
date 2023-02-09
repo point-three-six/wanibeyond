@@ -6,10 +6,11 @@ const _urls = [
     'https://waniplus.com'
 ];
 
-let myLevel = 0;
-let loadOrder = 'front';
 let isGuest = true;
 let userData = {
+    wpOnlyMode: false,
+    loadOrder: 'front',
+    level: 0,
     data: {
         decks: [],
         srs: {}
@@ -17,7 +18,7 @@ let userData = {
     user: {},
     lastGuestSession: null,
     lastUserSession: null,
-    wkofSyncRequiredAsOf: new Date().getTime() // as of this date wkof needs to be re-synced
+    wkofSyncRequiredAsOf: new Date().getTime(), // as of this date wkof needs to be re-synced
 };
 
 let headers = new Headers();
@@ -27,8 +28,6 @@ headers.append('cache-control', 'no-cache');
 // quick load last state
 const quickLoadCache = chrome.storage.local.get(['wp_data', 'wp_level', 'wp_order']).then(({ wp_data, wp_level, wp_order }) => {
     if (!wp_data) return;
-    myLevel = wp_level || 0;
-    loadOrder = wp_order || 'front';
     userData = wp_data;
     isGuest = wp_data.lastGuestSession >= wp_data.lastUserSession;
 });
@@ -188,14 +187,19 @@ async function setUserData(data) {
     await chrome.storage.local.set({ 'wp_data': data });
 }
 
-async function getLoadOrder() {
-    return (await chrome.storage.local.get(['wp_order'])).wp_order || 'front';
+async function setLoadOrder(val) {
+    userData.loadOrder = val;
+    await setUserData(userData);
 }
 
-async function setLoadOrder(val) {
-    let order = val || 'front';
-    loadOrder = val;
-    await chrome.storage.local.set({ 'wp_order': order });
+async function setWPOnlyMode(enabled) {
+    userData.wpOnlyMode = enabled;
+    await setUserData(userData);
+}
+
+async function setUserLevel(level) {
+    userData.level = level;
+    await setUserData(userData);
 }
 
 async function getInstalledDecks() {
@@ -228,11 +232,6 @@ async function isDeckInstalled(id) {
     return decks.indexOf(id) != -1;
 }
 
-async function setLevel(newLevel) {
-    myLevel = newLevel;
-    await chrome.storage.local.set({ 'wp_level': newLevel });
-}
-
 async function getLessonData() {
     await quickLoadCache;
 
@@ -243,7 +242,7 @@ async function getLessonData() {
 
     for (let i in decks) {
         let deck = decks[i];
-        let curLevel = (!'levelSystem' in deck || deck.levelSystem == 'wanikani') ? myLevel : calculateDeckLevel(deck);
+        let curLevel = (!'levelSystem' in deck || deck.levelSystem == 'wanikani') ? userData.level : calculateDeckLevel(deck);
 
         deck.level = curLevel;
 
@@ -273,7 +272,7 @@ async function getReviewData() {
 
     for (let i in decks) {
         let deck = decks[i];
-        let curLevel = (!'levelSystem' in deck || deck.levelSystem == 'wanikani') ? myLevel : calculateDeckLevel(deck);
+        let curLevel = (!'levelSystem' in deck || deck.levelSystem == 'wanikani') ? userData.level : calculateDeckLevel(deck);
 
         deck.level = curLevel;
 
@@ -335,6 +334,11 @@ async function itemSRSCompleted(completions) {
                     let assignments = (isGuest) ? item.assignmentsGuest : item.assignments;
 
                     if (assignments.length == 0) {
+                        // this should force a resync of WKOF cache.
+                        // now that the item has an assignment
+                        // assignment & review_satistics can be generated.
+                        userData.wkofSyncRequiredAsOf = new Date().getTime();
+
                         assignments.push({
                             stage: 1,
                             completedAt: new Date().toISOString()
@@ -424,7 +428,7 @@ function calculateDeckLevel(deck) {
 function prepareDeckData(decks, keepItemData) {
     let newDecks = JSON.parse(JSON.stringify(decks));
     for (let deck of newDecks) {
-        let curLevel = (!'levelSystem' in deck || deck.levelSystem == 'wanikani') ? myLevel : calculateDeckLevel(deck);
+        let curLevel = (!'levelSystem' in deck || deck.levelSystem == 'wanikani') ? userData.level : calculateDeckLevel(deck);
 
         deck.level = curLevel;
 
@@ -440,7 +444,7 @@ function prepareDeckData(decks, keepItemData) {
             item.isInLessonQueue = srs ? false : true;
             item.isReady = item.isInLessonQueue ? true : srs.ready;
             item.wpSrs = srs ? assignments[assignments.length - 1].stage : 0;
-            item.availableAt = srs.availableAt;
+            item.availableAt = srs ? srs.availableAt : null;
             if (!keepItemData) delete item.data;
         }
     }
@@ -476,7 +480,8 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
                 getLessonData().then((data) => {
                     sendResponse({
                         items: data,
-                        order: loadOrder
+                        order: userData.loadOrder,
+                        wpOnlyMode: userData.wpOnlyMode
                     });
                 });
                 break;
@@ -484,7 +489,8 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
                 getReviewData().then((data) => {
                     sendResponse({
                         items: data,
-                        order: loadOrder
+                        order: userData.loadOrder,
+                        wpOnlyMode: userData.wpOnlyMode
                     });
                 });
                 break;
@@ -494,7 +500,7 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
                 });
                 break;
             case 'setLevel':
-                setLevel(msg.level);
+                setUserLevel(msg.level);
                 sendResponse({});
                 break;
             case 'getState':
@@ -502,8 +508,9 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
                     sendResponse({
                         session: userData.user,
                         decks: prepareDeckData(userData.data.decks),
-                        loadOrder: loadOrder,
-                        level: myLevel
+                        loadOrder: userData.loadOrder,
+                        level: userData.level,
+                        wpOnlyMode: userData.wpOnlyMode
                     });
                 });
                 break;
@@ -535,13 +542,18 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
                 sendResponse({
                     session: userData.user,
                     decks: prepareDeckData(userData.data.decks),
-                    loadOrder: loadOrder,
-                    level: myLevel
+                    loadOrder: userData.loadOrder,
+                    level: userData.level,
+                    wpOnlyMode: userData.wpOnlyMode
                 });
             });
             break;
         case 'setLoadOrder':
             setLoadOrder(msg.order);
+            sendResponse({});
+            break;
+        case 'setWPOnlyMode':
+            setWPOnlyMode(msg.enabled);
             sendResponse({});
             break;
         default:
@@ -555,7 +567,6 @@ chrome.runtime.onInstalled.addListener(async () => {
     const scripts = [{
         id: 'waniplus',
         js: ['src/utils/context.js', 'src/utils/interceptor.js', 'src/utils/notify.js', 'src/utils/updateLevel.js', 'src/utils/idb.js', 'src/utils/wkofSync.js'],
-        //js: ['src/utils/context.js', 'src/utils/interceptor.js', 'src/utils/notify.js', 'src/utils/updateLevel.js'],
         matches: ['https://www.wanikani.com/*'],
         runAt: 'document_start',
         world: 'MAIN',

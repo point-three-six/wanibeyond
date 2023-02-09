@@ -24,12 +24,14 @@
         decks.forEach(deck => {
             deck.items.forEach(item => {
                 let subject = generateSubject(item, deck.id)
-                let assignment = generateAssignment(item);
-                let statistics = generateReviewStatistic(item);
-
                 wkofSubjects.content.data[subject.id] = subject;
-                wkofAssignments.content.data[assignment.id] = assignment;
-                wkofStatistics.content.data[statistics.id] = statistics;
+
+                if (item.assignments.length > 0) {
+                    let assignment = generateAssignment(item);
+                    let statistics = generateReviewStatistic(item);
+                    wkofAssignments.content.data[assignment.id] = assignment;
+                    wkofStatistics.content.data[statistics.id] = statistics;
+                }
             });
         });
 

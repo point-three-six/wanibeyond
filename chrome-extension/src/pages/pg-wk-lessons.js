@@ -1,10 +1,12 @@
 (() => {
     let items = [];
-    let loadOrder = 'random';
+    let loadOrder = 'front';
+    let wpOnlyMode = false;
 
     chrome.runtime.sendMessage(window.__wp__.eid, { action: 'getLessonData' }, (res) => {
         items = res.items;
         loadOrder = res.order;
+        wpOnlyMode = res.wpOnlyMode;
     });
 
     window.__wp__.Interceptor.hookIncoming('/lesson/queue', (data) => {
@@ -33,10 +35,21 @@
         }
 
         return [(filteredIDs > 0), newData];
-    })
+    });
+
+    // this is for reorder omega
+    window.__wp__.Interceptor.hookIncomingFetch('/extra_study/items', (data) => {
+        return injectWPItems(data);
+    });
+
+    window.__wp__.Interceptor.hookOutgoingFetch('/extra_study/items', (...args) => {
+        return args;
+    });
 
     function injectWPData(response) {
         response = JSON.parse(response);
+
+        if (wpOnlyMode) response['queue'] = [];
 
         items.forEach((item, i) => {
             if (loadOrder == 'random') {
@@ -50,6 +63,30 @@
         });
 
         return JSON.stringify(response);
+    }
+
+    function injectWPItems(data) {
+        //data = [];
+
+        if (wpOnlyMode) data = [];
+
+        items.forEach((item, i) => {
+            let id = items[i].id;
+
+            items[i].id = (typeof id == 'string') ? convertID(id) : id; // convert potential WP ids
+            items[i].syn = [];
+
+            if (loadOrder == 'random') {
+                var rand = Math.floor(Math.random() * (data.length)) + 1;
+                data.splice(rand, 0, item);
+            } else if (loadOrder == 'front') {
+                data.unshift(items[i]);
+            } else {
+                data.push(items[i]);
+            }
+        });
+
+        return data;
     }
 
     function extractIDsByType(ids) {
@@ -71,5 +108,29 @@
             'wp': wpIds
         }
     }
+
+    function updateItemCounts() {
+        console.log('FIRE')
+        let numrad = $.jStorage.get("l/count/rad");
+        let numkan = $.jStorage.get("l/count/kan");
+        let numvoc = $.jStorage.get("l/count/voc");
+
+        let numwpRad = items.filter(item => item.type.toLowerCase() == 'radical' && !('kanavocab' in item)).length;
+        let numwpKan = items.filter(item => item.type.toLowerCase() == 'kanji').length;
+        let numwpVoc = items.filter(item => item.type.toLowerCase() == 'vocabulary' || 'kanavocab' in item).length;
+
+        $.jStorage.set("l/count/rad", numrad + numwpRad);
+        $.jStorage.set("l/count/kan", numkan + numwpKan);
+        $.jStorage.set("l/count/voc", numvoc + numwpVoc);
+    }
+
+    window.addEventListener('load', () => {
+        updateItemCounts();
+        // handle a slower page load . . .
+        let obsv = new MutationObserver(updateItemCounts);
+        let target = document.getElementById('stats');
+        obsv.observe(target, { attributes: true, childList: true, subtree: true });
+        setTimeout(() => obsv.disconnect(), 250);
+    });
 })();
 

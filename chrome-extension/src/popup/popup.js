@@ -55,6 +55,7 @@ window.addEventListener('load', () => {
 
             buildDecksEl(decks);
             loadOrder(order);
+            document.getElementById('waniplus-only').checked = state.wpOnlyMode;
             hideLoading();
             showUser();
         }
@@ -64,5 +65,8 @@ window.addEventListener('load', () => {
         let order = e.target.value;
 
         chrome.runtime.sendMessage({ action: 'setLoadOrder', order: order });
+    });
+    document.getElementById('waniplus-only').addEventListener('change', (e) => {
+        chrome.runtime.sendMessage({ action: 'setWPOnlyMode', enabled: e.target.checked });
     })
 })

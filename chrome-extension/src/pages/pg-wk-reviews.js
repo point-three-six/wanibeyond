@@ -1,24 +1,14 @@
 (() => {
     let itemsIds = [];
     let items = [];
-    let loadOrder = 'random';
-
-    // depsite intercepting the requests
-    // this seems to be the only way to force reviewQueue
-    window.addEventListener('load', () => {
-        let handle = (key, action) => {
-            let ids = $.jStorage.get('reviewQueue');
-            items.forEach(item => ids.unshift(item.id));
-            $.jStorage.stopListening('reviewQueue', handle);
-            $.jStorage.set('reviewQueue', ids);
-        };
-        $.jStorage.listenKeyChange('reviewQueue', handle);
-    });
+    let loadOrder = 'front';
+    let wpOnlyMode = false;
 
     chrome.runtime.sendMessage(window.__wp__.eid, { action: 'getReviewData' }, (res) => {
         items = res.items;
         items.forEach(item => itemsIds.push(item.id));
         loadOrder = res.order;
+        wpOnlyMode = res.wpOnlyMode;
     });
 
     window.__wp__.Interceptor.hookIncoming('/review/queue', (data) => {
@@ -97,6 +87,8 @@
 
     function injectWPItems(data) {
         //data = [];
+
+        if (wpOnlyMode) data = [];
 
         items.forEach((item, i) => {
             let id = items[i].id;
