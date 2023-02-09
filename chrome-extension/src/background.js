@@ -155,13 +155,10 @@ async function fetchUserData(deckIDs, initialDownloads, updatedAfter) {
 function insertGuestSRSData(decks, srs) {
     decks.map(deck => {
         deck.items.map(item => {
-            if (!('assignmentGuest' in item)) item.assignmentGuest = [];
+            if (!('assignmentGuest' in item)) item.assignmentsGuest = [];
 
             if (item.id in srs) {
-                item.assignmentGuest = [{
-                    stage: srs[item.id].stage,
-                    lastAdvance: srs[item.id].lastAdvance
-                }];
+                item.assignmentsGuest = srs[item.id];
             }
 
             return item;
@@ -249,11 +246,11 @@ async function getLessonData() {
 
         for (let i in deck.items) {
             let item = deck.items[i];
-            let assignment = (isGuest) ? item.assignmentGuest : item.assignment;
+            let assignments = (isGuest) ? item.assignmentsGuest : item.assignments;
 
             // here we need to verify if the item is in the lesson stage.
             // an item is in the lesson stage if it has no generated assignment.
-            if (assignment.length == 0 && curLevel >= item.level) {
+            if (assignments.length == 0 && curLevel >= item.level) {
                 //deck.items[i].data.__wp__ = true;
                 items.unshift(deck.items[i].data)
             }
@@ -279,15 +276,15 @@ async function getReviewData() {
 
         for (let i in deck.items) {
             let item = deck.items[i];
-            let assignment = (isGuest) ? item.assignmentGuest : item.assignment;
+            let assignments = (isGuest) ? item.assignmentsGuest : item.assignments;
 
             // here we need to verify if the item is in the lesson stage.
             // an item is in the lesson stage if it has no generated assignment.
-            if (assignment.length > 0 && curLevel >= item.level) {
+            if (assignments.length > 0 && curLevel >= item.level) {
                 // inject assignment stage to item data
-                item.data.srs = assignment[0].stage;
+                item.data.srs = assignments[assignments.length - 1].stage;
 
-                if (calcIfSrsReady(assignment)) {
+                if (calcIfSrsReady(assignments[assignments.length - 1])) {
                     //deck.items[i].data.__wp__ = true;
                     items.unshift(item.data)
                 }
@@ -332,25 +329,33 @@ async function itemSRSCompleted(completions) {
                 let item = deck.items[i];
 
                 if (item.id == numId) {
-                    let assignment = (isGuest) ? item.assignmentGuest : item.assignment;
+                    let assignments = (isGuest) ? item.assignmentsGuest : item.assignments;
 
-                    if (assignment.length == 0) {
-                        assignment[0] = {
+                    if (assignments.length == 0) {
+                        assignments.push({
                             stage: 1,
-                            lastAdvance: new Date().toISOString()
-                        };
+                            completedAt: new Date().toISOString()
+                        });
                     } else {
-                        let curStage = assignment[0].stage;
+                        let curStage = assignments[assignments.length - 1].stage;
+                        let newStage = curStage;
 
                         if (failed && curStage > 1) {
-                            assignment[0].stage--;
+                            newStage--;
                         } else if (!failed && curStage < 8) {
-                            assignment[0].stage++;
+                            newStage++;
                         }
+
+                        assignments.push({
+                            stage: newStage,
+                            completedAt: new Date().toISOString()
+                        });
                     }
 
                     if (isGuest) {
-                        userData.data.srs[item.id] = assignment[0];
+                        // push the assignment we just created to local guest srs data
+                        if (!(item.id in userData.data.srs)) userData.data.srs[item.id] = [];
+                        userData.data.srs[item.id].push(assignments[assignments.length - 1]);
                     }
                 }
             }
@@ -363,10 +368,10 @@ async function itemSRSCompleted(completions) {
 }
 
 function calcIfSrsReady(assignment) {
-    let stage = assignment[0].stage;
+    let stage = assignment.stage;
 
     let now = Date.now();
-    let last = new Date(assignment[0].lastAdvance).getTime();
+    let last = new Date(assignment.completedAt).getTime();
     let elapsed = now - last;
 
     // in minutes
@@ -398,8 +403,8 @@ function calculateDeckLevel(deck) {
         let items = deck.items.filter(item => item.level == level);
 
         for (let item of items) {
-            let assignment = (isGuest) ? item.assignmentGuest : item.assignment;
-            if (assignment.length == 0 || assignment[0].stage < 5) {
+            let assignments = (isGuest) ? item.assignmentsGuest : item.assignments;
+            if (assignments.length == 0 || assignments[assignments.length - 1].stage < 5) {
                 return curLevel;
             }
         }
@@ -418,13 +423,13 @@ function prepareDeckData(decks) {
         deck.level = curLevel;
 
         for (let item of deck.items) {
-            let assignment = (isGuest) ? item.assignmentGuest : item.assignment;
+            let assignments = (isGuest) ? item.assignmentsGuest : item.assignments;
             item.unlocked = curLevel >= item.level;
             item.kanavocab = item.data.kanavocab;
             item.category = item.data.category.toLowerCase();
-            item.isInLessonQueue = assignment.length == 0 ? true : false;
-            item.isReady = item.isInLessonQueue ? true : calcIfSrsReady(assignment);
-            item.wpSrs = assignment.length == 0 ? 0 : assignment[0].stage;
+            item.isInLessonQueue = assignments.length == 0 ? true : false;
+            item.isReady = item.isInLessonQueue ? true : calcIfSrsReady(assignments[assignments.length - 1]);
+            item.wpSrs = assignments.length == 0 ? 0 : assignments[assignments.length - 1].stage;
             delete item.data;
         }
     }

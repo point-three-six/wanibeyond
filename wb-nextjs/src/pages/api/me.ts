@@ -50,7 +50,7 @@ async function getUserDecks(userId: number, ids: number[], initialDownloads: num
                     level: true,
                     characters: true,
                     updatedAt: true,
-                    assignment: {
+                    assignments: {
                         where: {
                             user: {
                                 id: userId
@@ -62,10 +62,9 @@ async function getUserDecks(userId: number, ids: number[], initialDownloads: num
                         },
                         orderBy: [
                             {
-                                completedAt: 'desc'
+                                id: 'asc'
                             }
-                        ],
-                        take: 1
+                        ]
                     }
                 },
                 orderBy: [

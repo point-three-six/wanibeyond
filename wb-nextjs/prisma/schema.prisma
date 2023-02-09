@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["filteredRelationCount"]
@@ -11,63 +8,51 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id          Int          @id @default(autoincrement())
-  username    String       @unique
-  password    String
-  email       String       @unique
-  dateCreated DateTime     @default(now())
-  decks       Deck[]
-  Assignment  Assignment[]
-
-  @@index([username, password])
-}
-
 model Deck {
   id          Int      @id @default(autoincrement())
-  user        User     @relation(fields: [userId], references: [id])
   userId      Int
   name        String
   description String
   dateCreated DateTime @default(now())
-  dateUpdated DateTime @updatedAt
+  dateUpdated DateTime
   allowForks  Boolean  @default(true)
   isPrivate   Boolean  @default(false)
   threadUrl   String?
   levelSystem String
+  user        User     @relation(fields: [userId], references: [id])
   items       Item[]
 
   @@index([name, userId])
+  @@index([userId])
 }
 
 model Item {
-  id         Int          @id @default(autoincrement())
-  type       String
-  en         String
-  characters String
-  data       Json
-  deck       Deck         @relation(fields: [deckId], references: [id])
-  deckId     Int
-  level      Int          @default(0)
-  deleted    Boolean      @default(false)
-  assignment Assignment[]
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @default(now()) @updatedAt
+  id          Int          @id @default(autoincrement())
+  type        String
+  en          String
+  characters  String
+  data        Json
+  deckId      Int
+  level       Int          @default(0)
+  deleted     Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @default(now())
+  assignments Assignment[]
+  deck        Deck         @relation(fields: [deckId], references: [id])
 
   @@index([deckId, en, characters])
 }
 
-model Assignment {
-  id          Int      @id @default(autoincrement())
-  user        User     @relation(fields: [userId], references: [id])
-  item        Item     @relation(fields: [itemId], references: [id])
-  userId      Int
-  itemId      Int
-  stage       Int      @default(1)
-  wasCorrect  Boolean
-  completedAt DateTime @default(now())
+model User {
+  id          Int          @id @default(autoincrement())
+  username    String       @unique()
+  password    String
+  email       String       @unique()
+  dateCreated DateTime     @default(now())
+  assignment  Assignment[]
+  deck        Deck[]
 
-  @@index([userId, itemId])
+  @@index([username, password])
 }
 
 model WkItem {
@@ -78,4 +63,18 @@ model WkItem {
   data       Json
 
   @@index([en, characters])
+}
+
+model Assignment {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  itemId      Int
+  stage       Int      @default(1)
+  wasCorrect  Boolean
+  completedAt DateTime @default(now())
+  item        Item     @relation(fields: [itemId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@index([itemId])
+  @@index([userId, itemId])
 }
