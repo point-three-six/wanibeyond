@@ -1,29 +1,31 @@
 (() => {
     chrome.runtime.sendMessage(window.__wp__.eid, { action: 'getDataForWkof' }, sync);
 
-    async function sync({ decks, lastSync }) {
+    async function sync({ decks, syncRequiredAsOf }) {
 
-        // indexedDB.databases() does not work on firefox
+        // WARNING: indexedDB.databases() does not work on firefox
         let databases = (await indexedDB.databases()).map(db => db.name);
         if (Array.from(databases).indexOf('wkof.file_cache') === -1) return;
-
-        console.log('- - wkofSync - -');
 
         const db = await idb.openDB('wkof.file_cache', 1, {});
         const tx = db.transaction('files', 'readwrite');
         const store = tx.objectStore('files');
         const wpData = await store.get('waniplus');
+
+        // no need to sync if it's up-to-date
+        if (wpData && new Date(wpData.lastWkofSync).getTime() >= syncRequiredAsOf) return;
+
+        console.log('WaniPlus: Syncing with WKOF cache.');
+
         const wkofSubjects = await store.get('Apiv2.subjects');
         const wkofAssignments = await store.get('Apiv2.assignments');
         const wkofStatistics = await store.get('Apiv2.review_statistics');
 
-        return;
-
         decks.forEach(deck => {
             deck.items.forEach(item => {
                 let subject = generateSubject(item, deck.id)
-                let assignment = generateAssignment(item, 400000000);
-                let statistics = generateReviewStatistic(item, 400000000);
+                let assignment = generateAssignment(item);
+                let statistics = generateReviewStatistic(item);
 
                 wkofSubjects.content.data[subject.id] = subject;
                 wkofAssignments.content.data[assignment.id] = assignment;
@@ -34,10 +36,9 @@
         store.put({ name: 'Apiv2.subjects', content: wkofSubjects.content });
         store.put({ name: 'Apiv2.assignments', content: wkofAssignments.content });
         store.put({ name: 'Apiv2.review_statistics', content: wkofStatistics.content });
+        store.put({ name: 'waniplus', lastWkofSync: new Date().toISOString() });
 
-        console.log(await store.get('Apiv2.subjects'));
-        console.log(await store.get('Apiv2.assignments'));
-        console.log(await store.get('Apiv2.review_statistics'));
+        db.close();
     }
 
     function generateSubject(item, deckId) {
@@ -46,6 +47,7 @@
         let dateStr = new Date().toISOString();
 
         let data = {};
+        data.__wp__ = true;
         data.created_at = item.createdAt;
         data.data_updated_at = item.updatedAt;
         data.level = item.level;
@@ -118,8 +120,8 @@
         };
     }
 
-    function generateAssignment(item, upperBound) {
-        let id = upperBound + item.id;
+    function generateAssignment(item) {
+        let id = Number.MAX_SAFE_INTEGER - item.id;
         let assignments = item.assignments;
         let firstAssignment = assignments[0];
         let lastAssignment = assignments[assignments.length - 1];
@@ -132,6 +134,7 @@
         });
 
         return {
+            __wp__: true,
             id: id,
             object: "assignment",
             url: 'https://api.wanikani.com/v2/assignments/wp-' + item.id,
@@ -152,16 +155,17 @@
         };
     }
 
-    function generateReviewStatistic(item, upperBound) {
-        let id = upperBound + item.id;
+    function generateReviewStatistic(item) {
+        let id = Number.MAX_SAFE_INTEGER - item.id;
         let assignments = item.assignments;
         let firstAssignment = assignments[0];
         let lastAssignment = assignments[assignments.length - 1];
 
-        // some of this data is not currently tracked
-        // in a future version soon
+        // a lot of the statistics data is not tracked
+        // in a future version soon this should be added
 
         return {
+            __wp__: true,
             id: id,
             object: "review_statistic",
             url: 'https://api.wanikani.com/v2/review_statistics/wp-' + item.id,
@@ -182,10 +186,6 @@
                 hidden: false
             }
         };
-    }
-
-    function helperBuildMeanings() {
-
     }
 
     window.__wp__.syncWkof = sync;

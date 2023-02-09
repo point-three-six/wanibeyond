@@ -17,7 +17,7 @@ let userData = {
     user: {},
     lastGuestSession: null,
     lastUserSession: null,
-    lastWkofSync: null
+    wkofSyncRequiredAsOf: new Date().getTime() // as of this date wkof needs to be re-synced
 };
 
 let headers = new Headers();
@@ -26,16 +26,11 @@ headers.append('cache-control', 'no-cache');
 
 // quick load last state
 const quickLoadCache = chrome.storage.local.get(['wp_data', 'wp_level', 'wp_order']).then(({ wp_data, wp_level, wp_order }) => {
+    if (!wp_data) return;
     myLevel = wp_level || 0;
     loadOrder = wp_order || 'front';
-
-    if (!wp_data) return;
-
-    if (wp_data) {
-        userData = wp_data;
-
-        isGuest = wp_data.lastGuestSession >= wp_data.lastUserSession;
-    }
+    userData = wp_data;
+    isGuest = wp_data.lastGuestSession >= wp_data.lastUserSession;
 });
 
 async function sync() {
@@ -65,16 +60,22 @@ async function sync() {
         }
     }
 
+    // flag to determine if wkof should be resynced
+    let newItemsAddedOrUpdated = false;
+
     // add new items
     for (let deck of me.data.decks) {
         if (initialDownloads.indexOf(deck.id) !== -1) {
+            newItemsAddedOrUpdated = true;
             userData.data.decks.push(deck);
             continue;
         }
 
-        // items to add
+        // items to add or update
         let items = deck.items;
         let itemsIDs = deck.items.map(item => item.id);
+
+        if (items.length > 0) newItemsAddedOrUpdated = true;
 
         // now loop through each cached deck and either
         // insert or update
@@ -129,7 +130,8 @@ async function sync() {
     userData.user = me.user;
     userData.lastSync = dt;
 
-    // write newest userData obj
+    if (newItemsAddedOrUpdated) userData.wkofSyncRequiredAsOf = new Date().getTime();
+
     setUserData(userData);
 
     return true;
@@ -509,7 +511,7 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
                 getState().then(() => {
                     sendResponse({
                         decks: prepareDeckData(userData.data.decks, true),
-                        lastSync: userData.lastWkofSync
+                        syncRequiredAsOf: userData.wkofSyncRequiredAsOf
                     });
                 });
                 break;

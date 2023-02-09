@@ -36,7 +36,7 @@ model Item {
   level       Int          @default(0)
   deleted     Boolean      @default(false)
   createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @default(now())
+  updatedAt   DateTime     @default(now()) @updatedAt
   assignments Assignment[]
   deck        Deck         @relation(fields: [deckId], references: [id])
 

@@ -15,7 +15,6 @@
         $.jStorage.listenKeyChange('reviewQueue', handle);
     });
 
-
     chrome.runtime.sendMessage(window.__wp__.eid, { action: 'getReviewData' }, (res) => {
         items = res.items;
         items.forEach(item => itemsIds.push(item.id));

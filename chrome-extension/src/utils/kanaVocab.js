@@ -1,4 +1,6 @@
 
+// TODO: rewrite this sloppy sloppy mess
+
 window.addEventListener('load', async function () {
     // create custom orange style for kanavocab
     const style = document.createElement('style');
