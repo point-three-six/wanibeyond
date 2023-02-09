@@ -103,13 +103,6 @@
         let url = args[0];
         let shortUrl = url.replace(/\?.*/, '');
 
-        // idk why fontawesome causes issues??
-        // needs further investigating
-        if (url.indexOf('fontawesome') != -1) {
-            let response = await origFetch(...args);
-            return response;
-        }
-
         let response;
         if (shortUrl in window.__wp__.Interceptor.hooksOutFetch) {
             let newArgs = window.__wp__.Interceptor.hooksOutFetch[shortUrl](...args);

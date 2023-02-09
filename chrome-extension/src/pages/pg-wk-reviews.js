@@ -1,9 +1,20 @@
-//window.addEventListener("beforeunload", function () { debugger; }, false);
-
 (() => {
     let itemsIds = [];
     let items = [];
     let loadOrder = 'random';
+
+    // depsite intercepting the requests
+    // this seems to be the only way to force reviewQueue
+    window.addEventListener('load', () => {
+        let handle = (key, action) => {
+            let ids = $.jStorage.get('reviewQueue');
+            items.forEach(item => ids.unshift(item.id));
+            $.jStorage.stopListening('reviewQueue', handle);
+            $.jStorage.set('reviewQueue', ids);
+        };
+        $.jStorage.listenKeyChange('reviewQueue', handle);
+    });
+
 
     chrome.runtime.sendMessage(window.__wp__.eid, { action: 'getReviewData' }, (res) => {
         items = res.items;
@@ -19,8 +30,16 @@
         return injectWPItems(data);
     });
 
-    /* TODO: DO NOT LET CALL HAPPEN? */
     window.__wp__.Interceptor.hookOutgoingFetch('/review/items', (...args) => {
+        return args;
+    });
+
+    // this is for reorder omega
+    window.__wp__.Interceptor.hookIncomingFetch('/extra_study/items', (data) => {
+        return injectWPItems(data);
+    });
+
+    window.__wp__.Interceptor.hookOutgoingFetch('/extra_study/items', (...args) => {
         return args;
     });
 

@@ -49,6 +49,7 @@ async function getUserDecks(userId: number, ids: number[], initialDownloads: num
                     en: true,
                     level: true,
                     characters: true,
+                    createdAt: true,
                     updatedAt: true,
                     assignments: {
                         where: {

@@ -3,43 +3,47 @@
 
     async function sync({ decks, lastSync }) {
 
-        // indexedDB.databases() is a nicer solution to check for
-        // existence; however, it is not supported by Firefox
-        let wkofExists = true;
-        const db = await idb.openDB('wkof.file_cache', 1, {
-            upgrade() {
-                wkofExists = false;
-                idb.deleteDB('wkof.file_cache');
-            }
-        });
-        if (!wkofExists) return;
+        // indexedDB.databases() does not work on firefox
+        let databases = (await indexedDB.databases()).map(db => db.name);
+        if (Array.from(databases).indexOf('wkof.file_cache') === -1) return;
 
-        // build subjects of deck
+        console.log('- - wkofSync - -');
 
-
-        return;
+        const db = await idb.openDB('wkof.file_cache', 1, {});
         const tx = db.transaction('files', 'readwrite');
         const store = tx.objectStore('files');
+        const wpData = await store.get('waniplus');
+        const wkofSubjects = await store.get('Apiv2.subjects');
+        const wkofAssignments = await store.get('Apiv2.assignments');
+        const wkofStatistics = await store.get('Apiv2.review_statistics');
 
-        // check for existence of wkof indexeddb
-        const dbKeys = await store.getAllKeys();
+        return;
 
-        if (dbKeys.length > 0) {
-            const wpData = await store.get('waniplus');
-            const wkofSubjects = await store.get('Apiv2.subjects');
-            const dblastSync = wpData.lastSync || 0;
+        decks.forEach(deck => {
+            deck.items.forEach(item => {
+                let subject = generateSubject(item, deck.id)
+                let assignment = generateAssignment(item, 400000000);
+                let statistics = generateReviewStatistic(item, 400000000);
 
-            store.put({ name: 'waniplus', lastSync: new Date().getTime() });
-        }
+                wkofSubjects.content.data[subject.id] = subject;
+                wkofAssignments.content.data[assignment.id] = assignment;
+                wkofStatistics.content.data[statistics.id] = statistics;
+            });
+        });
+
+        store.put({ name: 'Apiv2.subjects', content: wkofSubjects.content });
+        store.put({ name: 'Apiv2.assignments', content: wkofAssignments.content });
+        store.put({ name: 'Apiv2.review_statistics', content: wkofStatistics.content });
+
+        console.log(await store.get('Apiv2.subjects'));
+        console.log(await store.get('Apiv2.assignments'));
+        console.log(await store.get('Apiv2.review_statistics'));
     }
 
     function generateSubject(item, deckId) {
         let id = Number.MAX_SAFE_INTEGER - item.id;
-        let itemType = item.type;
+        let itemType = item.data.category.toLowerCase();
         let dateStr = new Date().toISOString();
-
-        if (itemType == 'kanavocab') itemType = 'radical';
-        if (itemType == 'vocab') itemType = 'vocabulary';
 
         let data = {};
         data.created_at = item.createdAt;
@@ -49,7 +53,7 @@
         data.hidden_at = null;
         data.document_url = `https://wanikani.com/decks/${deckId}/item/${item.id}`;
         data.characters = item.characters;
-        data.meanings = item.en.map((meaning, i) => {
+        data.meanings = item.data.en.map((meaning, i) => {
             return {
                 meaning: meaning,
                 primary: (i == 0) ? true : false,
@@ -59,7 +63,7 @@
         data.auxiliary_meanings = item.data.auxiliary_meanings;
 
         if (itemType == 'kanji') {
-            let kunyomi = item.kun.map((reading, i) => {
+            let kunyomi = item.data.kun.map((reading, i) => {
                 return {
                     type: 'kunyomi',
                     reading: reading,
@@ -67,7 +71,7 @@
                     accepted_answer: (item.data.emph == 'kunyomi') ? true : false
                 }
             });
-            let onyomi = item.en.map((reading, i) => {
+            let onyomi = item.data.en.map((reading, i) => {
                 return {
                     type: 'onyomi',
                     reading: reading,
@@ -78,7 +82,7 @@
             data.readings = kunyomi.concat(onyomi);
         } else if (itemType == 'vocabulary') {
             // - - - VOCABULARY - - -
-            data.readings = item.en.map((reading, i) => {
+            data.readings = item.data.en.map((reading, i) => {
                 return {
                     reading: reading,
                     primary: (i == 0) ? true : false,
@@ -110,40 +114,74 @@
             object: itemType,
             url: 'https://api.wanikani.com/v2/subjects/' + id,
             data_updated_at: dateStr,
-            data: data,
-            assignments: {
-                created_at: "2022-11-19T11:24:28.297839Z",
-                subject_id: 419,
-                subject_type: "radical",
-                srs_stage: 6,
-                unlocked_at: "2022-11-19T11:24:28.293873Z",
-                started_at: "2022-11-26T08:53:25.862657Z",
-                passed_at: "2022-11-30T10:23:15.660946Z",
-                burned_at: null,
-                available_at: "2022-12-22T09:00:00.000000Z",
+            data: data
+        };
+    }
+
+    function generateAssignment(item, upperBound) {
+        let id = upperBound + item.id;
+        let assignments = item.assignments;
+        let firstAssignment = assignments[0];
+        let lastAssignment = assignments[assignments.length - 1];
+
+        let passedAt = null;
+        let burnedAt = null;
+        assignments.forEach(assignment => {
+            if (passedAt === null && assignment.stage == 5) passedAt = assignment.completedAt;
+            if (burnedAt === null && assignment.stage == 9) burnedAt = assignment.completedAt;
+        });
+
+        return {
+            id: id,
+            object: "assignment",
+            url: 'https://api.wanikani.com/v2/assignments/wp-' + item.id,
+            data_updated_at: lastAssignment.completedAt,
+            data: {
+                created_at: item.createdAt,
+                subject_id: Number.MAX_SAFE_INTEGER - item.id,
+                subject_type: item.data.category.toLowerCase(),
+                srs_stage: lastAssignment.stage,
+                unlocked_at: item.createdAt,
+                started_at: firstAssignment.completedAt,
+                passed_at: passedAt,
+                burned_at: burnedAt,
+                available_at: item.availableAt,
                 resurrected_at: null,
                 hidden: false
-            },
-            review_statistics: {
-                "created_at": "2022-11-26T08:53:25.887904Z",
-                "subject_id": 419,
-                "subject_type": "radical",
-                "meaning_correct": 5,
-                "meaning_incorrect": 0,
-                "meaning_max_streak": 5,
-                "meaning_current_streak": 5,
-                "reading_correct": 5,
-                "reading_incorrect": 0,
-                "reading_max_streak": 5,
-                "reading_current_streak": 5,
-                "percentage_correct": 100,
-                "hidden": false
             }
         };
     }
 
-    function generateAssignment() {
+    function generateReviewStatistic(item, upperBound) {
+        let id = upperBound + item.id;
+        let assignments = item.assignments;
+        let firstAssignment = assignments[0];
+        let lastAssignment = assignments[assignments.length - 1];
 
+        // some of this data is not currently tracked
+        // in a future version soon
+
+        return {
+            id: id,
+            object: "review_statistic",
+            url: 'https://api.wanikani.com/v2/review_statistics/wp-' + item.id,
+            data_updated_at: lastAssignment.completedAt,
+            data: {
+                created_at: lastAssignment.completedAt,
+                subject_id: Number.MAX_SAFE_INTEGER - item.id,
+                subject_type: item.data.category.toLowerCase(),
+                meaning_correct: 1,
+                meaning_incorrect: 0,
+                meaning_max_streak: 1,
+                meaning_current_streak: 1,
+                reading_correct: 0,
+                reading_incorrect: 0,
+                reading_max_streak: 0,
+                reading_current_streak: 0,
+                percentage_correct: 100,
+                hidden: false
+            }
+        };
     }
 
     function helperBuildMeanings() {

@@ -104,6 +104,7 @@ async function sync() {
         }
     }
 
+    // sort by level then id
     for (let deck of userData.data.decks) {
         deck.items.sort((a, b) => a.level - b.level || a.id - b.id);
     }
@@ -284,7 +285,7 @@ async function getReviewData() {
                 // inject assignment stage to item data
                 item.data.srs = assignments[assignments.length - 1].stage;
 
-                if (calcIfSrsReady(assignments[assignments.length - 1])) {
+                if (calcSrs(assignments[assignments.length - 1]).ready) {
                     //deck.items[i].data.__wp__ = true;
                     items.unshift(item.data)
                 }
@@ -367,13 +368,7 @@ async function itemSRSCompleted(completions) {
     return true;
 }
 
-function calcIfSrsReady(assignment) {
-    let stage = assignment.stage;
-
-    let now = Date.now();
-    let last = new Date(assignment.completedAt).getTime();
-    let elapsed = now - last;
-
+function calcSrs(assignment) {
     // in minutes
     const times = {
         1: 4 * 60,
@@ -386,8 +381,17 @@ function calcIfSrsReady(assignment) {
         8: 30 * 4 * 24 * 60
     };
 
-    return true;
-    return (elapsed > times[stage] * 60000);
+    let stage = assignment.stage;
+    let now = new Date().getTime();
+    let last = new Date(assignment.completedAt).getTime();
+    let elapsed = now - last;
+    let availableAt = new Date(last + times[stage] * 60000).toISOString();
+
+    return {
+        //ready: (elapsed > times[stage] * 60000),
+        ready: true,
+        availableAt: availableAt
+    };
 }
 
 function calculateDeckLevel(deck) {
@@ -415,7 +419,7 @@ function calculateDeckLevel(deck) {
 
 // when sending to other parts of the ext, like pg-wk-home
 // or the popup, we don't need to include ALL the item data. That's a lot
-function prepareDeckData(decks) {
+function prepareDeckData(decks, keepItemData) {
     let newDecks = JSON.parse(JSON.stringify(decks));
     for (let deck of newDecks) {
         let curLevel = (!'levelSystem' in deck || deck.levelSystem == 'wanikani') ? myLevel : calculateDeckLevel(deck);
@@ -424,15 +428,21 @@ function prepareDeckData(decks) {
 
         for (let item of deck.items) {
             let assignments = (isGuest) ? item.assignmentsGuest : item.assignments;
+            let srs = assignments.length == 0 ? null : calcSrs(assignments[assignments.length - 1]);
+
+            // to simplify outside of background.js, just rewrite to current assignments value
+            item.assignments = assignments;
             item.unlocked = curLevel >= item.level;
             item.kanavocab = item.data.kanavocab;
             item.category = item.data.category.toLowerCase();
-            item.isInLessonQueue = assignments.length == 0 ? true : false;
-            item.isReady = item.isInLessonQueue ? true : calcIfSrsReady(assignments[assignments.length - 1]);
-            item.wpSrs = assignments.length == 0 ? 0 : assignments[assignments.length - 1].stage;
-            delete item.data;
+            item.isInLessonQueue = srs ? false : true;
+            item.isReady = item.isInLessonQueue ? true : srs.ready;
+            item.wpSrs = srs ? assignments[assignments.length - 1].stage : 0;
+            item.availableAt = srs.availableAt;
+            if (!keepItemData) delete item.data;
         }
     }
+
     return newDecks;
 }
 
@@ -498,7 +508,7 @@ chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
             case 'getDataForWkof':
                 getState().then(() => {
                     sendResponse({
-                        decks: userData.data.decks,
+                        decks: prepareDeckData(userData.data.decks, true),
                         lastSync: userData.lastWkofSync
                     });
                 });
