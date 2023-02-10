@@ -40,6 +40,7 @@
         // ideas in the original fetch request
         let body = JSON.parse(args[1].body);
         let requestIDs = Object.keys(body);
+        let jstoreCompleted = $.jStorage.get('wpReviewsComplete') || [];
 
         requestIDs.forEach(id => {
             let p1 = body[id][0];
@@ -61,13 +62,14 @@
             let idNum = parseInt(id);
             if (itemsIds.indexOf(idNum) !== -1) {
                 completions.push([idNum, failed]);
+                jstoreCompleted.push([Number.MAX_SAFE_INTEGER - idNum, failed]);
             }
         });
 
         // tell extension to upgrade SRS
         if (completions.length > 0) {
             chrome.runtime.sendMessage(window.__wp__.eid, { action: 'itemSRSCompleted', items: completions }, (res) => {
-                if (!res) window.__wp__.notify('No connection to WaniPlus. Item progress was not saved.');
+                if (!res) window.__wp__.notify('Error submitting data to WaniPlus. Item progress was not saved.');
             });
         }
 
@@ -113,4 +115,8 @@
         let newId = parseInt(id.substring(3, id.length));
         return Number.MAX_SAFE_INTEGER - newId;
     }
+
+    window.addEventListener('load', () => {
+        $.jStorage.set('wpReviewsComplete', []);
+    });
 })();

@@ -21,7 +21,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (session) {
         let completions = JSON.parse(req.body);
-        console.log(completions);
 
         // ids come in the "wk-###" id format
         // so we need to convert

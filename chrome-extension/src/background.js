@@ -441,6 +441,7 @@ function prepareDeckData(decks, keepItemData) {
             let srs = assignments.length == 0 ? null : calcSrs(assignments[assignments.length - 1]);
 
             // to simplify outside of background.js, just rewrite to current assignments value
+            item.deckId = deck.id;
             item.assignments = assignments;
             item.unlocked = curLevel >= item.level;
             item.kanavocab = item.data.kanavocab;

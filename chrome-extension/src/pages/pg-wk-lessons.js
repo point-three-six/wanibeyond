@@ -30,7 +30,10 @@
 
         if (extracted.wp.length > 0) {
             let completions = [];
+            let jstoreCompleted = $.jStorage.get('wpLessonsComplete') || [];
+
             extracted.wp.forEach(id => {
+                jstoreCompleted.push(Number.MAX_SAFE_INTEGER - parseInt(id));
                 completions.push([id, false]);
             });
 
@@ -113,8 +116,8 @@
     }
 
     window.addEventListener('load', () => {
-
-        updateItemCounts();;
+        $.jStorage.set('wpLessonsComplete', []);
+        updateItemCounts();
         // handle a slower page load . . .
         let obsv = new MutationObserver(updateItemCounts);
         let target = document.getElementById('stats');
