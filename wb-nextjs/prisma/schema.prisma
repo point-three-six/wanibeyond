@@ -14,7 +14,7 @@ model Deck {
   name        String
   description String
   dateCreated DateTime @default(now())
-  dateUpdated DateTime
+  dateUpdated DateTime @default(now()) @updatedAt
   allowForks  Boolean  @default(true)
   isPrivate   Boolean  @default(false)
   threadUrl   String?

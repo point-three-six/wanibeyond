@@ -1,7 +1,7 @@
-//const endpoint = 'https://waniplus.com';
-const endpoint = 'http://localhost:3000';
+const endpoint = 'https://waniplus.com';
+//const endpoint = 'http://localhost:3000';
 const _urls = [
-    'http://localhost:3000', 'https://www.wanikani.com',
+    'https://www.wanikani.com',
     'https://wanikani.com', 'https://www.waniplus.com',
     'https://waniplus.com'
 ];
@@ -26,7 +26,7 @@ headers.append('pragma', 'no-cache');
 headers.append('cache-control', 'no-cache');
 
 // quick load last state
-const quickLoadCache = chrome.storage.local.get(['wp_data', 'wp_level', 'wp_order']).then(({ wp_data, wp_level, wp_order }) => {
+const quickLoadCache = chrome.storage.local.get(['wp_data']).then(({ wp_data }) => {
     if (!wp_data) return;
     userData = wp_data;
     isGuest = wp_data.lastGuestSession >= wp_data.lastUserSession;
@@ -398,8 +398,7 @@ function calcSrs(assignment) {
     let availableAt = new Date(last + times[stage] * 60000).toISOString();
 
     return {
-        //ready: (elapsed > times[stage] * 60000),
-        ready: true,
+        ready: (elapsed > times[stage] * 60000),
         availableAt: availableAt
     };
 }
@@ -568,7 +567,33 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     return true;
 });
 
-chrome.runtime.onInstalled.addListener(async () => {
+async function test() {
+    await quickLoadCache;
+    console.log(userData);
+}
+test();
+
+chrome.runtime.onInstalled.addListener(async (details) => {
+    //const currentVersion = chrome.runtime.getManifest().version;
+    const previousVersion = details.previousVersion;
+
+    if (previousVersion != '1.2.0') {
+        userData = {
+            wpOnlyMode: false,
+            loadOrder: 'front',
+            level: 0,
+            data: {
+                decks: [],
+                srs: {}
+            },
+            user: {},
+            lastGuestSession: null,
+            lastUserSession: null,
+            wkofSyncRequiredAsOf: new Date().getTime(), // as of this date wkof needs to be re-synced
+        };
+        setUserData(userData);
+    }
+
     const scripts = [{
         id: 'waniplus',
         js: ['src/utils/context.js', 'src/utils/interceptor.js', 'src/utils/notify.js', 'src/utils/updateLevel.js', 'src/utils/idb.js', 'src/utils/wkofSync.js'],

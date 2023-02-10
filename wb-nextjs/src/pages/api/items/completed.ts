@@ -22,14 +22,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (session) {
         let completions = JSON.parse(req.body);
 
-        // ids come in the "wk-###" id format
-        // so we need to convert
-        // for (let completion of data) {
-        //     let id = completion[0];
-        //     let numerical = parseInt(id.substring(3, id.length));
-        //     completions.push([numerical, completion[1]]);
-        // }
-
         // now update assignments for each ID
         for (let completion of completions) {
             let id = completion[0];

@@ -13,8 +13,7 @@
   ],
   "host_permissions": [
     "https://waniplus.com/*",
-    "https://www.wanikani.com/*",
-    "http://localhost:3000/*"
+    "https://www.wanikani.com/*"
   ],
   "optional_permissions": [],
   "optional_host_permissions": [],
@@ -24,8 +23,7 @@
   "externally_connectable": {
     "matches": [
       "https://www.wanikani.com/*",
-      "https://waniplus.com/*",
-      "http://localhost:3000/*"
+      "https://waniplus.com/*"
     ]
   },
   "action": {
