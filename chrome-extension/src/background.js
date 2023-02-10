@@ -300,6 +300,11 @@ async function getReviewData() {
 async function itemSRSCompleted(completions) {
     await quickLoadCache;
 
+    // convert itemIDs
+    completions = completions.map(completion => {
+        return [Number.MAX_SAFE_INTEGER - parseInt(completion[0]), completion[1]];
+    });
+
     //note: itemIDs are strings in the format wk-###
     if (!isGuest) {
         try {
@@ -322,7 +327,6 @@ async function itemSRSCompleted(completions) {
     for (let completion of completions) {
         let id = completion[0];
         let failed = completion[1];
-        let numId = parseInt(id.substring(3, id.length));
 
         for (let x in decks) {
             let deck = decks[x];
@@ -330,7 +334,7 @@ async function itemSRSCompleted(completions) {
             for (let i in deck.items) {
                 let item = deck.items[i];
 
-                if (item.id == numId) {
+                if (item.id == id) {
                     let assignments = (isGuest) ? item.assignmentsGuest : item.assignments;
 
                     if (assignments.length == 0) {

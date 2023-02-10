@@ -44,14 +44,10 @@
 
     // this is for reorder omega
     window.__wp__.Interceptor.hookIncomingFetch('/extra_study/items', (data) => {
-        console.log('extra_study incoming')
-        console.log(data)
         return injectWPItems(data);
     });
 
     window.__wp__.Interceptor.hookOutgoingFetch('/extra_study/items', (...args) => {
-        console.log('extra_study outgoing')
-        console.log(data)
         return args;
     });
 
@@ -84,7 +80,7 @@
         for (let i in ids) {
             let id = ids[i];
 
-            if (typeof id == 'string' && id.indexOf('wp-') != -1) {
+            if (typeof id == 'string' && id.indexOf('wp-') != -1 || id >= 1000000000000000) {
                 wpIds.push(id);
             } else {
                 wkIds.push(id);
@@ -117,7 +113,8 @@
     }
 
     window.addEventListener('load', () => {
-        updateItemCounts();
+
+        updateItemCounts();;
         // handle a slower page load . . .
         let obsv = new MutationObserver(updateItemCounts);
         let target = document.getElementById('stats');

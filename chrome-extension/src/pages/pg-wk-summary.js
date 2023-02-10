@@ -1,3 +1,10 @@
+// window.summaryData
+// {
+//     "stats": [],
+//     "queue_count": 118,
+//     "last_lesson_date": "2023-02-10T14:32:34.604922Z"
+// }
+
 (() => {
     let lessonCount = 0;
     let reviewCount = 0;

@@ -19,6 +19,13 @@
         updateLRButtonClass(a_lessons, finalNumLessons);
         updateLRButtonClass(a_reviews, finalNumReviews);
 
+        /* topnavbar counts */
+        document.getElementsByClassName('navigation-shortcut--lessons')[0].getElementsByTagName('span')[0].innerText = finalNumLessons;
+        document.getElementsByClassName('navigation-shortcut--reviews')[0].getElementsByTagName('span')[0].innerText = finalNumReviews;
+
+        /* bottom srs category counts */
+        updateSrsCounts();
+
         /* deck progress panel */
         let wpProgress = document.createElement('section');
         wpProgress.setAttribute('id', 'waniplus-decks');
@@ -113,6 +120,32 @@
             </div>
         </div>`;
         return parentHtml;
+    }
+
+    function updateSrsCounts() {
+        let elApprentice = document.getElementById('apprentice').firstElementChild;
+        let elGuru = document.getElementById('guru').firstElementChild;
+        let elEnlightened = document.getElementById('enlightened').firstElementChild;
+        let elBurned = document.getElementById('burned').firstElementChild;
+
+        let numApprentice = parseInt(elApprentice.innerText);
+        let numGuru = parseInt(elGuru.innerText);
+        let numEnlightened = parseInt(elEnlightened.innerText);
+        let numBurned = parseInt(elBurned.innerText);
+
+        decks.forEach(deck => {
+            deck.items.forEach(item => {
+                if (item.wpSrs > 0 && item.wpSrs < 5) numApprentice += 1;
+                if (item.wpSrs == 5 || item.wpSrs == 6) numApprentice += 1;
+                if (item.wpSrs == 7) numEnlightened += 1;
+                if (item.wpSrs > 7) numBurned += 1;
+            });
+        });
+
+        elApprentice.innerText = numApprentice;
+        elGuru.innerText = numGuru;
+        elEnlightened.innerText = numEnlightened;
+        elBurned.innerText = numBurned;
     }
 
     function isReady(e) {

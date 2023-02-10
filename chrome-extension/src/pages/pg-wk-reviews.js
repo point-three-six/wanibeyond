@@ -6,7 +6,7 @@
 
     chrome.runtime.sendMessage(window.__wp__.eid, { action: 'getReviewData' }, (res) => {
         items = res.items;
-        items.forEach(item => itemsIds.push(item.id));
+        items.forEach(item => itemsIds.push(convertID(item.id)));
         loadOrder = res.order;
         wpOnlyMode = res.wpOnlyMode;
     });
@@ -57,10 +57,10 @@
                 data[id] = [0, ''];
             }
 
-            // handle srs for WP items
-            let wpId = 'wp-' + (Number.MAX_SAFE_INTEGER - parseInt(id));
-            if (itemsIds.indexOf(wpId) != -1) {
-                completions.push([wpId, failed]);
+            // handle srs for WP items only
+            let idNum = parseInt(id);
+            if (itemsIds.indexOf(idNum) !== -1) {
+                completions.push([idNum, failed]);
             }
         });
 

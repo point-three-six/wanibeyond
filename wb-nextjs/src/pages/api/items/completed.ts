@@ -20,16 +20,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const session = await getSession(req.cookies);
 
     if (session) {
-        let completions = [];
-        let data = JSON.parse(req.body);
+        let completions = JSON.parse(req.body);
+        console.log(completions);
 
         // ids come in the "wk-###" id format
         // so we need to convert
-        for (let completion of data) {
-            let id = completion[0];
-            let numerical = parseInt(id.substring(3, id.length));
-            completions.push([numerical, completion[1]]);
-        }
+        // for (let completion of data) {
+        //     let id = completion[0];
+        //     let numerical = parseInt(id.substring(3, id.length));
+        //     completions.push([numerical, completion[1]]);
+        // }
 
         // now update assignments for each ID
         for (let completion of completions) {
