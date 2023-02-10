@@ -10,7 +10,12 @@
     });
 
     window.__wp__.Interceptor.hookIncoming('/lesson/queue', (data) => {
-        return injectWPData(data);
+        return JSON.stringify(injectWPItems(JSON.parse(data)));
+    });
+
+    // additional FETCH hook because of reorder omega
+    window.__wp__.Interceptor.hookIncomingFetch('/lesson/queue', (data) => {
+        return injectWPItems(data);
     });
 
     window.__wp__.Interceptor.hookOutgoing('/json/lesson/completed', (data) => {
@@ -39,36 +44,19 @@
 
     // this is for reorder omega
     window.__wp__.Interceptor.hookIncomingFetch('/extra_study/items', (data) => {
+        console.log('extra_study incoming')
+        console.log(data)
         return injectWPItems(data);
     });
 
     window.__wp__.Interceptor.hookOutgoingFetch('/extra_study/items', (...args) => {
+        console.log('extra_study outgoing')
+        console.log(data)
         return args;
     });
 
-    function injectWPData(response) {
-        response = JSON.parse(response);
-
-        if (wpOnlyMode) response['queue'] = [];
-
-        items.forEach((item, i) => {
-            if (loadOrder == 'random') {
-                var rand = Math.floor(Math.random() * (response['queue'].length)) + 1;
-                response['queue'].splice(rand, 0, item);
-            } else if (loadOrder == 'front') {
-                response['queue'].unshift(items[i]);
-            } else {
-                response['queue'].push(items[i]);
-            }
-        });
-
-        return JSON.stringify(response);
-    }
-
     function injectWPItems(data) {
-        //data = [];
-
-        if (wpOnlyMode) data = [];
+        if (wpOnlyMode) data['queue'] = [];
 
         items.forEach((item, i) => {
             let id = items[i].id;
@@ -77,12 +65,12 @@
             items[i].syn = [];
 
             if (loadOrder == 'random') {
-                var rand = Math.floor(Math.random() * (data.length)) + 1;
-                data.splice(rand, 0, item);
+                var rand = Math.floor(Math.random() * (data['queue'].length)) + 1;
+                data['queue'].splice(rand, 0, item);
             } else if (loadOrder == 'front') {
-                data.unshift(items[i]);
+                data['queue'].unshift(items[i]);
             } else {
-                data.push(items[i]);
+                data['queue'].push(items[i]);
             }
         });
 
@@ -109,8 +97,12 @@
         }
     }
 
+    function convertID(id) {
+        let newId = parseInt(id.substring(3, id.length));
+        return Number.MAX_SAFE_INTEGER - newId;
+    }
+
     function updateItemCounts() {
-        console.log('FIRE')
         let numrad = $.jStorage.get("l/count/rad");
         let numkan = $.jStorage.get("l/count/kan");
         let numvoc = $.jStorage.get("l/count/voc");
