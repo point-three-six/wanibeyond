@@ -1,6 +1,6 @@
-import prisma from '../../../lib/prisma';
+import prisma from '../../lib/prisma';
 import ImportForm from './ImportForm';
-import { getSession } from '../../../lib/session';
+import { getSession } from '../../lib/session';
 
 export default async function page() {
     let sessionData = await getSession();

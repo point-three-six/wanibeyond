@@ -23,7 +23,6 @@
         return args;
     });
 
-    // this is for reorder omega
     window.__wp__.Interceptor.hookIncomingFetch('/extra_study/items', (data) => {
         return injectWPItems(data);
     });
@@ -31,6 +30,11 @@
     window.__wp__.Interceptor.hookOutgoingFetch('/extra_study/items', (...args) => {
         return args;
     });
+
+    //https://www.wanikani.com/json/kanji/9007199254740771
+    // window.__wp__.Interceptor.hookOutgoing(/\/json\/kanji\/*/, (...args) => {
+    //     return [false, ];
+    // });
 
     window.__wp__.Interceptor.hookIncomingFetch('/json/progress', (data, args) => {
         // list of ids that will need to be sent to WP

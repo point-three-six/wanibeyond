@@ -19,9 +19,9 @@ export default async function UserInfoBar() {
                                 <div className='entry p-2 text-left text-slate-800 dark:text-inherit hover:bg-slate-100 dark:hover:bg-neutral-700'>
                                     <Link href='/settings' className='px-2 py-1'>Settings</Link>
                                 </div>
-                                {/* <div className='entry p-2 text-left text-slate-800 dark:text-inherit hover:bg-slate-100 dark:hover:bg-neutral-700'>
-                                    <Link href='/decks/import' className='px-2 py-1'>Import</Link>
-                                </div> */}
+                                <div className='entry p-2 text-left text-slate-800 dark:text-inherit hover:bg-slate-100 dark:hover:bg-neutral-700'>
+                                    <Link href='/import' className='px-2 py-1'>Import</Link>
+                                </div>
                                 <div className='entry p-2 text-left text-slate-800 dark:text-inherit hover:bg-slate-100 dark:hover:bg-neutral-700'>
                                     <Link href='/signout' className='px-2 py-1'>Sign Out</Link>
                                 </div>

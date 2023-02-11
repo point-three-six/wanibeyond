@@ -1,48 +1,34 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import '../../../styles/checkmark.css';
+import '../../styles/checkmark.css';
 
-export default function ImportForm(props) {
-    const router = useRouter();
+export default function Step1(props) {
 
-    let [deck, setDeck] = useState(0);
-    let [file, setFile] = useState(null);
-
-    function submit() {
-        let data = new FormData();
-        data.append('deck', deck);
-        data.append('file', file);
-
-        fetch('/api/deck/import', {
-            method: 'POST',
-            body: data
-        }).then(res => {
-            console.log(res.status);
-        });
+    function verifyFile(e) {
+        props.onFileLoaded(e.target.files[0]);
     }
 
     return (
         <div>
             {/* decks */}
             <div className={`flex items-center mb-3`}>
-                <div className={`circle mr-6 ${(deck > 0) ? 'checked' : ''}`}>
-                    <div className={`checkmark ${(deck > 0) ? '' : 'hidden'}`}></div>
+                <div className={`circle mr-6 ${(props.deck > 0) ? 'checked' : ''}`}>
+                    <div className={`checkmark ${(props.deck > 0) ? '' : 'hidden'}`}></div>
                 </div>
                 <div className='flex-grow'>
-                    <label htmlFor='privacy' className='text-sm font-medium text-gray-700'>Select Deck</label>
+                    <label htmlFor='deck' className='text-sm font-medium text-gray-700'>Select Deck</label>
                     <div className='mt-1'>
                         <select
-                            name='privacy'
+                            name='deck'
                             className='border border-gray-300 w-full'
-                            defaultValue={''}
-                            onChange={e => { setDeck(e.target.value) }}
+                            defaultValue={props.deck}
+                            onChange={e => { props.onDeckChosen(e.target.value) }}
                         >
-                            <option value=''></option>
+                            <option value={0}></option>
                             {
                                 props.decks.map(deck =>
-                                    <option value={deck.id}>{deck.name}</option>
+                                    <option key={deck.id} value={deck.id}>{deck.name}</option>
                                 )
                             }
                         </select>
@@ -51,27 +37,33 @@ export default function ImportForm(props) {
             </div>
             {/* file */}
             <div className='flex items-center mb-3'>
-                <div className={`circle mr-6 ${(file) ? 'checked' : ''}`}>
-                    <div className={`checkmark ${(file) ? '' : 'hidden'}`}></div>
+                <div className={`circle mr-6 ${(props.file) ? 'checked' : ''}`}>
+                    <div className={`checkmark ${(props.file) ? '' : 'hidden'}`}></div>
                 </div>
                 <div className='flex-grow'>
                     <label htmlFor='file' className='text-sm font-medium text-gray-700'>File</label>
-                    <div className='mt-1'>
-                        <input
-                            name='file'
-                            type='file'
-                            className='border border-gray-300 w-full p-2'
-                            onChange={e => setFile(e.target.files[0])}
-                        />
-                    </div>
+                    {
+                        props.file ?
+                            <div>
+                                {props.file.name}
+                            </div>
+                            : <div className='mt-1'>
+                                <input
+                                    name='file'
+                                    type='file'
+                                    className='border border-gray-300 w-full p-2'
+                                    onChange={verifyFile}
+                                />
+                            </div>
+                    }
                 </div>
             </div>
             {/* button */}
-            <div className={`text-center mt-8`}>
+            <div className={`text-center mt-8 ${!props.file || props.deck == 0 ? 'hidden' : ''}`}>
                 <button
                     type="button"
                     className="text-white bg-blue-500 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2"
-                    onClick={() => submit()}
+                    onClick={() => props.onNext()}
                 >
                     <div className='mr-1 inline hidden'>
                         <span >
@@ -81,7 +73,7 @@ export default function ImportForm(props) {
                             </svg>
                         </span>
                     </div>
-                    upload & review
+                    continue
                 </button>
             </div >
         </div >
