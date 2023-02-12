@@ -1,16 +1,24 @@
 'use client';
 
+import { hash } from 'bcrypt';
 import React, { useState } from 'react';
 import { usePapaParse } from 'react-papaparse';
 import Step1 from './Step1';
 import Step2 from './Step2';
+import Step3 from './Step3';
 
 export default function ImportForm(props) {
 
+    // dont know anything about redux but I can assume this
+    // is exactly what it is created to prevent
     let [step, setStep] = useState(1);
     let [deck, setDeck] = useState(0);
     let [file, setFile] = useState(null);
     let [fileData, setFileData] = useState(null);
+    let [hasHeaderRow, setHasHeaderRow] = useState(true);
+    let [isHeaderRowConfirmed, setIsHeaderRowConfirmed] = useState(false);
+    let [itemType, setItemType] = useState('');
+    let [scPopupClicked, setScPopupClicked] = useState(false);
 
     function onFileLoaded({ file, results }) {
         setFile(file);
@@ -32,9 +40,22 @@ export default function ImportForm(props) {
 
     function getStepComponent() {
         switch (step) {
+            case 3:
+                return <Step3
+                    onNext={() => setStep(3)}
+                    itemType={itemType}
+                    onItemTypeChosen={(val) => setItemType(val)}
+                ></Step3 >
             case 2:
                 return <Step2
-                    onNext={() => setStep(2)}
+                    fileData={fileData}
+                    onNext={() => setStep(3)}
+                    hasHeaderRow={hasHeaderRow}
+                    isHeaderRowConfirmed={isHeaderRowConfirmed}
+                    onHeaderRowChanged={() => setHasHeaderRow(!hasHeaderRow)}
+                    onHeaderRowConfirmed={() => setIsHeaderRowConfirmed(true)}
+                    scPopupClicked={scPopupClicked}
+                    onScPopupClicked={() => setScPopupClicked(true)}
                 ></Step2>;
             default:
                 return <Step1
@@ -68,6 +89,17 @@ export default function ImportForm(props) {
                                 className='ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white'
                                 onClick={(e) => { e.preventDefault(); setStep(2); }}>
                                 Step 2
+                            </a>
+                        </div>
+                    </li>
+                    <li>
+                        <div className='flex items-center'>
+                            <svg aria-hidden='true' className='w-6 h-6 text-gray-400' fill='currentColor' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'><path fillRule='evenodd' d='M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z' clipRule='evenodd'></path></svg>
+                            <a
+                                href='#'
+                                className='ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white'
+                                onClick={(e) => { e.preventDefault(); setStep(3); }}>
+                                Step 3
                             </a>
                         </div>
                     </li>

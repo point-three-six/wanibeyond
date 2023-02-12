@@ -20,6 +20,21 @@ body {
 
 }
 
+.flex-override {
+    min-width: 0;
+}
+
+code {
+    display: block;
+    max-height: 300px;
+    overflow-x: auto;
+}
+
+pre code {
+    word-wrap: break-word;
+    display: block;
+}
+
 .max-width {
     width: 1024px;
 }

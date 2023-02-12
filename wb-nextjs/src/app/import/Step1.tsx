@@ -28,6 +28,7 @@ export default function Step1(props) {
     const { CSVReader } = useCSVReader();
 
     function onFileLoaded(results: any, file: File) {
+        console.log(results)
         props.onFileLoaded({
             file: file,
             results: results
@@ -79,13 +80,12 @@ export default function Step1(props) {
 
     return (
         <div>
-            {/* decks */}
-            <div className={`flex items-center mb-3`}>
-                <div className={`circle mr-6 ${(props.deck > 0) ? 'checked' : ''}`}>
+            <div className={`flex mb-5`}>
+                <div className={`flex-initial circle mr-6 mt-3 ${(props.deck > 0) ? 'checked' : ''}`}>
                     <div className={`checkmark ${(props.deck > 0) ? '' : 'hidden'}`}></div>
                 </div>
                 <div className='flex-grow'>
-                    <label htmlFor='deck' className='text-sm font-medium text-gray-700'>Select Deck</label>
+                    <label htmlFor='deck' className='font-medium text-gray-700'>Deck</label>
                     <div className='mt-1'>
                         <select
                             name='deck'
@@ -103,13 +103,12 @@ export default function Step1(props) {
                     </div>
                 </div>
             </div>
-            {/* file */}
-            <div className='flex items-center mb-3'>
-                <div className={`circle mr-6 ${(props.file) ? 'checked' : ''}`}>
+            <div className='flex mb-5'>
+                <div className={`flex-initial circle mr-6 mt-3 ${(props.file) ? 'checked' : ''}`}>
                     <div className={`checkmark ${(props.file) ? '' : 'hidden'}`}></div>
                 </div>
                 <div className='flex-grow'>
-                    <label htmlFor='file' className='text-sm font-medium text-gray-700'>File</label>
+                    <label htmlFor='file' className='font-medium text-gray-700'>File</label>
                     {getFileField()}
                 </div>
             </div>
