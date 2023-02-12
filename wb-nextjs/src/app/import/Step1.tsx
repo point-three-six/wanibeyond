@@ -1,12 +1,80 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, CSSProperties } from 'react';
+import { useCSVReader } from 'react-papaparse';
 import '../../styles/checkmark.css';
+
+const styles = {
+    csvReader: {
+        display: 'flex',
+        flexDirection: 'row',
+        marginBottom: 10,
+    } as CSSProperties,
+    browseFile: {
+        width: '20%',
+    } as CSSProperties,
+    acceptedFile: {
+        border: '1px solid #ccc',
+        height: 45,
+        lineHeight: 2.5,
+        paddingLeft: 10,
+        width: '80%',
+    } as CSSProperties
+};
+
 
 export default function Step1(props) {
 
-    function verifyFile(e) {
-        props.onFileLoaded(e.target.files[0]);
+    const { CSVReader } = useCSVReader();
+
+    function onFileLoaded(results: any, file: File) {
+        props.onFileLoaded({
+            file: file,
+            results: results
+        });
+    }
+
+    function getFileField() {
+        if (!props.file) {
+            return (
+                <CSVReader
+                    config={
+                        { worker: true }
+                    }
+                    onUploadAccepted={onFileLoaded}
+                >
+                    {({
+                        getRootProps,
+                        acceptedFile,
+                        ProgressBar,
+                        getRemoveFileProps,
+                    }: any) => (
+                        <>
+                            <div style={styles.csvReader}>
+                                <div style={styles.acceptedFile}>
+                                    {acceptedFile && acceptedFile.name}
+                                </div>
+                                <button
+                                    type='button'
+                                    {...getRootProps()}
+                                    style={styles.browseFile}
+                                    className='bg-neutral-200'>
+                                    Browse
+                                </button>
+                                {/* <button {...getRemoveFileProps()} style={styles.remove}>
+                                        Remove
+                                    </button> */}
+                            </div>
+                            <ProgressBar className='bg-slate-400' />
+                        </>
+                    )}
+                </CSVReader>
+            );
+        }
+
+        return (
+            <div>{props.file.name}</div>
+        );
     }
 
     return (
@@ -42,20 +110,7 @@ export default function Step1(props) {
                 </div>
                 <div className='flex-grow'>
                     <label htmlFor='file' className='text-sm font-medium text-gray-700'>File</label>
-                    {
-                        props.file ?
-                            <div>
-                                {props.file.name}
-                            </div>
-                            : <div className='mt-1'>
-                                <input
-                                    name='file'
-                                    type='file'
-                                    className='border border-gray-300 w-full p-2'
-                                    onChange={verifyFile}
-                                />
-                            </div>
-                    }
+                    {getFileField()}
                 </div>
             </div>
             {/* button */}

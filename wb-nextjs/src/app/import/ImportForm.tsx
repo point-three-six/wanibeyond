@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { usePapaParse } from 'react-papaparse';
 import Step1 from './Step1';
 import Step2 from './Step2';
 
@@ -9,9 +10,11 @@ export default function ImportForm(props) {
     let [step, setStep] = useState(1);
     let [deck, setDeck] = useState(0);
     let [file, setFile] = useState(null);
+    let [fileData, setFileData] = useState(null);
 
-    function onFileLoaded(file) {
+    function onFileLoaded({ file, results }) {
         setFile(file);
+        setFileData(results);
     }
 
     function submit() {

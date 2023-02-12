@@ -20,6 +20,7 @@ module.exports = {
     extend: {
       colors: {
         red: colors.red,
+        green: colors.green
       },
       backgroundColor: {
         red: colors.red
