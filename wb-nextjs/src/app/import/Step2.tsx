@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import '../../styles/checkmark.css';
 
 export default function Step1(props) {
+
     function getHeaderRowField() {
         if (!props.isHeaderRowConfirmed) {
             return (
@@ -95,8 +95,17 @@ export default function Step1(props) {
                     </button>
                 </>
             );
+        } else if (props.detectedSpecialColumns.length > 0) {
+            return (
+                <pre className='mt-2'>
+                    <code>
+                        {props.detectedSpecialColumns.join(',')}
+                    </code>
+                </pre>
+            );
+
         } else {
-            return <div>hey good stuff acknowleding that</div>
+            return <div>No special columns detected.</div>
         }
     }
 

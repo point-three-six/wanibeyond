@@ -2,7 +2,6 @@
 
 import React, { useState, CSSProperties } from 'react';
 import { useCSVReader } from 'react-papaparse';
-import '../../styles/checkmark.css';
 
 const styles = {
     csvReader: {
@@ -28,7 +27,6 @@ export default function Step1(props) {
     const { CSVReader } = useCSVReader();
 
     function onFileLoaded(results: any, file: File) {
-        console.log(results)
         props.onFileLoaded({
             file: file,
             results: results

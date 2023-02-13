@@ -1,34 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import '../../styles/checkmark.css';
 
 export default function Step3(props) {
-
-    function getMappingField() {
-        return <div>hey you're mapping!</div>
-    }
 
     return (
         <>
             <div className={`flex mb-5`}>
-                <div className={`flex-initial circle mr-6 mt-3`}>
-                    <div className='checkmark'></div>
-                </div>
-                <div className='flex-1 w-full flex-override'>
-                    <label htmlFor='privacy' className='font-medium text-gray-700 mb-2'>Mapping</label>
-                    <div className='mb-3'>
-                        The mapping process will allow you to select what columns in your file correlate to which WaniPlus item values.
-                    </div>
-                    <div className='mb-6'>
-                        For example, if your file contains a column named <span className='bg-neutral-100 p-1'>item_meaning</span>, you will map that column to WaniPlus's <span className='bg-neutral-100 p-1'>meaning</span> field.
-
-                        Now WaniPlus will know that the <span className='bg-neutral-100 p-1'>item_meaning</span> column is the item's definition, and automatically assign the definition to your newly imported items.
-                    </div>
-                </div>
-            </div>
-            <div className={`flex items-center mb-5`}>
-                <div className={`flex-initial circle mr-6 ${(props.itemType) ? 'checked' : ''}`}>
+                <div className={`flex-initial circle mr-6 mt-3 ${(props.itemType) ? 'checked' : ''}`}>
                     <div className={`checkmark`}></div>
                 </div>
                 <div className='flex-grow'>
@@ -42,14 +21,15 @@ export default function Step3(props) {
                             onChange={e => { props.onItemTypeChosen(e.target.value) }}
                         >
                             <option value=''></option>
-                            <option value='vocabulary'>Vocabulary</option>
-                            <option value='kanji'>Kanji</option>
                             <option value='radical'>Radical</option>
+                            <option value='kanji'>Kanji</option>
+                            <option value='vocab'>Vocabulary</option>
+                            <option value='kanavocab'>Kana Vocabulary</option>
                         </select>
                     </div>
                 </div>
             </div>
-            <div className={`text-center mt-8 ${true ? 'hidden' : ''}`}>
+            <div className={`text-center mt-8 ${!props.itemType ? 'hidden' : ''}`}>
                 <button
                     type="button"
                     className="text-white bg-blue-500 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2"
