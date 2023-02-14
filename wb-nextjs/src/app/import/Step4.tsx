@@ -13,9 +13,15 @@ export default function Step4(props) {
                 <>
                     <div className='mb-3'>Please map the fields below.</div>
                     <div className='mb-3'>
-                        Only fields marked with a <span className='text-orange-600 px-1'>*</span> are required.
+                        Only fields marked with <span className='text-orange-600 px-1'>*</span> are required.
                     </div>
-                    <Mapper columns={props.columns} itemType={props.itemType} onAllRequiredFieldsMapped={(bool) => setAllRequiredFieldsMapped(bool)}></Mapper>
+                    <Mapper
+                        columns={props.columns}
+                        mappings={props.mappings}
+                        itemType={props.itemType}
+                        onMappingsUpdated={(mappings) => props.onMappingsUpdated(mappings)}
+                        onAllRequiredFieldsMapped={(bool) => setAllRequiredFieldsMapped(bool)}
+                    />
                 </>
             );
         } else {
@@ -51,8 +57,8 @@ export default function Step4(props) {
 
     return (
         <>
-            <div className={`flex mb-5`}>
-                <div className={`flex-initial circle mr-6 mt-3`}>
+            <div className={`flex mb-12`}>
+                <div className={`flex-initial circle mr-6 mt-3 ${allRequiredFieldsMapped ? 'checked' : ''}`}>
                     <div className='checkmark'></div>
                 </div>
                 <div className='flex-1 w-full flex-override'>
@@ -76,7 +82,7 @@ export default function Step4(props) {
                     </div>
                     continue
                 </button>
-            </div >
+            </div>
         </>
     )
 }

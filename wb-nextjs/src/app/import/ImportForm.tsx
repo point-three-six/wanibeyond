@@ -7,6 +7,7 @@ import Step1 from './Step1';
 import Step2 from './Step2';
 import Step3 from './Step3';
 import Step4 from './Step4';
+import Review from './Review';
 
 export default function ImportForm(props) {
     let specialColumnsList = [
@@ -25,6 +26,7 @@ export default function ImportForm(props) {
     let [scPopupClicked, setScPopupClicked] = useState(false);
     let [detectedSpecialColumns, setDetectedSpecialColumns] = useState([]);
     let [mappingPopupConfirmed, setMappingPopupConfirmed] = useState(false);
+    let [mappings, setMappings] = useState({});
 
     function onFileLoaded({ file, results }) {
         setFile(file);
@@ -36,6 +38,8 @@ export default function ImportForm(props) {
     }
 
     function submit() {
+        console.log('submitting')
+        return;
         let data = new FormData();
         data.append('deck', deck);
         data.append('file', file);
@@ -50,21 +54,30 @@ export default function ImportForm(props) {
 
     function getStepComponent() {
         switch (step) {
+            case 5:
+                return <Review
+                    file={file}
+                    deckName={props.decks[deck].name}
+                    itemType={itemType}
+                    onSubmit={submit}
+                />
             case 4:
                 return <Step4
                     itemType={itemType}
                     columns={fileData.data[0]}
+                    mappings={mappings}
                     hasHeaderRow={hasHeaderRow}
                     mappingPopupConfirmed={mappingPopupConfirmed}
+                    onMappingsUpdated={(mappings) => setMappings(mappings)}
                     onMappingPopupConfirmed={() => setMappingPopupConfirmed(true)}
-                    onNext={() => setStep(4)}
-                ></Step4>
+                    onNext={() => setStep(5)}
+                />;
             case 3:
                 return <Step3
                     onNext={() => setStep(4)}
                     itemType={itemType}
                     onItemTypeChosen={(val) => setItemType(val)}
-                ></Step3>
+                />;
             case 2:
                 return <Step2
                     fileData={fileData}
@@ -76,7 +89,7 @@ export default function ImportForm(props) {
                     onHeaderRowConfirmed={() => setIsHeaderRowConfirmed(true)}
                     scPopupClicked={scPopupClicked}
                     onScPopupClicked={() => setScPopupClicked(true)}
-                ></Step2>;
+                />;
             default:
                 return <Step1
                     decks={props.decks}
@@ -85,7 +98,7 @@ export default function ImportForm(props) {
                     onNext={() => setStep(2)}
                     onFileLoaded={onFileLoaded}
                     onDeckChosen={(id) => setDeck(id)}
-                ></Step1>;
+                />;
         }
     }
 
@@ -131,6 +144,17 @@ export default function ImportForm(props) {
                                 className={`inline-flex items-center text-sm ${step == 4 ? 'font-bold' : 'font-medium'} text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white'`}
                                 onClick={(e) => { e.preventDefault(); setStep(4); }}>
                                 Step 4
+                            </a>
+                        </div>
+                    </li>
+                    <li>
+                        <div className='flex items-center'>
+                            <svg aria-hidden='true' className='w-6 h-6 text-gray-400' fill='currentColor' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'><path fillRule='evenodd' d='M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z' clipRule='evenodd'></path></svg>
+                            <a
+                                href='#'
+                                className={`inline-flex items-center text-sm ${step == 4 ? 'font-bold' : 'font-medium'} text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white'`}
+                                onClick={(e) => { e.preventDefault(); setStep(5); }}>
+                                Review
                             </a>
                         </div>
                     </li>

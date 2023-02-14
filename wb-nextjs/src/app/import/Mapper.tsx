@@ -26,6 +26,7 @@ export default function Mapper(props) {
         },
         'kana': {
             field: 'Reading',
+            required: true,
             types: ['vocab']
         },
         'mmne': {
@@ -51,11 +52,10 @@ export default function Mapper(props) {
     };
 
     let fields = Object.keys(defaultWpFields).filter(field => defaultWpFields[field].types.indexOf(props.itemType) !== -1);
-    let required = fields.filter(field => defaultWpFields[field].required)
+    let required = fields.filter(field => defaultWpFields[field].required);
 
-    console.log(required)
-
-    let mappings = {};
+    let mappings = props.mappings;
+    console.log(props)
 
     function areRequiredFieldsMapped() {
         let mapped = required.filter(field => field in mappings);
@@ -66,11 +66,15 @@ export default function Mapper(props) {
         let field = e.target.name;
         let columnIdx = parseInt(e.target.value);
 
+        console.log(mappings)
+
         if (columnIdx >= 0) {
             mappings[field] = columnIdx;
         } else {
             delete mappings[field];
         }
+
+        props.onMappingsUpdated(mappings);
 
         areRequiredFieldsMapped();
     }
