@@ -19,24 +19,34 @@ export const config = {
     },
 };
 
+function detectSpecialColumns(columns) {
+    let specialColumns = ['waniplus_id', 'waniplus_level', 'waniplus_srs'];
+    let detected = columns.filter(col => specialColumns.indexOf(col) !== -1);
+    return detected;
+}
+
 async function processFile(filepath: string, data: ImportOptions) {
     console.log('Processing ', filepath)
-    console.log('w/ options:')
-    console.log(data)
-    console.log('========================')
-
-    let startLine = (data.hasHeaderRow) ? 2 : 1;
 
     // item fields that are arrays, and we should check for
     // commas separted (,) data within the cell
     let arrayFields = ['en', 'onyomi', 'kunyomi', 'kana', 'parts_of_speech'];
 
+    let headerRow = [];
+    let specialColumns = [];
+
     let i = 0;
 
     fs.createReadStream(filepath)
-        .pipe(parse({ delimiter: ",", from_line: startLine }))
+        .pipe(parse({ delimiter: "," }))
         .on('data', function (row) {
+            if (i == 0) {
+                headerRow = row;
+                specialColumns = detectSpecialColumns(row);
+            }
+
             let itemData = {
+                'level': 0,
                 'type': data.type
             };
 
@@ -51,12 +61,22 @@ async function processFile(filepath: string, data: ImportOptions) {
                 itemData[mapping] = value;
             }
 
-            // do some additional data cleanup & formatting if possible
+            // ADDITIONAL CONDITIONS
             if ('emph' in itemData) {
                 itemData['emph'] = (itemData['emph'].includes('kun')) ? 'kunyomi' : 'onyomi';
             }
 
+            // SPECIAL COLUMNS
+            let spec_wp_level_idx = headerRow.indexOf('waniplus_level');
+            if (spec_wp_level_idx !== -1) {
+                let level = parseInt(row[spec_wp_level_idx]);
+                if (!level || level < 0 || level > 999) level = 0;
+                itemData['level'] = level;
+            }
+
             addItem(data.user, data.deck, itemData);
+
+            i++;
         });
 }
 
