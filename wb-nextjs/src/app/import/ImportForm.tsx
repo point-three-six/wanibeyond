@@ -18,6 +18,7 @@ export default function ImportForm(props) {
 
     // dont know anything about redux but I can assume this
     // is exactly what it is created to prevent
+    let [maxStep, setMaxStep] = useState(1);
     let [step, setStep] = useState(1);
     let [deck, setDeck] = useState(0);
     let [file, setFile] = useState(null);
@@ -39,6 +40,13 @@ export default function ImportForm(props) {
         // detect special columns
         let detected = results.data[0].filter(column => specialColumnsList.indexOf(column.toLowerCase()) !== -1);
         setDetectedSpecialColumns(detected);
+    }
+
+    function navigate(newStep, override) {
+        if (isImporting || importRequestStatus == 200) return; //disable nav on successful import
+        if (!override && (newStep > maxStep)) return; // can't skip forward
+        if (override && newStep > maxStep) setMaxStep(newStep);
+        setStep(newStep);
     }
 
     function submit() {
@@ -83,18 +91,18 @@ export default function ImportForm(props) {
                     mappingPopupConfirmed={mappingPopupConfirmed}
                     onMappingsUpdated={(mappings) => setMappings(mappings)}
                     onMappingPopupConfirmed={() => setMappingPopupConfirmed(true)}
-                    onNext={() => setStep(5)}
+                    onNext={() => navigate(5, true)}
                 />;
             case 3:
                 return <Step3
-                    onNext={() => setStep(4)}
+                    onNext={() => navigate(4, true)}
                     itemType={itemType}
                     onItemTypeChosen={(val) => setItemType(val)}
                 />;
             case 2:
                 return <Step2
                     fileData={fileData}
-                    onNext={() => setStep(3)}
+                    onNext={() => navigate(3, true)}
                     hasHeaderRow={hasHeaderRow}
                     detectedSpecialColumns={detectedSpecialColumns}
                     isHeaderRowConfirmed={isHeaderRowConfirmed}
@@ -108,7 +116,7 @@ export default function ImportForm(props) {
                     decks={props.decks}
                     deck={deck}
                     file={file}
-                    onNext={() => setStep(2)}
+                    onNext={() => navigate(2, true)}
                     onFileLoaded={onFileLoaded}
                     onDeckChosen={(id) => setDeck(id)}
                 />;
@@ -123,7 +131,7 @@ export default function ImportForm(props) {
                         <a
                             href='#'
                             className={`inline-flex items-center text-sm ${step == 1 ? 'font-bold' : 'font-medium'} text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white'`}
-                            onClick={(e) => { e.preventDefault(); setStep(1); }}>
+                            onClick={(e) => { e.preventDefault(); navigate(1); }}>
                             Step 1
                         </a>
                     </li>
@@ -133,7 +141,7 @@ export default function ImportForm(props) {
                             <a
                                 href='#'
                                 className={`inline-flex items-center text-sm ${step == 2 ? 'font-bold' : 'font-medium'} text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white'`}
-                                onClick={(e) => { e.preventDefault(); setStep(2); }}>
+                                onClick={(e) => { e.preventDefault(); navigate(2); }}>
                                 Step 2
                             </a>
                         </div>
@@ -144,7 +152,7 @@ export default function ImportForm(props) {
                             <a
                                 href='#'
                                 className={`inline-flex items-center text-sm ${step == 3 ? 'font-bold' : 'font-medium'} text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white'`}
-                                onClick={(e) => { e.preventDefault(); setStep(3); }}>
+                                onClick={(e) => { e.preventDefault(); navigate(3); }}>
                                 Step 3
                             </a>
                         </div>
@@ -155,7 +163,7 @@ export default function ImportForm(props) {
                             <a
                                 href='#'
                                 className={`inline-flex items-center text-sm ${step == 4 ? 'font-bold' : 'font-medium'} text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white'`}
-                                onClick={(e) => { e.preventDefault(); setStep(4); }}>
+                                onClick={(e) => { e.preventDefault(); navigate(4); }}>
                                 Step 4
                             </a>
                         </div>
@@ -166,7 +174,7 @@ export default function ImportForm(props) {
                             <a
                                 href='#'
                                 className={`inline-flex items-center text-sm ${step == 4 ? 'font-bold' : 'font-medium'} text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white'`}
-                                onClick={(e) => { e.preventDefault(); setStep(5); }}>
+                                onClick={(e) => { e.preventDefault(); navigate(5); }}>
                                 Review
                             </a>
                         </div>

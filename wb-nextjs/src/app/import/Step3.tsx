@@ -7,8 +7,8 @@ export default function Step3(props) {
     return (
         <>
             <div className={`flex mb-5`}>
-                <div className={`flex-initial circle mr-6 mt-3 ${(props.itemType) ? 'checked' : ''}`}>
-                    <div className={`checkmark`}></div>
+                <div className={`flex-initial circle mr-6 mt-3 ${props.itemType ? 'checked' : ''}`}>
+                    <div className={`checkmark ${props.itemType ? '' : 'hidden'}`}></div>
                 </div>
                 <div className='flex-grow'>
                     <label htmlFor='deck' className='text-sm font-medium text-gray-700 dark:text-inherit'>Item Type</label>
@@ -21,8 +21,8 @@ export default function Step3(props) {
                             onChange={e => { props.onItemTypeChosen(e.target.value) }}
                         >
                             <option value=''></option>
-                            <option value='radical'>Radical</option>
                             <option value='kanji'>Kanji</option>
+                            <option value='radical'>Radical</option>
                             <option value='vocab'>Vocabulary</option>
                             <option value='kanavocab'>Kana Vocabulary</option>
                         </select>

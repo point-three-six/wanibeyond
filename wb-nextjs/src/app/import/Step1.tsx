@@ -21,7 +21,6 @@ const styles = {
     } as CSSProperties
 };
 
-
 export default function Step1(props) {
 
     const { CSVReader } = useCSVReader();
@@ -50,7 +49,7 @@ export default function Step1(props) {
                     }: any) => (
                         <>
                             <div style={styles.csvReader}
-                                className='border border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 focus:border-slate-500 focus:outline-none focus:ring-slate-500 w-full'
+                                className='border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 focus:border-slate-500 focus:outline-none focus:ring-slate-500 w-full'
                             >
                                 <div style={styles.acceptedFile}>
                                     {acceptedFile && acceptedFile.name}

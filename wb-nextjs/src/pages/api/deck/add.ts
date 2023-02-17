@@ -3,6 +3,25 @@ import { getSession } from '../../../lib/sessionApiFallback'
 import prisma from '../../../lib/prisma'
 import { Kanji, Radical, Vocab } from '../../../../types';
 
+async function createAssignment(userId, itemId, srs) {
+    await prisma.assignment.create({
+        data: {
+            user: {
+                connect: {
+                    id: userId
+                }
+            },
+            item: {
+                connect: {
+                    id: itemId
+                }
+            },
+            wasCorrect: true,
+            stage: srs
+        }
+    });
+}
+
 function createRadicalDataObject(radical: Radical, isKanaVocab) {
     let obj = {
         'en': radical.en,
@@ -100,7 +119,7 @@ function createKanjiDataObject(kanji: Kanji) {
     return obj;
 }
 
-async function updateItem(userId, itemId, data) {
+export async function updateItem(userId, itemId, data, srs) {
     let obj;
     if (data.type == 'kanji') obj = createKanjiDataObject(data);
     if (data.type == 'vocab') obj = createVocabDataObject(data);
@@ -108,6 +127,7 @@ async function updateItem(userId, itemId, data) {
 
     obj.id = 'wp-' + itemId;
 
+    // .CATCH() to suppresses if records NOT EXIST
     let r = await prisma.item.update({
         where: {
             id: itemId,
@@ -127,11 +147,21 @@ async function updateItem(userId, itemId, data) {
             type: true,
             data: true
         }
+    }).catch(e => {
+        // p2025 == record does not exist
+        if (e.code !== 'P2025') {
+            throw e;
+        }
     });
+
+    if (r && srs && srs > 0) {
+        await createAssignment(userId, itemId, srs);
+    }
+
     return r;
 }
 
-export async function addItem(userId, deckId, data) {
+export async function addItem(userId, deckId, data, srs) {
     let obj;
     if (data.type == 'kanji') obj = createKanjiDataObject(data);
     if (data.type == 'vocab') obj = createVocabDataObject(data);
@@ -178,6 +208,10 @@ export async function addItem(userId, deckId, data) {
             data: obj
         }
     });
+
+    if (srs && srs > 0) {
+        await createAssignment(userId, itemId, srs);
+    }
 
     return r.items[0];
 }

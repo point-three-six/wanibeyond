@@ -76,7 +76,7 @@ export default function Step1(props) {
                         These special rows give more information to WaniPlus on how your data should be imported.
                     </div>
                     <div className='mb-5'>
-                        <a href="#" target="_blank" className='margin-left-auto  text-orange-600'>Learn more about special columns</a>
+                        <a href="#" target="_blank" className='margin-left-auto text-orange-600'>Learn more about special columns</a>
                     </div>
                     <button
                         type="button"
@@ -99,7 +99,7 @@ export default function Step1(props) {
             return (
                 <pre className='mt-2'>
                     <code>
-                        {props.detectedSpecialColumns.join(',')}
+                        {props.detectedSpecialColumns.join('\n')}
                     </code>
                 </pre>
             );
@@ -113,7 +113,7 @@ export default function Step1(props) {
         <>
             <div className={`flex mb-5`}>
                 <div className={`flex-initial circle mr-6 mt-3 ${props.isHeaderRowConfirmed ? 'checked' : ''}`}>
-                    <div className='checkmark'></div>
+                    <div className={`checkmark ${props.isHeaderRowConfirmed ? '' : 'hidden'}`}></div>
                 </div>
                 <div className='flex-1 w-full flex-override'>
                     <label htmlFor='privacy' className='text-sm font-medium text-gray-700 dark:text-inherit'>Header</label>
@@ -122,7 +122,7 @@ export default function Step1(props) {
             </div>
             <div className={`flex mb-5`}>
                 <div className={`flex-initial circle mr-6 mt-3 ${props.scPopupClicked ? 'checked' : ''}`}>
-                    <div className='checkmark'></div>
+                    <div className={`checkmark ${props.scPopupClicked ? '' : 'hidden'}`}></div>
                 </div>
                 <div className='flex-1 w-full flex-override'>
                     <label htmlFor='privacy' className='text-sm font-medium text-gray-700 dark:text-inherit'>Special Columns</label>

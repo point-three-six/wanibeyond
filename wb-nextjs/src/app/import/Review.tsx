@@ -34,7 +34,10 @@ export default function Review(props) {
                     </div>
                     import items
                 </button>
-            </div >
+            </div>
+            <div className={`text-center font-bold text-green-600 dark:text-green-300 mt-8 ${props.importRequestStatus == 200 ? '' : 'hidden'}`}>
+                Success! Your items have been imported.
+            </div>
         </>
     )
 }
