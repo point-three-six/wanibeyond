@@ -11,7 +11,9 @@ import Review from './Review';
 
 export default function ImportForm(props) {
     let specialColumnsList = [
-        'waniplus_id'
+        'waniplus_id',
+        'waniplus_level',
+        'waniplus_srs'
     ];
 
     // dont know anything about redux but I can assume this
@@ -27,6 +29,8 @@ export default function ImportForm(props) {
     let [detectedSpecialColumns, setDetectedSpecialColumns] = useState([]);
     let [mappingPopupConfirmed, setMappingPopupConfirmed] = useState(false);
     let [mappings, setMappings] = useState({});
+    let [isImporting, setIsImporting] = useState(false); // while requesting is processing
+    let [importRequestStatus, setImportRequestStatus] = useState(0);
 
     function onFileLoaded({ file, results }) {
         setFile(file);
@@ -38,6 +42,8 @@ export default function ImportForm(props) {
     }
 
     function submit() {
+        setIsImporting(true);
+
         let fd = new FormData();
         let metadata = JSON.stringify({
             deck: deck,
@@ -52,7 +58,8 @@ export default function ImportForm(props) {
             method: 'POST',
             body: fd
         }).then(res => {
-            console.log(res.status);
+            setIsImporting(false);
+            setImportRequestStatus(res.status);
         });
     }
 
@@ -63,6 +70,8 @@ export default function ImportForm(props) {
                     file={file}
                     deckName={props.decks[deck].name}
                     itemType={itemType}
+                    isImporting={isImporting}
+                    importRequestStatus={importRequestStatus}
                     onSubmit={submit}
                 />
             case 4:

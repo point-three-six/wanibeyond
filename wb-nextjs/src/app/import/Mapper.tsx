@@ -95,7 +95,11 @@ export default function Mapper(props) {
                                     {defaultWpFields[field].required ? <span className='text-orange-600 px-1'>*</span> : ''}
                                 </td>
                                 <td>
-                                    <select name={field} onChange={columnSelected}>
+                                    <select
+                                        name={field}
+                                        onChange={columnSelected}
+                                        className='border border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 focus:border-slate-500 focus:outline-none focus:ring-slate-500 w-full'
+                                    >
                                         <option value='-1'></option>
                                         {
                                             props.columns.map((column, i) =>

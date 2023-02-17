@@ -49,7 +49,9 @@ export default function Step1(props) {
                         getRemoveFileProps,
                     }: any) => (
                         <>
-                            <div style={styles.csvReader}>
+                            <div style={styles.csvReader}
+                                className='border border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 focus:border-slate-500 focus:outline-none focus:ring-slate-500 w-full'
+                            >
                                 <div style={styles.acceptedFile}>
                                     {acceptedFile && acceptedFile.name}
                                 </div>
@@ -57,7 +59,7 @@ export default function Step1(props) {
                                     type='button'
                                     {...getRootProps()}
                                     style={styles.browseFile}
-                                    className='bg-neutral-200'>
+                                    className='bg-neutral-200 dark:bg-neutral-700'>
                                     Browse
                                 </button>
                                 {/* <button {...getRemoveFileProps()} style={styles.remove}>
@@ -83,11 +85,11 @@ export default function Step1(props) {
                     <div className={`checkmark ${(props.deck > 0) ? '' : 'hidden'}`}></div>
                 </div>
                 <div className='flex-grow'>
-                    <label htmlFor='deck' className='font-medium text-gray-700'>Deck</label>
+                    <label htmlFor='deck' className='text-sm font-medium text-gray-700 dark:text-inherit'>Deck</label>
                     <div className='mt-1'>
                         <select
                             name='deck'
-                            className='border border-gray-300 w-full'
+                            className='border border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 focus:border-slate-500 focus:outline-none focus:ring-slate-500 w-full'
                             defaultValue={props.deck}
                             onChange={e => { props.onDeckChosen(e.target.value) }}
                         >
@@ -106,7 +108,7 @@ export default function Step1(props) {
                     <div className={`checkmark ${(props.file) ? '' : 'hidden'}`}></div>
                 </div>
                 <div className='flex-grow'>
-                    <label htmlFor='file' className='font-medium text-gray-700'>File</label>
+                    <label htmlFor='file' className='text-sm font-medium text-gray-700 dark:text-inherit'>File</label>
                     {getFileField()}
                 </div>
             </div>

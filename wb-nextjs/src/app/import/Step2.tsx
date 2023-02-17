@@ -11,7 +11,7 @@ export default function Step1(props) {
                     <div className='mb-2'>
                         Below is the first row of your selected file.
                     </div>
-                    <pre className='my-4 text-sm bg-neutral-100 p-2'>
+                    <pre className='my-4 text-sm bg-neutral-100 p-2 dark:bg-neutral-700 dark:text-inherit'>
                         <code>
                             {props.fileData.data[0].join(',')}
                         </code>
@@ -116,7 +116,7 @@ export default function Step1(props) {
                     <div className='checkmark'></div>
                 </div>
                 <div className='flex-1 w-full flex-override'>
-                    <label htmlFor='privacy' className='font-medium text-gray-700'>Header</label>
+                    <label htmlFor='privacy' className='text-sm font-medium text-gray-700 dark:text-inherit'>Header</label>
                     {getHeaderRowField()}
                 </div>
             </div>
@@ -125,7 +125,7 @@ export default function Step1(props) {
                     <div className='checkmark'></div>
                 </div>
                 <div className='flex-1 w-full flex-override'>
-                    <label htmlFor='privacy' className='font-medium text-gray-700'>Special Columns</label>
+                    <label htmlFor='privacy' className='text-sm font-medium text-gray-700 dark:text-inherit'>Special Columns</label>
                     {getSpecialColumnField()}
                 </div>
             </div>
