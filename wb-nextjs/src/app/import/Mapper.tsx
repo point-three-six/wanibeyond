@@ -55,7 +55,6 @@ export default function Mapper(props) {
     let required = fields.filter(field => defaultWpFields[field].required);
 
     let mappings = props.mappings;
-    console.log(props)
 
     function areRequiredFieldsMapped() {
         let mapped = required.filter(field => field in mappings);
@@ -65,8 +64,6 @@ export default function Mapper(props) {
     function columnSelected(e) {
         let field = e.target.name;
         let columnIdx = parseInt(e.target.value);
-
-        console.log(mappings)
 
         if (columnIdx >= 0) {
             mappings[field] = columnIdx;

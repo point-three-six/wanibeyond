@@ -38,15 +38,19 @@ export default function ImportForm(props) {
     }
 
     function submit() {
-        console.log('submitting')
-        return;
-        let data = new FormData();
-        data.append('deck', deck);
-        data.append('file', file);
+        let fd = new FormData();
+        let metadata = JSON.stringify({
+            deck: deck,
+            type: itemType,
+            mappings: mappings,
+            hasHeaderRow: hasHeaderRow
+        });
+        fd.append('data', metadata);
+        fd.append('file', file);
 
         fetch('/api/deck/import', {
             method: 'POST',
-            body: data
+            body: fd
         }).then(res => {
             console.log(res.status);
         });

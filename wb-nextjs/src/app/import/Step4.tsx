@@ -59,7 +59,7 @@ export default function Step4(props) {
         <>
             <div className={`flex mb-12`}>
                 <div className={`flex-initial circle mr-6 mt-3 ${allRequiredFieldsMapped ? 'checked' : ''}`}>
-                    <div className='checkmark'></div>
+                    <div className={`checkmark ${allRequiredFieldsMapped ? '' : 'hidden'}`}></div>
                 </div>
                 <div className='flex-1 w-full flex-override'>
                     <label htmlFor='privacy' className='font-medium text-gray-700 mb-2'>Mapping</label>

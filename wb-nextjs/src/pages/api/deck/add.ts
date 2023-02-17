@@ -131,7 +131,7 @@ async function updateItem(userId, itemId, data) {
     return r;
 }
 
-async function addItem(userId, deckId, data) {
+export async function addItem(userId, deckId, data) {
     let obj;
     if (data.type == 'kanji') obj = createKanjiDataObject(data);
     if (data.type == 'vocab') obj = createVocabDataObject(data);
