@@ -35,8 +35,11 @@ export default function Review(props) {
                     import items
                 </button>
             </div>
-            <div className={`text-center font-bold text-green-600 dark:text-green-300 mt-8 ${props.importRequestStatus == 200 ? '' : 'hidden'}`}>
-                Success! Your items have been imported.
+            <div className={`flex items-center justify-center mt-8 ${props.importRequestStatus == 200 ? '' : 'hidden'}`}>
+                <div className='circle checked m-2'>
+                    <div className='checkmark'></div>
+                </div>
+                <div>Your items were imported!</div>
             </div>
         </>
     )

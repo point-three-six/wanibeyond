@@ -13,7 +13,6 @@ const styles = {
         width: '20%',
     } as CSSProperties,
     acceptedFile: {
-        border: '1px solid #ccc',
         height: 45,
         lineHeight: 2.5,
         paddingLeft: 10,
@@ -49,7 +48,7 @@ export default function Step1(props) {
                     }: any) => (
                         <>
                             <div style={styles.csvReader}
-                                className='border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 focus:border-slate-500 focus:outline-none focus:ring-slate-500 w-full'
+                                className='border border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 focus:border-slate-500 focus:outline-none focus:ring-slate-500 w-full'
                             >
                                 <div style={styles.acceptedFile}>
                                     {acceptedFile && acceptedFile.name}
@@ -61,9 +60,6 @@ export default function Step1(props) {
                                     className='bg-neutral-200 dark:bg-neutral-700'>
                                     Browse
                                 </button>
-                                {/* <button {...getRemoveFileProps()} style={styles.remove}>
-                                        Remove
-                                    </button> */}
                             </div>
                             <ProgressBar className='bg-slate-400' />
                         </>

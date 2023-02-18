@@ -73,10 +73,10 @@ export default function Step1(props) {
                 <>
                     <div className='mb-3'>
                         To give you more control over the importing process, WaniPlus has a list of pre-defined columns that it will look for in your file.
-                        These special rows give more information to WaniPlus on how your data should be imported.
+                        These special columns give more information to WaniPlus on how your data should be imported.
                     </div>
                     <div className='mb-5'>
-                        <a href="#" target="_blank" className='margin-left-auto text-orange-600'>Learn more about special columns</a>
+                        <a href='/guides/import#special-columns' className='margin-left-auto text-orange-600' target='_blank'>Learn more about special columns</a>
                     </div>
                     <button
                         type="button"
@@ -97,11 +97,17 @@ export default function Step1(props) {
             );
         } else if (props.detectedSpecialColumns.length > 0) {
             return (
-                <pre className='mt-2'>
-                    <code>
-                        {props.detectedSpecialColumns.join('\n')}
-                    </code>
-                </pre>
+                <>
+                    <div className='mt-2'>
+                        The following special columns were detected:
+                    </div>
+                    <pre className='mt-4'>
+                        <code>
+                            {props.detectedSpecialColumns.join('\n')}
+                        </code>
+                    </pre>
+                </>
+
             );
 
         } else {

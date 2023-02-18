@@ -78,3 +78,11 @@ model Assignment {
   @@index([itemId])
   @@index([userId, itemId])
 }
+
+model Log {
+  id       Int      @id @default(autoincrement())
+  loggedAt DateTime @default(now())
+  userId   Int?
+  ip       String?
+  msg      String
+}

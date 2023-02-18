@@ -48,10 +48,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (data.threadUrl.length > 0 && validateUrl(data.threadUrl)) return res.status(422).json({ e: 'Invalid thread URL.' });
         if (['wanikani', 'internal'].indexOf(data.levelSystem) == -1) return res.status(422).json({ e: 'Invalid level system.' });
 
-        createDeck(session.id, data).then((r) => {
-            res.status(200).json({
-                id: r.id
-            });
+        let r = await createDeck(session.id, data);
+        res.status(200).json({
+            id: r.id
         });
     } else {
         res.status(401).json({});

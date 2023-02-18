@@ -33,7 +33,7 @@ function createRadicalDataObject(radical: Radical, isKanaVocab) {
         'type': 'Radical',
         'category': 'Radical',
         'characters': radical.characters,
-        'auxiliary_meanings': radical.auxiliary_meanings,
+        'auxiliary_meanings': radical.auxiliary_meanings || [],
         'character_image_url': '',
         'relationships': {
             'study_material': null
@@ -69,8 +69,8 @@ function createVocabDataObject(vocab: Vocab) {
         'id': null,
         'aud': vocab.aud,
         'voc': vocab.characters,
-        'kana': vocab.kana,
-        'kanji': vocab.kanji,
+        'kana': vocab.kana || [],
+        'kanji': vocab.kanji || [],
         'mhnt': vocab.meaningHint,
         'mmne': vocab.mmne,
         'rhnt': vocab.readingHint,
@@ -79,10 +79,10 @@ function createVocabDataObject(vocab: Vocab) {
         'category': 'Vocabulary',
         'characters': vocab.characters,
         'sentences': sentences,
-        'collocations': vocab.collocations,
-        'parts_of_speech': vocab.parts_of_speech,
-        'auxiliary_meanings': vocab.auxiliary_meanings,
-        'auxiliary_readings': vocab.auxiliary_readings,
+        'collocations': vocab.collocations || [],
+        'parts_of_speech': vocab.parts_of_speech || [],
+        'auxiliary_meanings': vocab.auxiliary_meanings || [],
+        'auxiliary_readings': vocab.auxiliary_readings || [],
         'relationships': {
             'study_material': null
         }
@@ -95,9 +95,9 @@ function createKanjiDataObject(kanji: Kanji) {
     let obj = {
         'en': kanji.en,
         'id': null,
-        'on': kanji.onyomi,
+        'on': kanji.onyomi || [],
         'kan': kanji.characters,
-        'kun': kanji.kunyomi,
+        'kun': kanji.kunyomi || [],
         'emph': kanji.emph,
         'mhnt': kanji.meaningHint,
         'mmne': kanji.mmne,
@@ -106,11 +106,11 @@ function createKanjiDataObject(kanji: Kanji) {
         'type': 'Kanji',
         'nanori': [],
         'category': 'Kanji',
-        'radicals': kanji.radicals,
+        'radicals': kanji.radicals || [],
         'characters': kanji.characters,
-        'vocabulary': kanji.vocabulary,
-        'auxiliary_meanings': kanji.auxiliary_meanings,
-        'auxiliary_readings': kanji.auxiliary_readings,
+        'vocabulary': kanji.vocabulary || [],
+        'auxiliary_meanings': kanji.auxiliary_meanings || [],
+        'auxiliary_readings': kanji.auxiliary_readings || [],
         'relationships': {
             'study_material': null
         }

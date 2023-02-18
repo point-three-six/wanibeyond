@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
+import sendExtMsg from '../../lib/wpExtension';
 
 import '../../styles/checkmark.css';
 import Step1 from './Step1';
@@ -42,6 +44,14 @@ export default function ImportForm(props) {
         setDetectedSpecialColumns(detected);
     }
 
+    function getColumns() {
+        if (hasHeaderRow) {
+            return fileData.data[0];
+        } else {
+            return fileData.data[0].map((col, i) => 'Column ' + i);
+        }
+    }
+
     function navigate(newStep, override) {
         if (isImporting || importRequestStatus == 200) return; //disable nav on successful import
         if (!override && (newStep > maxStep)) return; // can't skip forward
@@ -68,6 +78,7 @@ export default function ImportForm(props) {
         }).then(res => {
             setIsImporting(false);
             setImportRequestStatus(res.status);
+            sendExtMsg('sync', true, () => { });
         });
     }
 
@@ -76,7 +87,7 @@ export default function ImportForm(props) {
             case 5:
                 return <Review
                     file={file}
-                    deckName={props.decks[deck].name}
+                    deckName={props.decks.filter(d => d.id == deck)[0].name}
                     itemType={itemType}
                     isImporting={isImporting}
                     importRequestStatus={importRequestStatus}
@@ -85,7 +96,7 @@ export default function ImportForm(props) {
             case 4:
                 return <Step4
                     itemType={itemType}
-                    columns={fileData.data[0]}
+                    columns={getColumns()}
                     mappings={mappings}
                     hasHeaderRow={hasHeaderRow}
                     mappingPopupConfirmed={mappingPopupConfirmed}
@@ -118,19 +129,19 @@ export default function ImportForm(props) {
                     file={file}
                     onNext={() => navigate(2, true)}
                     onFileLoaded={onFileLoaded}
-                    onDeckChosen={(id) => setDeck(id)}
+                    onDeckChosen={(id) => setDeck(parseInt(id))}
                 />;
         }
     }
 
     return (
         <>
-            <div className='flex px-5 py-3 text-gray-700 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700 mb-5' aria-label='Breadcrumb'>
+            <div className='flex px-5 py-3 text-gray-700 border border-gray-200 rounded-lg bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-inherit mb-5' aria-label='Breadcrumb'>
                 <ol className='inline-flex items-center space-x-1 md:space-x-3'>
                     <li className='inline-flex items-center'>
                         <a
                             href='#'
-                            className={`inline-flex items-center text-sm ${step == 1 ? 'font-bold' : 'font-medium'} text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white'`}
+                            className={`inline-flex items-center text-sm ${step == 1 ? 'font-bold' : 'font-medium'} text-gray-700 hover:text-blue-600 dark:text-inherit dark:hover:text-white'`}
                             onClick={(e) => { e.preventDefault(); navigate(1); }}>
                             Step 1
                         </a>
@@ -140,7 +151,7 @@ export default function ImportForm(props) {
                             <svg aria-hidden='true' className='w-6 h-6 text-gray-400' fill='currentColor' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'><path fillRule='evenodd' d='M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z' clipRule='evenodd'></path></svg>
                             <a
                                 href='#'
-                                className={`inline-flex items-center text-sm ${step == 2 ? 'font-bold' : 'font-medium'} text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white'`}
+                                className={`inline-flex items-center text-sm ${step == 2 ? 'font-bold' : 'font-medium'} text-gray-700 hover:text-blue-600 dark:text-inherit dark:hover:text-white'`}
                                 onClick={(e) => { e.preventDefault(); navigate(2); }}>
                                 Step 2
                             </a>
@@ -151,7 +162,7 @@ export default function ImportForm(props) {
                             <svg aria-hidden='true' className='w-6 h-6 text-gray-400' fill='currentColor' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'><path fillRule='evenodd' d='M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z' clipRule='evenodd'></path></svg>
                             <a
                                 href='#'
-                                className={`inline-flex items-center text-sm ${step == 3 ? 'font-bold' : 'font-medium'} text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white'`}
+                                className={`inline-flex items-center text-sm ${step == 3 ? 'font-bold' : 'font-medium'} text-gray-700 hover:text-blue-600 dark:text-inherit dark:hover:text-white'`}
                                 onClick={(e) => { e.preventDefault(); navigate(3); }}>
                                 Step 3
                             </a>
@@ -162,7 +173,7 @@ export default function ImportForm(props) {
                             <svg aria-hidden='true' className='w-6 h-6 text-gray-400' fill='currentColor' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'><path fillRule='evenodd' d='M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z' clipRule='evenodd'></path></svg>
                             <a
                                 href='#'
-                                className={`inline-flex items-center text-sm ${step == 4 ? 'font-bold' : 'font-medium'} text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white'`}
+                                className={`inline-flex items-center text-sm ${step == 4 ? 'font-bold' : 'font-medium'} text-gray-700 hover:text-blue-600 dark:text-inherit dark:hover:text-white'`}
                                 onClick={(e) => { e.preventDefault(); navigate(4); }}>
                                 Step 4
                             </a>
@@ -173,7 +184,7 @@ export default function ImportForm(props) {
                             <svg aria-hidden='true' className='w-6 h-6 text-gray-400' fill='currentColor' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'><path fillRule='evenodd' d='M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z' clipRule='evenodd'></path></svg>
                             <a
                                 href='#'
-                                className={`inline-flex items-center text-sm ${step == 4 ? 'font-bold' : 'font-medium'} text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white'`}
+                                className={`inline-flex items-center text-sm ${step == 4 ? 'font-bold' : 'font-medium'} text-gray-700 hover:text-blue-600 dark:text-inherit dark:hover:text-white'`}
                                 onClick={(e) => { e.preventDefault(); navigate(5); }}>
                                 Review
                             </a>
@@ -182,6 +193,9 @@ export default function ImportForm(props) {
                 </ol>
             </div>
             {getStepComponent(step)}
+            <div className='mt-12 mb-6 pt-5 border-t border-neutral-200 dark:border-neutral-700 text-sm font-medium text-center'>
+                <Link href='/guides/import' className='text-slate-600 dark:text-neutral-400' target='_blank'>Need help? See the import guide & documentation</Link>
+            </div>
         </>
     );
 }

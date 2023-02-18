@@ -17,6 +17,7 @@ interface ImportOptions {
 export const config = {
     api: {
         bodyParser: false,
+        responseLimit: '20mb'
     },
 };
 
@@ -33,7 +34,9 @@ async function processFile(filepath: string, data: ImportOptions) {
     // item fields that are arrays, and we should check for
     // commas separted (,) data within the cell
     let arrayFields = ['en', 'onyomi', 'kunyomi', 'kana', 'parts_of_speech'];
+
     const cleanRgx = /\[.*\]|\(.*\)/g;
+    const commaRgx = /、|,/;
 
     let headerRow = [];
     let specialColumns = [];
@@ -74,7 +77,7 @@ async function processFile(filepath: string, data: ImportOptions) {
                     }
 
                     if (arrayFields.indexOf(mapping) !== -1) {
-                        value = value.split(',');
+                        value = value.split(commaRgx);
                     }
 
                     if (Array.isArray(value)) {
@@ -120,7 +123,7 @@ async function processFile(filepath: string, data: ImportOptions) {
                     dbPromises.push(prom);
                 } else {
                     let prom = addItem(data.user, data.deck, itemData, wp_srs);
-                    dbPromises.push();
+                    dbPromises.push(prom);
                 }
 
                 i++;

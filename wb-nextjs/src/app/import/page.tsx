@@ -22,7 +22,7 @@ export default async function page() {
         <div>
             <div className='w-screen max-width flex justify-center gap-7'>
                 <div className='w-3/4'>
-                    <h1 className="text-3xl font-extrabold text-slate-700 dark:text-inherit mb-6">Import</h1>
+                    <h1 className="text-3xl font-bold text-slate-700 dark:text-inherit mb-6">Import</h1>
                     {
                         sessionData ? <ImportForm decks={myDecks}></ImportForm> : 'You are not authorized for this action.'
                     }
