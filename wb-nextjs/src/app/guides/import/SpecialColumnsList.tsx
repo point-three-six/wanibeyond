@@ -34,6 +34,9 @@ export default function SpecialColumnsList() {
                         <div className='mb-3'>
                             By default, items created in WaniPlus start a the lowest SRS stage possible, {code(1)}.
                         </div>
+                        <div className='mb-3'>
+                            This will set <i>your</i> default SRS level for the item. This effect will not carry over for anyone who installs your deck.
+                        </div>
                         <div>
                             The value provided should be a number between 1-9.
                         </div>

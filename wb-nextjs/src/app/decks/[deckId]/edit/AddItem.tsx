@@ -4,7 +4,6 @@ import React, { useState } from 'react'
 import MultiInput from './MultiInput';
 import ItemSearch from './ItemSearch';
 import DeleteModal from './DeleteModal';
-import sendExtMsg from '../../../../lib/wpExtension';
 import '../../../../styles/checkmark.css';
 
 function getTypeDisplayText(value: string) {
@@ -154,9 +153,6 @@ export default function AddItem(props) {
             let r = await res.json();
 
             if (res.status == 200 && 'item' in r) {
-                sendExtMsg('sync', true, () => { });
-
-
                 if (eitm) {
                     props.onItemEdited(r.item);
                 } else {
@@ -180,7 +176,6 @@ export default function AddItem(props) {
         })
 
         if (res.status == 200) {
-            sendExtMsg('sync', true, () => { });
             setShowDeleteModal(false);
             props.onItemDeleted(props.item);
             props.back();

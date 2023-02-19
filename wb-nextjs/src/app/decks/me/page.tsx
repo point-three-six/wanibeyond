@@ -11,10 +11,19 @@ export default async function DeckListPage() {
       where: {
         userId: sessionData.id
       },
+      orderBy: [
+        {
+          dateCreated: 'asc'
+        }
+      ],
       include: {
         _count: {
           select: {
-            items: true,
+            items: {
+              where: {
+                deleted: false
+              }
+            }
           },
         },
       }

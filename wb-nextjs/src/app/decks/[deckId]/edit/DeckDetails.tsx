@@ -23,6 +23,9 @@ export default function DeckDetails(props) {
                     <div>Level System</div>
                     <div>{props.deck.levelSystem}</div>
                 </div>
+                <div className='mt-4 mb-2 text-orange-500'>
+                    <a href="#" onClick={props.onEditDetails}>Edit Details</a>
+                </div>
                 <div>
                     <Link href={`/decks/${props.deck.id}`} className='text-orange-500'>View preview</Link>
                 </div>
